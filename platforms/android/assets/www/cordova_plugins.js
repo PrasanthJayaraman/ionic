@@ -46,6 +46,14 @@ module.exports = [
     "clobbers": [
       "cordova.plugins.locationAccuracy"
     ]
+  },
+  {
+    "id": "cordova.plugins.diagnostic.Diagnostic",
+    "file": "plugins/cordova.plugins.diagnostic/www/android/diagnostic.js",
+    "pluginId": "cordova.plugins.diagnostic",
+    "clobbers": [
+      "cordova.plugins.diagnostic"
+    ]
   }
 ];
 module.exports.metadata = 
@@ -57,7 +65,8 @@ module.exports.metadata =
   "cordova-plugin-splashscreen": "4.0.3",
   "cordova-plugin-ionic-webview": "1.1.16",
   "cordova-plugin-geolocation": "2.4.3",
-  "cordova-plugin-request-location-accuracy": "2.2.2"
+  "cordova-plugin-request-location-accuracy": "2.2.2",
+  "cordova.plugins.diagnostic": "3.7.1"
 };
 // BOTTOM OF METADATA
 });

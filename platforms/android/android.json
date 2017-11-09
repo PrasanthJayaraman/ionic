@@ -46,6 +46,16 @@
               "xml": "<uses-feature android:name=\"android.hardware.location.gps\" />",
               "count": 1
             }
+          ],
+          "/manifest/application": [
+            {
+              "xml": "<receiver android:name=\"cordova.plugins.Diagnostic$LocationProviderChangedReceiver\"><intent-filter><action android:name=\"android.location.PROVIDERS_CHANGED\" /></intent-filter></receiver>",
+              "count": 1
+            },
+            {
+              "xml": "<receiver android:name=\"cordova.plugins.Diagnostic$NFCStateChangedReceiver\"><intent-filter><action android:name=\"android.nfc.action.ADAPTER_STATE_CHANGED\" /></intent-filter></receiver>",
+              "count": 1
+            }
           ]
         }
       },
@@ -54,6 +64,10 @@
           "/*": [
             {
               "xml": "<feature name=\"RequestLocationAccuracy\"><param name=\"android-package\" value=\"cordova.plugin.RequestLocationAccuracy\" /></feature>",
+              "count": 1
+            },
+            {
+              "xml": "<feature name=\"Diagnostic\"><param name=\"android-package\" value=\"cordova.plugins.Diagnostic\" /><param name=\"onload\" value=\"true\" /></feature>",
               "count": 1
             }
           ]
@@ -81,6 +95,9 @@
       "PACKAGE_NAME": "io.ionic.starter"
     },
     "cordova-plugin-request-location-accuracy": {
+      "PACKAGE_NAME": "io.ionic.starter"
+    },
+    "cordova.plugins.diagnostic": {
       "PACKAGE_NAME": "io.ionic.starter"
     }
   },
@@ -132,6 +149,14 @@
       "clobbers": [
         "cordova.plugins.locationAccuracy"
       ]
+    },
+    {
+      "id": "cordova.plugins.diagnostic.Diagnostic",
+      "file": "plugins/cordova.plugins.diagnostic/www/android/diagnostic.js",
+      "pluginId": "cordova.plugins.diagnostic",
+      "clobbers": [
+        "cordova.plugins.diagnostic"
+      ]
     }
   ],
   "plugin_metadata": {
@@ -141,6 +166,7 @@
     "cordova-plugin-splashscreen": "4.0.3",
     "cordova-plugin-ionic-webview": "1.1.16",
     "cordova-plugin-geolocation": "2.4.3",
-    "cordova-plugin-request-location-accuracy": "2.2.2"
+    "cordova-plugin-request-location-accuracy": "2.2.2",
+    "cordova.plugins.diagnostic": "3.7.1"
   }
 }

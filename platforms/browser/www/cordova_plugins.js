@@ -48,7 +48,8 @@ module.exports.metadata =
     "cordova-plugin-request-location-accuracy": "2.2.2",
     "cordova-plugin-splashscreen": "4.0.3",
     "cordova-plugin-whitelist": "1.3.1",
-    "ionic-plugin-keyboard": "2.2.1"
+    "ionic-plugin-keyboard": "2.2.1",
+    "cordova.plugins.diagnostic": "3.7.1"
 }
 // BOTTOM OF METADATA
 });

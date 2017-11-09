@@ -64,7 +64,7 @@ var Home = (function () {
         this.locationAccuracy = locationAccuracy;
     }
     Home.prototype.ionViewDidLoad = function () {
-        //this.getLocation();      
+        this.getLocation();
     };
     Home.prototype.getLocation = function () {
         var _this = this;
