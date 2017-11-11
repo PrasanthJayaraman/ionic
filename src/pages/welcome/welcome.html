@@ -1,0 +1,35 @@
+<!--
+  Generated template for the WelcomePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+
+<ion-content center text-center padding>  
+  <img src="assets/imgs/lion.png" class="logo-medium veritical" alt="logo">
+  <h3 class="primary bold">Welcome to Jobs Wala</h3>  
+  <br>
+  <p class="line-space medium-text">Welcome to Jobswala, get the latest job details. Login and share your jobs details with friends</p> 
+  <h5>Your career your choice</h5>
+  <div class="fixed-bottom">
+    <span class="light">-- Sign in with --</span>
+    <br><br>
+    <div class="button-wrapper">
+      <button ion-button class="whitey-background circle" style="margin-right:30px;">
+        <img src="assets/imgs/facebook.png" class="logo-small" alt="fb">
+      </button>
+      <br>
+      <button ion-button class="whitey-background circle">
+        <img src="assets/imgs/google.png" class="logo-small" alt="g+">
+      </button>
+    </div>
+    <br>
+    <span class="light">-- Or --</span>
+    <br>
+    <br>
+    <div class="bottom-space">
+      <button ion-button color="primary" class="standard-medium shadow" (click)="login()" round>Login</button>
+      <button ion-button color="whitey" class="standard-medium shadow" (click)="signup()" round>Signup</button>
+    </div>    
+  </div>
+</ion-content>

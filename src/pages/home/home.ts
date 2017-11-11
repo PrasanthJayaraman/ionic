@@ -13,11 +13,12 @@ export class Home {
   public Error : any;
   public location : any;
 
-  constructor(public navCtrl: NavController, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController) {    
-  
-    platform.ready().then(() => {
+  constructor(public navCtrl: NavController, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController) {      
+    platform.ready().then(() => {      
       this.Android = platform.is('android');
-      this.getLocation();
+      if(platform.is('cordova')){
+        this.getLocation();
+      }
     });
 
   }  

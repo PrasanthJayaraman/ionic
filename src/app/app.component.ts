@@ -4,14 +4,14 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Firebase } from '@ionic-native/firebase';
 
-import { Home } from '../pages/home/home';
+import { WelcomePage } from '../pages/welcome/welcome';
 
 @Component({
   templateUrl: 'app.html'
 })
 
 export class MyApp {
-  rootPage:any = Home;
+  rootPage: any = WelcomePage;
   public Android: Boolean = false;
 
   alert(title, content) {
@@ -32,7 +32,9 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
-      this.registerPush();
+      if (platform.is('cordova')) {
+        this.registerPush();    
+      }
     });
   }
 

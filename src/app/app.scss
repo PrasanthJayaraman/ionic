@@ -1,6 +1,4 @@
 // http://ionicframework.com/docs/theming/
-
-
 // App Global Sass
 // --------------------------------------------------
 // Put style rules here that you want to apply globally. These
@@ -14,3 +12,58 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+.primary {
+  color: map-get($colors, primary) !important;
+}
+
+.secondary {
+  color: map-get($colors, secondary) !important;
+}
+
+.danger {
+  color: map-get($colors, danger) !important;
+}
+
+.light {
+  color: map-get($colors, light) !important;
+}
+
+.dark {
+  color: map-get($colors, dark) !important;
+}
+
+.whitey {
+  color: map-get($colors, whitey) !important;
+}
+
+.primary-background {
+  background-color: map-get($colors, primary) !important;
+}
+
+.secondary-background {
+  background-color: map-get($colors, secondary) !important;
+}
+
+.danger-background {
+  background-color: map-get($colors, danger) !important;
+}
+
+.light-background {
+  background-color: map-get($colors, light) !important;
+}
+
+.dark-background {
+  background-color: map-get($colors, dark) !important;
+}
+
+.whitey-background {
+  background-color: map-get($colors, whitey) !important;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.font-default {
+  font-size: 14px !important;
+}
