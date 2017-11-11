@@ -33413,8 +33413,35 @@ page-welcome {
   background-color: #f8f8f8;
 }
 
+.veritical {
+  padding-top: 20px;
+}
+
+.fixed-bottom {
+  bottom: 0px;
+  position: absolute;
+  width: 100%;
+  left: 0px;
+}
+
+.bottom-space {
+  margin-bottom: 30px;
+}
+
+@media (max-width: 320px) {
+  .bottom-space {
+    margin-bottom: 5px;
+  }
+}
+
 .scroll-content {
   background-color: #f8f8f8;
+}
+
+.scroll {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .standard-medium {

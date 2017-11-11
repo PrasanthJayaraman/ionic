@@ -33414,11 +33414,12 @@ page-welcome {
 }
 
 .veritical {
-  padding-top: 40px;
+  padding-top: 20px;
 }
 
 .fixed-bottom {
   bottom: 0px;
+  padding: 16px;
   position: absolute;
   width: 100%;
   left: 0px;
@@ -33429,11 +33430,16 @@ page-welcome {
 }
 
 @media (max-width: 320px) {
-  .veritical {
-    padding-top: 20px;
-  }
   .bottom-space {
     margin-bottom: 5px;
+  }
+  .logo-medium {
+    width: 60px !important;
+  }
+  .circle {
+    border-radius: 50%;
+    width: 55px !important;
+    height: 55px !important;
   }
 }
 
@@ -33487,4 +33493,9 @@ page-welcome {
 
 .medium-text {
   font-size: 16px;
+}
+
+.inputPadding {
+  margin-bottom: 5px;
+  padding-right: 16px;
 }
