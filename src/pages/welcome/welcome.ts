@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Storage } from '@ionic/storage';
 
 import { Home } from '../home/home';
+import { Platform } from 'ionic-angular/platform/platform';
 /**
  * Generated class for the WelcomePage page.
  *
@@ -28,12 +30,14 @@ export class WelcomePage {
     alert.present();
   }
 
-  constructor(public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController) {
+  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform) {
+    storage.set('page', 'Welcome');
+    
     this.user = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', Validators.required],
       phone: ['', Validators.required],
-    });
+    });    
   }
 
   ionViewDidLoad() {
@@ -59,7 +63,9 @@ export class WelcomePage {
     } else if (data.phone && data.phone.length < 10) {
       return this.alert("Alert", "Please enter a valid phone number");
     }
-    this.navCtrl.push(Home);
+    this.storage.set('profile', data);
+    this.storage.set('isLoggedIn', true);
+    this.navCtrl.setRoot(Home);
   }
 
   validateEmail(email) {

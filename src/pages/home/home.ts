@@ -3,6 +3,7 @@ import { NavController, Platform, AlertController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'page-home',
@@ -12,16 +13,43 @@ export class Home {
   public Android : Boolean;  
   public Error : any;
   public location : any;
-
-  constructor(public navCtrl: NavController, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController) {      
+  
+  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController) {      
+    storage.set('page', 'Home');
     platform.ready().then(() => {      
       this.Android = platform.is('android');
       if(platform.is('cordova')){
-        this.getLocation();
+        if(storage.get('location')){
+          console.log(storage.get('location'));
+        } else {
+          this.getLocation();
+        }
       }
-    });
+    });    
 
-  }  
+    platform.registerBackButtonAction((e) => {
+      storage.get('page').then((page) => {
+        if (page == "Home" || page == "Welcome") {          
+          let alert = alertCtrl.create({
+            title: 'Confirm',
+            message: 'Do you want to exit?',
+            buttons: [{
+              text: "exit?",
+              handler: () => { this.exitApp() }
+            }, {
+              text: "Cancel",
+              role: 'cancel'
+            }]
+          })
+          alert.present();
+        } 
+      });
+    });    
+  }   
+
+  exitApp() {
+    this.platform.exitApp();
+  } 
 
   alert(content){
     let alert = this.alertCtrl.create({
@@ -47,13 +75,16 @@ export class Home {
               "longitude" : resp.coords.longitude
             };
             this.alert(`${this.location.latitude} ${this.location.longitude}`);
+            this.storage.set("location", this.location);
           }).catch((error) => {
-            console.log('Error getting location', error);            
-            this.alert(`Cannot read your location 1 ${error}`);
+            console.log('Error getting location', error);      
+            this.storage.set("location", "");      
+            //this.alert(`Cannot read your location 1 ${error}`);
           });
         },(error) => {
           console.log(error);
-          this.alert(`Cannot read your location 2 ${error}`);
+          this.storage.set("location", "");      
+          //this.alert(`Cannot read your location 2 ${error}`);
         });
       } else {
         this.geolocation.getCurrentPosition(options).then((resp) => {
@@ -62,10 +93,12 @@ export class Home {
             "latitude": resp.coords.latitude,
             "longitude": resp.coords.longitude
           };
-          this.alert(`${this.location.latitude} ${this.location.longitude}`);
+          this.storage.set("location", this.location);
+          //this.alert(`${this.location.latitude} ${this.location.longitude}`);
         }).catch((error) => {
           console.log('Error getting location', error);
-          this.alert(`Cannot read your location 3 ${error}`);
+          this.storage.set("location", "");      
+          //this.alert(`Cannot read your location 3 ${error}`);
         });
       }
     });    

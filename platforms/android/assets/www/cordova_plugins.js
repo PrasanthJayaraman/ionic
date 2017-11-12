@@ -62,6 +62,14 @@ module.exports = [
     "clobbers": [
       "FirebasePlugin"
     ]
+  },
+  {
+    "id": "cordova-sqlite-storage.SQLitePlugin",
+    "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+    "pluginId": "cordova-sqlite-storage",
+    "clobbers": [
+      "SQLitePlugin"
+    ]
   }
 ];
 module.exports.metadata = 
@@ -75,7 +83,8 @@ module.exports.metadata =
   "cordova-plugin-geolocation": "2.4.3",
   "cordova-plugin-request-location-accuracy": "2.2.2",
   "cordova.plugins.diagnostic": "3.7.1",
-  "cordova-plugin-firebase": "0.1.24"
+  "cordova-plugin-firebase": "0.1.24",
+  "cordova-sqlite-storage": "2.1.1"
 };
 // BOTTOM OF METADATA
 });
