@@ -87,6 +87,9 @@
       "APP_ID": "324863091255981",
       "APP_NAME": "MyApp",
       "PACKAGE_NAME": "io.ionic.starter"
+    },
+    "cordova-plugin-googleplus": {
+      "PACKAGE_NAME": "io.ionic.starter"
     }
   },
   "dependent_plugins": {},
@@ -151,6 +154,14 @@
       "clobbers": [
         "facebookConnectPlugin"
       ]
+    },
+    {
+      "file": "plugins/cordova-plugin-googleplus/www/GooglePlus.js",
+      "id": "cordova-plugin-googleplus.GooglePlus",
+      "pluginId": "cordova-plugin-googleplus",
+      "clobbers": [
+        "window.plugins.googleplus"
+      ]
     }
   ],
   "plugin_metadata": {
@@ -165,6 +176,7 @@
     "cordova.plugins.diagnostic": "3.7.1",
     "cordova-plugin-firebase": "0.1.24",
     "cordova-sqlite-storage": "2.1.1",
-    "cordova-plugin-facebook4": "1.9.1"
+    "cordova-plugin-facebook4": "1.9.1",
+    "cordova-plugin-googleplus": "5.1.1"
   }
 }

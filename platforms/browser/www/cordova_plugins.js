@@ -60,6 +60,14 @@ module.exports = [
         "clobbers": [
             "facebookConnectPlugin"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-googleplus/www/GooglePlus.js",
+        "id": "cordova-plugin-googleplus.GooglePlus",
+        "pluginId": "cordova-plugin-googleplus",
+        "clobbers": [
+            "window.plugins.googleplus"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -76,7 +84,8 @@ module.exports.metadata =
     "cordova.plugins.diagnostic": "3.7.1",
     "cordova-plugin-firebase": "0.1.24",
     "cordova-sqlite-storage": "2.1.1",
-    "cordova-plugin-facebook4": "1.9.1"
+    "cordova-plugin-facebook4": "1.9.1",
+    "cordova-plugin-googleplus": "5.1.1"
 }
 // BOTTOM OF METADATA
 });

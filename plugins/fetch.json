@@ -97,5 +97,15 @@
       "APP_ID": "324863091255981",
       "APP_NAME": "MyApp"
     }
+  },
+  "cordova-plugin-googleplus": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-googleplus"
+    },
+    "is_top_level": true,
+    "variables": {
+      "REVERSED_CLIENT_ID": "com.googleusercontent.apps.859717456078-kumslmpqlv29llpkk4o6gj6l3t9rbpqs"
+    }
   }
 }

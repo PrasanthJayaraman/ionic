@@ -95,4 +95,8 @@
         <variable name="APP_ID" value="324863091255981" />
         <variable name="APP_NAME" value="MyApp" />
     </plugin>
+    <plugin name="cordova-plugin-googleplus" spec="5.1.1">
+        <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.859717456078-kumslmpqlv29llpkk4o6gj6l3t9rbpqs" />
+    </plugin>
+    <allow-navigation href="http://172.20.10.3:8100" />
 </widget>

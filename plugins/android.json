@@ -41,6 +41,9 @@
       "APP_ID": "324863091255981",
       "APP_NAME": "MyApp",
       "PACKAGE_NAME": "io.ionic.starter"
+    },
+    "cordova-plugin-googleplus": {
+      "PACKAGE_NAME": "io.ionic.starter"
     }
   },
   "dependent_plugins": {}

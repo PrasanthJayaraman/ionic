@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 import { Home } from '../home/home';
 import { Platform } from 'ionic-angular/platform/platform';
@@ -20,8 +21,8 @@ import { Platform } from 'ionic-angular/platform/platform';
 })
 export class WelcomePage {
 
-  public user : FormGroup;
-  
+  public user: FormGroup;
+
   alert(title, content) {
     let alert = this.alertCtrl.create({
       title: title,
@@ -31,14 +32,14 @@ export class WelcomePage {
     alert.present();
   }
 
-  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook) {
+  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook, public googlePlus: GooglePlus) {
     storage.set('page', 'Welcome');
-    
+
     this.user = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', Validators.required],
       phone: ['', Validators.required],
-    });    
+    });
   }
 
   ionViewDidLoad() {
@@ -47,9 +48,9 @@ export class WelcomePage {
 
   login(form) {
     var data = this.user.value
-    if(data.name == ""){
+    if (data.name == "") {
       return this.alert("Alert", "Please enter your name");
-    } else if(data.name && data.name.length < 3){
+    } else if (data.name && data.name.length < 3) {
       return this.alert("Alert", "Please enter a valid name");
     }
 
@@ -69,11 +70,11 @@ export class WelcomePage {
     this.navCtrl.setRoot(Home);
   }
 
-  loginFB(){
+  loginFB() {
     this.fb.login(['public_profile', 'user_friends', 'email'])
       .then((res: FacebookLoginResponse) => {
         console.log('Logged into Facebook!', res);
-        if(res.status == "connected"){
+        if (res.status == "connected") {
           this.getUserDetailFB(res.authResponse.userID)
         } else {
           this.alert("Alert", "You FB security is blocking, Please enter your details to get started!")
@@ -82,16 +83,28 @@ export class WelcomePage {
       .catch(e => console.log('Error logging into Facebook', e));
   }
 
+  loginGoogle() {
+    this.googlePlus.login({
+      //'scopes': 'profile email name gender', // optional, space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
+      'webClientId': '859717456078-kumslmpqlv29llpkk4o6gj6l3t9rbpqs.apps.googleusercontent.com', // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
+      'offline': true
+    }).then(function (user) {
+      console.log(user);
+    }, function (error) {
+      console.log(error);
+    });
+  }
+
   getUserDetailFB(userid) {
     this.fb.api("/" + userid + "/?fields=id,email,name,gender", ["public_profile"])
       .then(res => {
         console.log(res);
         let detail = {
-          name : res.name,
-          gender : res.gender,
-          email : res.email
-        }        
-        this.alert("Login",`${detail.name} ${detail.email} ${detail.gender}`)
+          name: res.name,
+          gender: res.gender,
+          email: res.email
+        }
+        this.alert("Login", `${detail.name} ${detail.email} ${detail.gender}`)
         this.storage.set('profile', detail);
         this.storage.set('isLoggedIn', true);
         this.navCtrl.setRoot(Home);
@@ -104,6 +117,6 @@ export class WelcomePage {
   validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
-  }  
+  }
 
 }
