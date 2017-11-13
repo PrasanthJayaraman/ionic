@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Storage } from '@ionic/storage';
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 
 import { Home } from '../home/home';
 import { Platform } from 'ionic-angular/platform/platform';
@@ -30,7 +31,7 @@ export class WelcomePage {
     alert.present();
   }
 
-  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform) {
+  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook) {
     storage.set('page', 'Welcome');
     
     this.user = this.formBuilder.group({
@@ -66,6 +67,38 @@ export class WelcomePage {
     this.storage.set('profile', data);
     this.storage.set('isLoggedIn', true);
     this.navCtrl.setRoot(Home);
+  }
+
+  loginFB(){
+    this.fb.login(['public_profile', 'user_friends', 'email'])
+      .then((res: FacebookLoginResponse) => {
+        console.log('Logged into Facebook!', res);
+        if(res.status == "connected"){
+          this.getUserDetailFB(res.authResponse.userID)
+        } else {
+          this.alert("Alert", "You FB security is blocking, Please enter your details to get started!")
+        }
+      })
+      .catch(e => console.log('Error logging into Facebook', e));
+  }
+
+  getUserDetailFB(userid) {
+    this.fb.api("/" + userid + "/?fields=id,email,name,gender", ["public_profile"])
+      .then(res => {
+        console.log(res);
+        let detail = {
+          name : res.name,
+          gender : res.gender,
+          email : res.email
+        }        
+        this.alert("Login",`${detail.name} ${detail.email} ${detail.gender}`)
+        this.storage.set('profile', detail);
+        this.storage.set('isLoggedIn', true);
+        this.navCtrl.setRoot(Home);
+      })
+      .catch(e => {
+        console.log(e);
+      });
   }
 
   validateEmail(email) {

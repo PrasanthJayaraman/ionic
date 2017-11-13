@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "4.4.4",
     "@ionic-native/core": "4.3.3",
     "@ionic-native/diagnostic": "4.3.3",
+    "@ionic-native/facebook": "4.4.0",
     "@ionic-native/firebase": "4.4.0",
     "@ionic-native/geolocation": "4.3.3",
     "@ionic-native/location-accuracy": "4.3.3",
@@ -32,6 +33,7 @@
     "cordova-browser": "~5.0.1",
     "cordova-plugin-compat": "1.2.0",
     "cordova-plugin-device": "1.1.4",
+    "cordova-plugin-facebook4": "1.9.1",
     "cordova-plugin-firebase": "0.1.24",
     "cordova-plugin-geolocation": "2.4.3",
     "cordova-plugin-ionic-webview": "1.1.16",
@@ -63,7 +65,11 @@
       "cordova-plugin-request-location-accuracy": {},
       "cordova.plugins.diagnostic": {},
       "cordova-plugin-firebase": {},
-      "cordova-sqlite-storage": {}
+      "cordova-sqlite-storage": {},
+      "cordova-plugin-facebook4": {
+        "APP_ID": "324863091255981",
+        "APP_NAME": "MyApp"
+      }
     },
     "platforms": [
       "android",

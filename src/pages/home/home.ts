@@ -29,7 +29,7 @@ export class Home {
 
     platform.registerBackButtonAction((e) => {
       storage.get('page').then((page) => {
-        if (page == "Home" || page == "Welcome") {          
+        if (page == "Home") {          
           let alert = alertCtrl.create({
             title: 'Confirm',
             message: 'Do you want to exit?',
@@ -42,7 +42,9 @@ export class Home {
             }]
           })
           alert.present();
-        } 
+        } else if (page == "Welcome"){
+          this.exitApp();
+        }
       });
     });    
   }   

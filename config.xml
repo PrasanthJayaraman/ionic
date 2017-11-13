@@ -91,4 +91,8 @@
     <allow-navigation href="http://192.168.43.16:8100" />
     <plugin name="cordova-plugin-firebase" spec="0.1.24" />
     <plugin name="cordova-sqlite-storage" spec="2.1.1" />
+    <plugin name="cordova-plugin-facebook4" spec="1.9.1">
+        <variable name="APP_ID" value="324863091255981" />
+        <variable name="APP_NAME" value="MyApp" />
+    </plugin>
 </widget>

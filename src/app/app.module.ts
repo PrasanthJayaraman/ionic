@@ -13,6 +13,7 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Firebase } from '@ionic-native/firebase';
 import { IonicStorageModule } from '@ionic/storage';
+import { Facebook } from '@ionic-native/facebook';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { IonicStorageModule } from '@ionic/storage';
     LocationAccuracy,
     Diagnostic,
     Firebase,
+    Facebook,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

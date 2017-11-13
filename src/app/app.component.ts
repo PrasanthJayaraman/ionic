@@ -4,6 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Firebase } from '@ionic-native/firebase';
 import { Storage } from '@ionic/storage';
+import { Facebook } from '@ionic-native/facebook';
 
 import { WelcomePage } from '../pages/welcome/welcome';
 import { Home } from '../pages/home/home';
@@ -27,7 +28,7 @@ export class MyApp {
     alert.present();
   }
 
-  constructor(public storage: Storage, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public firebase:Firebase, public alertCtrl:AlertController) {          
+  constructor(public storage: Storage, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public firebase:Firebase, public alertCtrl:AlertController, public fb: Facebook) {          
 
     storage.get('isLoggedIn').then((val) => {      
       //storage.remove('isLoggedIn');
@@ -57,6 +58,9 @@ export class MyApp {
   }
 
   logout() {    
+    this.fb.logout()
+      .then(res => console.log("FB logged out"))
+      .catch(e => console.log('Error logout from Facebook', e));
     this.storage.clear();
     this.storage.set('page', "Welcome");
     setTimeout(() => {
