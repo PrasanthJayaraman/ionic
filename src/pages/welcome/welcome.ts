@@ -64,9 +64,17 @@ export class WelcomePage {
     } else if (data.phone && data.phone.length < 10) {
       return this.alert("Alert", "Please enter a valid phone number");
     }
-    this.storage.set('profile', data);
-    this.storage.set('isLoggedIn', true);
-    this.navCtrl.setRoot(Home);
+    this.storage.set('profile', data).then(() => { 
+      console.log("Profile setted")
+      this.storage.set('isLoggedIn', true).then(() => {
+        console.log("islogedIn saved");
+        this.storage.get('isLoggedIn').then(isLoggedIn => {
+          console.log("isLoggedIn", isLoggedIn);
+          this.navCtrl.setRoot(Home);
+        },error => console.error("fetch", error))
+      }, error => console.error("islogg error", error))
+    },error => console.error("pro error", error))
+      
   }
 
   loginFB(){
@@ -94,6 +102,7 @@ export class WelcomePage {
         this.alert("Login",`${detail.name} ${detail.email} ${detail.gender}`)
         this.storage.set('profile', detail);
         this.storage.set('isLoggedIn', true);
+        this.alert("alert", this.storage.get("isLoggedIn"));
         this.navCtrl.setRoot(Home);
       })
       .catch(e => {

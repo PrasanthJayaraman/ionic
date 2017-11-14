@@ -1,8 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, AlertController, Nav } from 'ionic-angular';
+import { Platform, Nav } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { Firebase } from '@ionic-native/firebase';
 import { Storage } from '@ionic/storage';
 import { Facebook } from '@ionic-native/facebook';
 
@@ -17,18 +16,7 @@ export class MyApp {
   public rootPage: any;  
   @ViewChild(Nav) nav: Nav;
 
-  public Android: Boolean = false;
-
-  alert(title, content) {
-    let alert = this.alertCtrl.create({
-      title: title,
-      subTitle: content,
-      buttons: ['Dismiss']
-    });
-    alert.present();
-  }
-
-  constructor(public storage: Storage, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public firebase:Firebase, public alertCtrl:AlertController, public fb: Facebook) {          
+  constructor(public storage: Storage, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
 
     storage.get('isLoggedIn').then((val) => {      
       //storage.remove('isLoggedIn');
@@ -39,17 +27,12 @@ export class MyApp {
       }
     });    
 
-    platform.ready().then(() => {
-      if(platform.is('android')){
-        this.Android = true;
-      }
+    platform.ready().then(() => {      
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
-      if (platform.is('cordova')) {
-        this.registerPush();    
-      }
+      
     });
   } 
 
@@ -68,24 +51,5 @@ export class MyApp {
     }, 100)    
   }
 
-  registerPush(){    
-    if(this.Android){
-      this.firebase.onTokenRefresh()
-        .subscribe((token: string) => {
-          console.log(`Got a new token ${token}`);
-          this.storage.set("token", token);
-        });
-
-      this.firebase.onNotificationOpen()
-        .subscribe((notification) => {
-          console.log("Got", notification);
-          if(notification.tap){
-            this.alert("true", notification.tap);
-          } else {
-            this.alert("false", notification.tap);
-          }
-        });
-    }       
-   
-  }
+  
 }

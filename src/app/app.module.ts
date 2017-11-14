@@ -11,7 +11,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
-import { Firebase } from '@ionic-native/firebase';
+//import { Firebase } from '@ionic-native/firebase';
 import { IonicStorageModule } from '@ionic/storage';
 import { Facebook } from '@ionic-native/facebook';
 
@@ -24,7 +24,10 @@ import { Facebook } from '@ionic-native/facebook';
   imports: [
     BrowserModule,    
     IonicModule.forRoot(MyApp),
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot({
+      name: '__jobswala',
+      driverOrder: ['indexeddb', 'sqlite', 'websql']
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -38,7 +41,8 @@ import { Facebook } from '@ionic-native/facebook';
     Geolocation,
     LocationAccuracy,
     Diagnostic,
-    Firebase,
+    //Firebase,
+    IonicStorageModule,
     Facebook,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

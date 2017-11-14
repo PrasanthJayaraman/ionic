@@ -97,5 +97,13 @@
       "APP_ID": "324863091255981",
       "APP_NAME": "MyApp"
     }
+  },
+  "cordova-plugin-statusbar": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-statusbar@2.3.0"
+    },
+    "is_top_level": true,
+    "variables": {}
   }
 }
