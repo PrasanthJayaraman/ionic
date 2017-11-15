@@ -61,13 +61,11 @@ export class WelcomePage {
 
     if (!data.phone) {
       return this.alert("Alert", "Please enter your phone number");
-    } else if (data.phone && data.phone.length < 10) {
+    } else if (data.phone.length < 10 || data.phone.length > 10|| !this.validatePhone(data.phone)) {
       return this.alert("Alert", "Please enter a valid phone number");
     }
-    this.storage.set('profile', data).then(() => { 
-      console.log("Profile setted")
-      this.storage.set('isLoggedIn', true).then(() => {
-        console.log("islogedIn saved");
+    this.storage.set('profile', data).then(() => {       
+      this.storage.set('isLoggedIn', true).then(() => {        
         this.storage.get('isLoggedIn').then(isLoggedIn => {
           console.log("isLoggedIn", isLoggedIn);
           this.navCtrl.setRoot(Home);
@@ -111,8 +109,12 @@ export class WelcomePage {
   }
 
   validateEmail(email) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
   }  
 
+  validatePhone(phone){
+    let regex = /^\d+$/;
+    return regex.test(phone);
+  }
 }

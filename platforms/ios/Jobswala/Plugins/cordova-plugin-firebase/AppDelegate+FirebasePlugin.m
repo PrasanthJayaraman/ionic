@@ -37,7 +37,7 @@
     [self application:application swizzledDidFinishLaunchingWithOptions:launchOptions];
     
     if(![FIRApp defaultApp]) {
-       // [FIRApp configure];
+        [FIRApp configure];
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:)

@@ -79,7 +79,7 @@ var WelcomePage = (function () {
         if (!data.phone) {
             return this.alert("Alert", "Please enter your phone number");
         }
-        else if (data.phone && data.phone.length < 10) {
+        else if (data.phone.length < 10 || data.phone.length > 10 || !this.validatePhone(data.phone)) {
             return this.alert("Alert", "Please enter a valid phone number");
         }
         this.storage.set('profile', data).then(function () {
@@ -131,6 +131,10 @@ var WelcomePage = (function () {
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
     };
+    WelcomePage.prototype.validatePhone = function (phone) {
+        var regex = /^\d+$/;
+        return regex.test(phone);
+    };
     return WelcomePage;
 }());
 WelcomePage = __decorate([
@@ -166,7 +170,7 @@ webpackEmptyAsyncContext.id = 112;
 
 var map = {
 	"../pages/welcome/welcome.module": [
-		271,
+		272,
 		0
 	]
 };
@@ -186,13 +190,13 @@ module.exports = webpackAsyncContext;
 
 /***/ }),
 
-/***/ 199:
+/***/ 200:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(200);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(218);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(201);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(219);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -200,24 +204,25 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 218:
+/***/ 219:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(270);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(271);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_welcome_welcome__ = __webpack_require__(104);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_status_bar__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_splash_screen__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_status_bar__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_splash_screen__ = __webpack_require__(199);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_geolocation__ = __webpack_require__(155);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_location_accuracy__ = __webpack_require__(156);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_diagnostic__ = __webpack_require__(157);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_storage__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_native_facebook__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_firebase__ = __webpack_require__(158);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_storage__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_facebook__ = __webpack_require__(80);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -235,7 +240,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
-//import { Firebase } from '@ionic-native/firebase';
+
 
 
 var AppModule = (function () {
@@ -257,7 +262,7 @@ AppModule = __decorate([
                     { loadChildren: '../pages/welcome/welcome.module#WelcomePageModule', name: 'WelcomePage', segment: 'welcome', priority: 'low', defaultHistory: [] }
                 ]
             }),
-            __WEBPACK_IMPORTED_MODULE_11__ionic_storage__["a" /* IonicStorageModule */].forRoot({
+            __WEBPACK_IMPORTED_MODULE_12__ionic_storage__["a" /* IonicStorageModule */].forRoot({
                 name: '__jobswala',
                 driverOrder: ['indexeddb', 'sqlite', 'websql']
             })
@@ -274,9 +279,9 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_8__ionic_native_geolocation__["a" /* Geolocation */],
             __WEBPACK_IMPORTED_MODULE_9__ionic_native_location_accuracy__["a" /* LocationAccuracy */],
             __WEBPACK_IMPORTED_MODULE_10__ionic_native_diagnostic__["a" /* Diagnostic */],
-            //Firebase,
-            __WEBPACK_IMPORTED_MODULE_11__ionic_storage__["a" /* IonicStorageModule */],
-            __WEBPACK_IMPORTED_MODULE_12__ionic_native_facebook__["a" /* Facebook */],
+            __WEBPACK_IMPORTED_MODULE_11__ionic_native_firebase__["a" /* Firebase */],
+            __WEBPACK_IMPORTED_MODULE_12__ionic_storage__["a" /* IonicStorageModule */],
+            __WEBPACK_IMPORTED_MODULE_13__ionic_native_facebook__["a" /* Facebook */],
             { provide: __WEBPACK_IMPORTED_MODULE_0__angular_core__["v" /* ErrorHandler */], useClass: __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["c" /* IonicErrorHandler */] }
         ]
     })
@@ -286,15 +291,15 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 270:
+/***/ 271:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(199);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_storage__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_facebook__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_welcome_welcome__ = __webpack_require__(104);
@@ -379,6 +384,7 @@ MyApp = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__ = __webpack_require__(156);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__ = __webpack_require__(157);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_storage__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__ = __webpack_require__(158);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -394,9 +400,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-//import { Firebase } from '@ionic-native/firebase';
+
 var Home = (function () {
-    function Home(navCtrl, storage, platform, geolocation, locationAccuracy, diagnostic, alertCtrl) {
+    function Home(navCtrl, storage, platform, geolocation, locationAccuracy, diagnostic, alertCtrl, firebase) {
         var _this = this;
         this.navCtrl = navCtrl;
         this.storage = storage;
@@ -405,19 +411,29 @@ var Home = (function () {
         this.locationAccuracy = locationAccuracy;
         this.diagnostic = diagnostic;
         this.alertCtrl = alertCtrl;
+        this.firebase = firebase;
         storage.set('page', 'Home');
         platform.ready().then(function () {
-            _this.Android = platform.is('android');
             if (platform.is('cordova')) {
-                //this.registerPush();                   
+                _this.registerPush();
                 storage.get("location").then(function (location) {
                     if (location) {
-                        console.log("Location alerady available");
+                        console.log("Location alerady available", location);
                     }
                     else {
                         _this.getLocation();
                     }
                 }, function (error) { return console.error("Location fetch error", error); });
+                firebase.onNotificationOpen()
+                    .subscribe(function (notification) {
+                    console.log("Got", notification);
+                    if (notification.tap) {
+                        _this.alert(notification.tap);
+                    }
+                    else {
+                        _this.alert(notification.tap);
+                    }
+                });
             }
         });
         platform.registerBackButtonAction(function (e) {
@@ -455,50 +471,68 @@ var Home = (function () {
     };
     Home.prototype.getLocation = function () {
         var _this = this;
-        var options = {
-            enableHighAccuracy: true
-        };
         this.locationAccuracy.canRequest().then(function (canRequest) {
             if (canRequest) {
                 _this.locationAccuracy.request(_this.locationAccuracy.REQUEST_PRIORITY_BALANCED_POWER_ACCURACY).then(function () {
-                    _this.geolocation.getCurrentPosition(options).then(function (resp) {
-                        console.log(resp.coords.latitude, resp.coords.longitude);
-                        _this.location = {
-                            "latitude": resp.coords.latitude,
-                            "longitude": resp.coords.longitude
-                        };
-                        _this.alert(_this.location.latitude + " " + _this.location.longitude);
-                        _this.storage.set("location", _this.location).then(function () {
-                            console.log("Location set succesfully");
-                        }, function (error) { return console.log("error reading loc", error); });
-                    }).catch(function (error) {
-                        console.log('Error getting location', error);
-                        //this.storage.set("location", "");      
-                        _this.alert("Cannot read your location 1 " + error);
-                    });
+                    _this.fetchLocation();
                 }, function (error) {
                     console.log(error);
-                    //this.storage.set("location", "");      
-                    _this.alert("Cannot read your location 2 " + error);
+                    _this.alert("Cannot read request your location " + error);
                 });
             }
             else {
-                _this.geolocation.getCurrentPosition(options).then(function (resp) {
-                    console.log(resp.coords.latitude, resp.coords.longitude);
-                    _this.location = {
-                        "latitude": resp.coords.latitude,
-                        "longitude": resp.coords.longitude
-                    };
-                    _this.storage.set("location", _this.location).then(function () {
-                        console.log("Location set succesfully without can request");
-                    }, function (error) { return console.log("error reading loc without can request", error); });
-                    _this.alert(_this.location.latitude + " " + _this.location.longitude);
-                }).catch(function (error) {
-                    console.log('Error getting location', error);
-                    _this.alert("Cannot read your location 3 " + error);
-                });
+                _this.fetchLocation();
             }
         });
+    };
+    Home.prototype.fetchLocation = function () {
+        var _this = this;
+        var options = {
+            enableHighAccuracy: true
+        };
+        this.geolocation.getCurrentPosition(options).then(function (resp) {
+            console.log(resp.coords.latitude, resp.coords.longitude);
+            _this.location = {
+                "latitude": resp.coords.latitude,
+                "longitude": resp.coords.longitude
+            };
+            _this.alert(_this.location.latitude + " " + _this.location.longitude);
+            _this.storage.set("location", _this.location).then(function () {
+                console.log("Location set succesfully");
+            }, function (error) { return console.log("error reading loc", error); });
+        }).catch(function (error) {
+            console.log('Error getting location', error);
+            _this.storage.set("location", "");
+            _this.alert("Cannot read your location " + error);
+        });
+    };
+    Home.prototype.registerPush = function () {
+        var _this = this;
+        console.log("register push called");
+        this.firebase.hasPermission()
+            .then(function (data) {
+            if (data.isEnabled) {
+                _this.collectToken();
+            }
+            else {
+                console.log("Push not permitted");
+                _this.firebase.grantPermission()
+                    .then(function (permission) {
+                    console.log("asked for permission", permission);
+                    _this.collectToken();
+                }, function (error) { return console.log("error in getting permission", error); });
+            }
+        }, function (error) { return console.log("Error in checking push permission"); });
+    };
+    Home.prototype.collectToken = function () {
+        var _this = this;
+        console.log("collect called");
+        this.firebase.onTokenRefresh()
+            .subscribe(function (token) {
+            debugger;
+            console.log("Got a new token " + token);
+            _this.storage.set("token", token);
+        }, function (error) { return console.log("error in getting tokens", error); });
     };
     return Home;
 }());
@@ -506,12 +540,12 @@ Home = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
         selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/jobswala/src/pages/home/home.html"*/' <ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <h2>Welcome to Ionic!</h2>\n  <p>Its COOL B-)</p>    \n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/jobswala/src/pages/home/home.html"*/
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */]])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */]])
 ], Home);
 
 //# sourceMappingURL=home.js.map
 
 /***/ })
 
-},[199]);
+},[200]);
 //# sourceMappingURL=main.js.map
