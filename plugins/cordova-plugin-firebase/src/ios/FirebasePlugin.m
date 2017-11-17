@@ -6,6 +6,7 @@
 @import FirebaseMessaging;
 @import FirebaseAnalytics;
 @import FirebaseRemoteConfig;
+@import FirebaseAuth;
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
@@ -145,6 +146,38 @@ static FirebasePlugin *firebasePlugin;
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
+}
+
+
+- (void)getVerificationID:(CDVInvokedUrlCommand *)command {
+    NSString* number = [command.arguments objectAtIndex:0];
+
+    [[FIRPhoneAuthProvider provider]
+    verifyPhoneNumber:number
+           completion:^(NSString *_Nullable verificationID,
+                        NSError *_Nullable error) {
+NSDictionary *message;
+  if (error) {
+
+    // Verification code not sent.
+    message = @{
+                @"code": [NSNumber numberWithInteger:error.code],
+                @"description": error.description == nil ? [NSNull null] : error.description
+                };
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:message];
+                                                                                                        
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId]; 
+    
+  } else {
+    // Successful.
+CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:verificationID];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId]; 
+  }
+}];
+
+     
+    
 }
 
 - (void)getBadgeNumber:(CDVInvokedUrlCommand *)command {
@@ -290,12 +323,18 @@ static FirebasePlugin *firebasePlugin;
                 if (status == FIRRemoteConfigFetchStatusSuccess) {
                     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                } else {
+                    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                 }
             }];
         } else {
             [remoteConfig fetchWithCompletionHandler:^(FIRRemoteConfigFetchStatus status, NSError * _Nullable error) {
                 if (status == FIRRemoteConfigFetchStatusSuccess) {
                     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                } else {
+                    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
                     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                 }
             }];
