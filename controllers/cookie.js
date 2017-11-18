@@ -9,13 +9,18 @@ exports.authenticate = function(req, res, next){
         });
     } else {
         User.findOne({authKey: authKey}, function(err, user){
-            if(!err){
+            if(err){
+                console.log(err);
+                return res.status(401).send({
+                    message: "Unauthorized User, Please login"
+                });                
+            } else if(user){
                 req.user = user;
                 next();
             } else {
                 return res.status(401).send({
                     message: "Unauthorized User, Please login"
-                });
+                });      
             }
         })
     }
