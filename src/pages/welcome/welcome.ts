@@ -7,6 +7,7 @@ import { GooglePlus } from '@ionic-native/google-plus';
 
 import { Home } from '../home/home';
 import { Platform } from 'ionic-angular/platform/platform';
+import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 /**
  * Generated class for the WelcomePage page.
  *
@@ -22,6 +23,7 @@ import { Platform } from 'ionic-angular/platform/platform';
 export class WelcomePage {
 
   public user : FormGroup;
+  public timestamp = new Date().getTime();
   
   alert(title, content) {
     let alert = this.alertCtrl.create({
@@ -32,19 +34,16 @@ export class WelcomePage {
     alert.present();
   }
 
-  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook, public googlePlus: GooglePlus) {
-    storage.set('page', 'Welcome');
-    
+  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook, public googlePlus: GooglePlus, public authService: AuthServiceProvider) {
+    storage.set('page', 'Welcome');    
+    storage.set("firstTime", true);
+    storage.set("limit", this.timestamp);
     this.user = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', Validators.required],
       phone: ['', Validators.required],
     });    
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad WelcomePage');
-  }
+  }  
 
   login(form) {
     var data = this.user.value
@@ -57,29 +56,49 @@ export class WelcomePage {
     if (!data.email) {
       return this.alert("Alert", "Please enter your email");
     } else if (data.email && !this.validateEmail(data.email)) {
-      return this.alert("Alert", "Please enter a valid email");
+      return this.alert("Alert", "Please enter valid email");
     }
 
     if (!data.phone) {
       return this.alert("Alert", "Please enter your phone number");
     } else if (data.phone.length < 10 || data.phone.length > 10|| !this.validatePhone(data.phone)) {
-      return this.alert("Alert", "Please enter a valid phone number");
+      return this.alert("Alert", "Please enter valid phone number");
     }
-    this.storage.set('profile', data).then(() => {       
-      this.storage.set('isLoggedIn', true).then(() => {        
-        this.storage.get('isLoggedIn').then(isLoggedIn => {
-          console.log("isLoggedIn", isLoggedIn);
-          this.navCtrl.setRoot(Home);
-        },error => console.error("fetch", error))
-      }, error => console.error("islogg error", error))
-    },error => console.error("pro error", error))
-      
+
+    this.postLoginData('user', data);
+
   }
+
+  postLoginData(url, data){
+    let headers = { 
+      'Content-Type': 'application/json'
+    };
+    let body = {
+      user: data
+    }
+    this.authService.postData(url, headers, body)
+    .then((res: any) => {    
+      if(res.status && res.status == 200){
+        let data = JSON.parse(res._body);
+        this.storage.set('profile', data).then(() => {       
+          this.storage.set('isLoggedIn', true).then(() => {        
+            this.navCtrl.setRoot(Home);            
+          }, error => console.error("islogg error", error))
+        }, error => console.error("pro error", error))
+      } else {
+        this.alert("Error", res.data.message);
+      }
+    }, (err) => {
+      console.log(JSON.stringify(err));
+      this.alert("Error", err.data.message);
+    })    
+  
+  }
+  
 
   loginFB(){
     this.fb.login(['public_profile', 'user_friends', 'email'])
-      .then((res: FacebookLoginResponse) => {
-        console.log('Logged into Facebook!', res);
+      .then((res: FacebookLoginResponse) => {        
         if(res.status == "connected"){
           this.getUserDetailFB(res.authResponse.userID)
         } else {
@@ -87,30 +106,28 @@ export class WelcomePage {
         }
       })
       .catch(e => console.log('Error logging into Facebook', e));
-  }
+  } 
 
   loginGoogle() {
     this.googlePlus.login(
-      {}).then((userData) => {
-        this.navCtrl.setRoot(Home);
-        this.alert("Alert", `${userData.userId} ${userData.displayName} ${userData.email} ${userData.gender}`);
+      {}).then((userData) => {        
+        let detail = {
+          name : userData.displayName,
+          email : userData.email          
+        }        
+       this.postLoginData('user/social', detail);
       }).catch(err => console.error(err));
   }
 
   getUserDetailFB(userid) {
     this.fb.api("/" + userid + "/?fields=id,email,name,gender", ["public_profile"])
-      .then(res => {
-        console.log(res);
+      .then(res => {        
         let detail = {
           name : res.name,
           gender : res.gender,
           email : res.email
         }        
-        this.alert("Login",`${detail.name} ${detail.email} ${detail.gender}`)
-        this.storage.set('profile', detail);
-        this.storage.set('isLoggedIn', true);
-        this.alert("alert", this.storage.get("isLoggedIn"));
-        this.navCtrl.setRoot(Home);
+       this.postLoginData('user/social', detail);
       })
       .catch(e => {
         console.log(e);

@@ -18,8 +18,7 @@ export class MyApp {
 
   constructor(public storage: Storage, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
 
-    storage.get('isLoggedIn').then((val) => {      
-      //storage.remove('isLoggedIn');
+    storage.get('isLoggedIn').then((val) => {            
       if (val) {
         this.rootPage = Home;
       } else {

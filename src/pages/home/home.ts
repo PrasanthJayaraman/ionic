@@ -5,6 +5,8 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
+import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+
 
 @Component({
   selector: 'page-home',
@@ -14,27 +16,35 @@ export class Home {
   public Error: any;
   public location: any;
 
-  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase) {
+  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
     storage.set('page', 'Home');
-    platform.ready().then(() => {
-      
+    platform.ready().then(() => {      
       if (platform.is('cordova')) {
-        this.registerPush();
-        storage.get("location").then(location => {
-          if (location) {
-            console.log("Location alerady available", location);
-          } else {
-            this.getLocation();
-          }
-        }, error => console.error("Location fetch error", error))
-
+        storage.get("firstTime",).then((first) => {
+          storage.get("limit").then((limit) => {
+            if(first){              
+              this.registerPush();
+              this.getLocation();
+              storage.set("firstTime", false);
+            } else {              
+              let now = new Date().getTime();
+              let diff = this.diffDays(now, limit);
+              if(diff > 0){
+                this.registerPush();
+                this.getLocation();
+                storage.set("limit", now);
+              }
+            }
+          })
+        })
+        
         firebase.onNotificationOpen()
         .subscribe((notification) => {
           console.log("Got", notification);
           if (notification.tap) {
-            this.alert(notification.tap);
+            this.alert(notification.body);
           } else {
-            this.alert(notification.tap);
+            this.alert(notification.body);
           }
         });
       }
@@ -97,33 +107,24 @@ export class Home {
 
     this.geolocation.getCurrentPosition(options).then((resp) => {
       console.log(resp.coords.latitude, resp.coords.longitude);
-      this.location = {
-        "latitude": resp.coords.latitude,
-        "longitude": resp.coords.longitude
-      };
-      this.alert(`${this.location.latitude} ${this.location.longitude}`);
-      this.storage.set("location", this.location).then(() => {
-        console.log("Location set succesfully");
-      }, (error) => console.log("error reading loc", error))
+      let data = {
+        location: [ resp.coords.latitude, resp.coords.longitude]        
+      };      
+      this.updateData(data);            
     }).catch((error) => {
-      console.log('Error getting location', error);
-      this.storage.set("location", "");      
+      console.log('Error getting location', error);         
       this.alert(`Cannot read your location ${error}`);
     });
   }
 
-  registerPush() {
-    console.log("register push called");
-    
+  registerPush() {    
     this.firebase.hasPermission()
     .then((data) => {
       if(data.isEnabled){
         this.collectToken();
-      } else {
-        console.log("Push not permitted");
+      } else {        
         this.firebase.grantPermission()
-        .then((permission) => {
-          console.log("asked for permission", permission);
+        .then((permission) => {          
           this.collectToken();
         }, (error) => console.log("error in getting permission", error))        
       }
@@ -133,12 +134,37 @@ export class Home {
   collectToken(){
     console.log("collect called");
     this.firebase.onTokenRefresh()
-    .subscribe((token: string) => {
-      debugger;
-      console.log(`Got a new token ${token}`);
-      this.storage.set("token", token);
+    .subscribe((token: string) => {       
+      let data = {
+        token: token
+      }
+      this.updateData(data);
+      console.log(`Got a new token ${token}`);            
     }, (error) => console.log("error in getting tokens", error));      
   }
-
   
+  diffDays(timestamp1, timestamp2) {
+    var difference = timestamp1 - timestamp2;
+    var daysDifference = Math.floor(difference/1000/60/60/24);
+
+    return daysDifference;
+  }
+
+  updateData(data){
+    this.storage.get("profile")
+    .then((user) => {      
+      if(user.authKey){
+        console.log("here")
+        let headers = {
+          'Content-Type' : 'application/json',
+          'Authorization' : user.authKey
+        }        
+        this.authService.postData('user/device', headers, data)
+        .then((res: any) => {
+          console.log("Device data updated");
+        })
+      }
+    })
+  }
+
 }

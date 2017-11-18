@@ -15,6 +15,8 @@ import { Firebase } from '@ionic-native/firebase';
 import { IonicStorageModule } from '@ionic/storage';
 import { Facebook } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
+import { AuthServiceProvider } from '../providers/auth-service/auth-service';
+import { HttpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,7 @@ import { GooglePlus } from '@ionic-native/google-plus';
   ],
   imports: [
     BrowserModule,    
+    HttpModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot({
       name: '__jobswala',
@@ -46,7 +49,8 @@ import { GooglePlus } from '@ionic-native/google-plus';
     IonicStorageModule,
     Facebook,
     GooglePlus,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    AuthServiceProvider
   ]
 })
 export class AppModule {}
