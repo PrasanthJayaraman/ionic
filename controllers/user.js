@@ -41,6 +41,10 @@ exports.getStarted = function(req, res, next){
     }
 }
 
+exports.socialLogin = function(req, res, next){
+    
+}
+
 exports.getUser = function(req, res, next){
     var user = req.user;
     return res.status(200).send(user);
