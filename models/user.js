@@ -11,6 +11,10 @@ var userSchema = new Schema({
     email: {
         type: String
     },
+    coords: {
+        type: [Number],
+        index: '2dsphere'        
+    },
     gender: {
         type: String
     },
@@ -21,6 +25,15 @@ var userSchema = new Schema({
         type: String
     },
     authKey: {
+        type: String
+    },
+    city: {
+        type: String
+    },
+    state: {
+        type: String
+    },
+    country: {
         type: String
     }
 });
