@@ -39,7 +39,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
  * Ionic pages and navigation.
  */
 var WelcomePage = (function () {
-    function WelcomePage(storage, formBuilder, navCtrl, navParams, alertCtrl, platform, fb, googlePlus, authService) {
+    function WelcomePage(storage, formBuilder, navCtrl, navParams, alertCtrl, platform, fb, googlePlus, authService, loadingCtrl) {
         this.storage = storage;
         this.formBuilder = formBuilder;
         this.navCtrl = navCtrl;
@@ -49,6 +49,7 @@ var WelcomePage = (function () {
         this.fb = fb;
         this.googlePlus = googlePlus;
         this.authService = authService;
+        this.loadingCtrl = loadingCtrl;
         this.timestamp = new Date().getTime();
         storage.set('page', 'Welcome');
         storage.set("firstTime", true);
@@ -91,6 +92,10 @@ var WelcomePage = (function () {
     };
     WelcomePage.prototype.postLoginData = function (url, data) {
         var _this = this;
+        var loading = this.loadingCtrl.create({
+            content: 'Loading, please wait...'
+        });
+        loading.present();
         var headers = {
             'Content-Type': 'application/json'
         };
@@ -103,15 +108,17 @@ var WelcomePage = (function () {
                 var data_1 = JSON.parse(res._body);
                 _this.storage.set('profile', data_1).then(function () {
                     _this.storage.set('isLoggedIn', true).then(function () {
+                        loading.dismiss();
                         _this.navCtrl.setRoot(__WEBPACK_IMPORTED_MODULE_6__home_home__["a" /* Home */]);
                     }, function (error) { return console.error("islogg error", error); });
                 }, function (error) { return console.error("pro error", error); });
             }
             else {
+                loading.dismiss();
                 _this.alert("Error", res.data.message);
             }
         }, function (err) {
-            console.log(JSON.stringify(err));
+            loading.dismiss();
             _this.alert("Error", err.data.message);
         });
     };
@@ -140,8 +147,13 @@ var WelcomePage = (function () {
     };
     WelcomePage.prototype.getUserDetailFB = function (userid) {
         var _this = this;
+        var loading = this.loadingCtrl.create({
+            content: 'Fetching your facebook profile...'
+        });
+        loading.present();
         this.fb.api("/" + userid + "/?fields=id,email,name,gender", ["public_profile"])
             .then(function (res) {
+            loading.dismiss();
             var detail = {
                 name: res.name,
                 gender: res.gender,
@@ -167,7 +179,7 @@ WelcomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
         selector: 'page-welcome',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/'<!--\n  Generated template for the WelcomePage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n\n<ion-content center text-center padding>\n  <br>\n  <img src="assets/imgs/lion.png" class="logo-medium" alt="logo" >\n  <h3 class="primary bold">Welcome to Jobs Wala</h3>\n  <div>\n    <span class="light">-- Sign in with --</span>\n    <br>\n    <br>\n    <div class="button-wrapper">\n      <button ion-button class="whitey-background circle shadow" (click)="loginFB()" style="margin-right:30px;">\n        <img src="assets/imgs/facebook.png" class="logo-small" alt="fb">\n      </button>\n      <br>\n      <button ion-button class="whitey-background circle shadow" (click)="loginGoogle()">\n        <img src="assets/imgs/google.png" class="logo-small" alt="g+">\n      </button>\n    </div>\n    <br>\n    <span class="light">-- Or --</span>\n    <form [formGroup]="user" (ngSubmit)="login()">\n      <ion-item class="secondary-background inputPadding">\n        <ion-label fixed>Name</ion-label>\n        <ion-input type="text" formControlName="name"></ion-input>\n      </ion-item>\n      <ion-item class="secondary-background inputPadding">\n        <ion-label fixed>Email</ion-label>\n        <ion-input type="email" formControlName="email"></ion-input>\n      </ion-item>\n      <ion-item class="secondary-background inputPadding">\n        <ion-label fixed>Phone</ion-label>\n        <ion-input type="tel" formControlName="phone"></ion-input>\n      </ion-item>\n      <br>\n      <button ion-button color="primary" type="submit" class="shadow bottom-space" round full>Get Started</button>\n    </form>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/,
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_7_ionic_angular_platform_platform__["a" /* Platform */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_facebook__["a" /* Facebook */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_google_plus__["a" /* GooglePlus */], __WEBPACK_IMPORTED_MODULE_8__providers_auth_service_auth_service__["a" /* AuthServiceProvider */]])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_7_ionic_angular_platform_platform__["a" /* Platform */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_facebook__["a" /* Facebook */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_google_plus__["a" /* GooglePlus */], __WEBPACK_IMPORTED_MODULE_8__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */]])
 ], WelcomePage);
 
 //# sourceMappingURL=welcome.js.map
@@ -394,13 +406,13 @@ var MyApp = (function () {
     return MyApp;
 }());
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* Nav */]),
-    __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* Nav */])
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* Nav */]),
+    __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* Nav */])
 ], MyApp.prototype, "nav", void 0);
 MyApp = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/app/app.html"*/'<ion-menu side="left" [content]="content" [swipeEnabled]="false"> \n    <ion-header>\n        <ion-toolbar>\n            <ion-title>Home</ion-title>\n        </ion-toolbar>\n    </ion-header>\n    <ion-content>\n        <ion-list>\n            <button ion-item menuClose (click)="openHome(\'Home\')">\n                Home\n            </button>            \n            <button ion-item menuClose (click)="logout()">\n                Logout\n            </button>\n        </ion-list>\n    </ion-content>\n</ion-menu>\n\n<ion-nav id="nav" #content [root]="rootPage"  swipeBackEnabled="false"></ion-nav>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/app/app.html"*/
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_4__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_facebook__["a" /* Facebook */]])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_4__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_facebook__["a" /* Facebook */]])
 ], MyApp);
 
 //# sourceMappingURL=app.component.js.map
@@ -602,7 +614,7 @@ Home = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
         selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/' <ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <h2>Welcome to Ionic!</h2>\n  <p>Its COOL B-)</p>    \n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */]])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */]])
 ], Home);
 
 //# sourceMappingURL=home.js.map
