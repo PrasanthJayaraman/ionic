@@ -5,3 +5,7 @@
 Sha 1 : 25:1E:C8:4D:5A:B5:D6:51:4F:B8:56:22:A9:6C:9C:F6:58:27:A1:7F
 
 base64 : JR7ITVq11lFPuFYiqWyc9lgnoX8=
+
+ionic cordova plugin add cordova-plugin-facebook4 --variable APP_ID="2191509621076046" --variable APP_NAME="Jobswala"
+
+cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.361099237251-c7iln2cpankf3j3ume8hugl5ejlvaga5

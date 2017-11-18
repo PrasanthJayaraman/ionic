@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 import { Home } from '../home/home';
 import { Platform } from 'ionic-angular/platform/platform';
@@ -31,7 +32,7 @@ export class WelcomePage {
     alert.present();
   }
 
-  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook) {
+  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook, public googlePlus: GooglePlus) {
     storage.set('page', 'Welcome');
     
     this.user = this.formBuilder.group({
@@ -86,6 +87,14 @@ export class WelcomePage {
         }
       })
       .catch(e => console.log('Error logging into Facebook', e));
+  }
+
+  loginGoogle() {
+    this.googlePlus.login(
+      {}).then((userData) => {
+        this.navCtrl.setRoot(Home);
+        this.alert("Alert", `${userData.userId} ${userData.displayName} ${userData.email} ${userData.gender}`);
+      }).catch(err => console.error(err));
   }
 
   getUserDetailFB(userid) {

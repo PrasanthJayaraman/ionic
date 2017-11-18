@@ -14,6 +14,7 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { Firebase } from '@ionic-native/firebase';
 import { IonicStorageModule } from '@ionic/storage';
 import { Facebook } from '@ionic-native/facebook';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { Facebook } from '@ionic-native/facebook';
     Firebase,
     IonicStorageModule,
     Facebook,
+    GooglePlus,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

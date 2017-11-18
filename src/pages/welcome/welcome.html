@@ -6,7 +6,8 @@
 -->
 
 <ion-content center text-center padding>
-  <img src="assets/imgs/lion.png" class="logo-medium" alt="logo">
+  <br>
+  <img src="assets/imgs/lion.png" class="logo-medium" alt="logo" >
   <h3 class="primary bold">Welcome to Jobs Wala</h3>
   <div>
     <span class="light">-- Sign in with --</span>
@@ -17,7 +18,7 @@
         <img src="assets/imgs/facebook.png" class="logo-small" alt="fb">
       </button>
       <br>
-      <button ion-button class="whitey-background circle shadow">
+      <button ion-button class="whitey-background circle shadow" (click)="loginGoogle()">
         <img src="assets/imgs/google.png" class="logo-small" alt="g+">
       </button>
     </div>
@@ -34,7 +35,7 @@
       </ion-item>
       <ion-item class="secondary-background inputPadding">
         <ion-label fixed>Phone</ion-label>
-        <ion-input type="number" formControlName="phone"></ion-input>
+        <ion-input type="tel" formControlName="phone"></ion-input>
       </ion-item>
       <br>
       <button ion-button color="primary" type="submit" class="shadow bottom-space" round full>Get Started</button>

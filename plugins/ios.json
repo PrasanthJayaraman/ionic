@@ -1,0 +1,59 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-firebase": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-geolocation": {
+      "GEOLOCATION_USAGE_DESCRIPTION": " ",
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-ionic-webview": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-request-location-accuracy": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-sqlite-storage": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova.plugins.diagnostic": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "ionic-plugin-keyboard": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-facebook4": {
+      "APP_ID": "2191509621076046",
+      "APP_NAME": "Jobswala",
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-googleplus": {
+      "REVERSED_CLIENT_ID": "com.googleusercontent.apps.361099237251-c7iln2cpankf3j3ume8hugl5ejlvaga5",
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    }
+  }
+}
