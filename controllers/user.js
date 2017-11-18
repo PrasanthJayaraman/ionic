@@ -28,7 +28,7 @@ exports.getStarted = function(req, res, next){
 
         data.authKey = common.rand();
 
-        User.findOneAndUpdate({ phone: data.phone }, data, { upsert: true, new: true }, function(err, user){
+        User.findOneAndUpdate({ email: data.email }, data, { upsert: true, new: true }, function(err, user){
         if(err){
             return res.status(400).send({
                 message: "Server is busy, Please try again!"
