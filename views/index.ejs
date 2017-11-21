@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <%- include header.ejs %>
+        <div class="container">
+            <h2>Posts</h2>
+            <div class="row" style="float:right">
+                <div class="btn-group">
+                    <a href="/post/create" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add Post
+                    </a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="row">
+                <h3>My List of posts</h3>
+            </div>
+        </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var path = window.location.href;        
+        $('ul.nav li a').each(function () {
+            if (this.href === path) {
+                $(this).parent('li').addClass('active');
+            }
+        })
+    });
+</script>
+
+</html>

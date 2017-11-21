@@ -1,0 +1,130 @@
+<html>
+
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/app.css">
+    <link rel="stylesheet" href="/assets/editor/jquery-te-1.4.0.css">
+</head>
+
+<body>
+    <%- include header.ejs %>
+        <div class="container">
+            <h2>Create Post</h2>            
+            <div class="row">
+                <form action="">
+                    <table id="post-table">
+                        <tr>
+                            <td><label for="">Select Categories</label></td>
+                            <td>
+                                <div class="dropdown-container" id="dropdown-container">
+                                    <div class="dropdown-button noselect">
+                                        <div class="dropdown-label">Categories</div>
+                                        <div class="dropdown-quantity">(
+                                            <span class="quantity">Any</span>)</div>                                        
+                                    </div>
+                                    <div class="dropdown-list" id="dropdown-list" style="display: none;">
+                                        <input type="search" class="form-control dropdown-search" placeholder="Search states" id="dropdown-search" style="padding-left: 10px;" />
+                                        <ul>
+                                            <% categories.forEach(function(cat){ %>
+                                                <li class="list-cat">
+                                                    <input class="select-check" name=<%=cat.abbreviation %> type="checkbox">
+                                                    <label for=<%=cat.abbreviation %>>
+                                                        <%= cat.name %>
+                                                    </label>
+                                                </li>
+                                                <% }) %>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Upload Image</label>
+                            </td>
+                            <td>
+                                <input type="file">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Title</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Title">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Notification URL</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Notification URL">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Apply URL</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Apply URL">
+                                </div>
+                            </td>
+                        </tr>                       
+                    </table>
+                    <div class="form-group" style="padding-left:10px;">
+                        <label for="">Post Content</label>
+                        <textarea name="textarea" class="jqte-test"></textarea>
+                    </div>
+                    <p>
+                        <button type="button" class="btn btn-primary btn-lg btn-block">Post</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/assets/editor/jquery-te-1.4.0.min.js"></script>
+<script>
+    $('#dropdown-list').toggle();
+    $('#dropdown-container')       
+        .on('input', '#dropdown-search', function () {
+            var target = $(this);
+            var search = target.val().toLowerCase();
+
+            if (!search) {
+                $('.list-cat').show();
+                return false;
+            }
+
+            $('.list-cat').each(function () {
+                var text = $(this).text().toLowerCase();
+                var match = text.indexOf(search) > -1;
+                $(this).toggle(match);
+            });
+        })
+        .on('change', '.select-check', function () {
+            var numChecked = $('input:checkbox.select-check:checked').length;
+            $('.quantity').text(numChecked || 'Any');
+        });  
+    
+    $(document).ready(function () {
+        var path = window.location.href;
+        $('ul.nav li a').each(function () {
+            if (this.href === path) {
+                $(this).parent('li').addClass('active');
+            }
+        });
+        $('.jqte-test').jqte();
+    });
+</script>
+
+</html>
+

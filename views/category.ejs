@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/app.css">
+</head>
+
+<body>
+    <%- include header.ejs %>
+        <div class="container">
+            <h2>Create Category</h2>
+            <div class="row">
+                <form action="">
+                    <table id="post-table">                                                
+                        <tr>
+                            <td>
+                                <label for="">Category Name</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Name">
+                                </div>
+                            </td>
+                        </tr>                        
+                    </table>
+                    <p>
+                        <button type="button" class="btn btn-primary btn-lg btn-block">Create Category</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+            var path = window.location.href;
+            $('ul.nav li a').each(function () {
+                if (this.href === path) {
+                    $(this).parent('li').addClass('active');
+                }
+            })
+        });
+</script>
+</html>

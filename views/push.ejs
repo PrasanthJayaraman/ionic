@@ -1,0 +1,94 @@
+<html>
+
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/app.css">    
+</head>
+
+<body>
+    <%- include header.ejs %>
+        <div class="container">
+            <h2>Create Category</h2>
+            <div class="row">
+                <form action="">
+                    <table id="post-table">
+                        <tr>
+                            <td>
+                                <label for="">Location</label>
+                            </td>
+                            <td>
+                                <select id="volume" class="form-control">                                
+                                <%                                    
+                                    for ( var i = 0; i < options.length; i++ )
+                                    {                                       
+                                    %>
+                                        <option value="<%=options[i] %>" >
+                                            <%=options[i] %>
+                                        </option>
+                                    <%
+                                    }
+                                %>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>                                        
+                    <p class="or">Or</p>
+                    <table id="post-table">
+                        <tr>
+                            <td>
+                                <label for="">Platform</label>
+                            </td>
+                            <td>
+                                <select id="volume" class="form-control">
+                                <option value="0">ALL</option>
+                                <option value="1">Android</option>
+                                <option value="2">IOS</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <hr>
+                    <table>
+                        <tr>
+                            <td>
+                                <label for="">Title</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Push Notification Title">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Body</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Push Notification Body">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        <button type="button" class="btn btn-primary btn-lg btn-block">Send Push</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var path = window.location.href;
+        $('ul.nav li a').each(function () {
+            if (this.href === path) {
+                $(this).parent('li').addClass('active');
+            }
+        });        
+    });
+</script>
+
+</html>
