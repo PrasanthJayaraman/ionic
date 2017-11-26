@@ -1,3 +1,17 @@
+var multer = require('multer');
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+        var extArray = file.mimetype.split("/");
+        var extension = extArray[extArray.length - 1]
+        cb(null, Date.now() + '.' + extension) //Appending .jpg
+    }
+});
+var upload = multer({ storage: storage });
+
+
 var userController = require('./controllers/user');
 var cookieController = require('./controllers/cookie');
 var postController = require('./controllers/posts.js');
@@ -17,11 +31,16 @@ module.exports = function(app){
     app.get('/posts/:index', postController.showPost);
     app.get('/post/create', postController.postForm);
     app.post('/post/create', postController.createPost);
+    app.post('/post/image', upload.single('files'), postController.uploadImage);
     app.get('/post/edit/:id', postController.editPost);
     app.get('/post/delete/:id', postController.deletePost);
     
     // Category API
-    app.get('/category/create', categoryController.listCategory);  
+    app.get('/category/show', categoryController.listCategory);  
+    app.get('/category/create', categoryController.categoryForm);  
+    app.get('/category/edit/:id', categoryController.editCategory);
+    app.put('/category/update/:id', categoryController.updateCategory);
+    app.get('/category/delete/:id', categoryController.deleteCategory);
     app.post('/category/create', categoryController.createCategory);    
     
     // Push API

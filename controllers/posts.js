@@ -16,6 +16,7 @@ exports.showPost = function(req, res, next){
 
 exports.createPost = function(req, res, next){
     var data = req.body.post;
+    console.log(data);
     if(!data){
         return res.status(400).send({
             message: "Invalid Post data"
@@ -43,12 +44,13 @@ exports.createPost = function(req, res, next){
 }
 
 exports.postForm = function(req, res, next){
-    Category.find({}, 'name, value', function(err, categories){
+    Category.find({}, 'name value', function(err, categories){
         if(err){
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
             });
         } else if(categories){
+            console.log(categories);
             return res.render('post', { categories: categories});
         } else {
             return res.render('post', { categories: {name : "No Categories", value: ""} });
@@ -71,7 +73,17 @@ exports.editPost = function(req, res, next){
                 message: "Server is Busy, Please try again!"
             });
         } else {
-            return res.send(post);
+            Category.find({}, function (err, categories) {
+                if (err) {
+                    return res.status(500).send({
+                        message: "Server is Busy, Please try again!"
+                    });
+                } else {                                        
+                    post.categories = categories;
+                    console.log(post);
+                    return res.render('post', {data: post});
+                }
+            })
         }
     })
 }
@@ -94,6 +106,22 @@ exports.deletePost = function(req, res, next){
             return res.redirect('/posts/1');            
         }
     })
+}
+
+exports.uploadImage = function(req, res, next){    
+    var fileName = req.file.filename;
+    if(fileName){
+        var obj = {
+            response: 200,
+            name: "http://localhost:1234/uploads/"+fileName
+        }
+    } else {
+        var obj = {
+            response: 400,
+            name: ""
+        }
+    }
+    res.send(obj);
 }
 
 

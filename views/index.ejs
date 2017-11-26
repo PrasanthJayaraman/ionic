@@ -33,7 +33,7 @@
                             <td><%= index + 1 %> </td>
                             <td><%= post.title %></td>
                             <td><%= post.categories %></td>
-                            <td><%= post.modified.toDateString() %></td>
+                            <td><%= post.modified.toDateString() %> <%= post.modified.toLocaleTimeString() %></td>
                             <td>
                                 <p>
                                     <a href="/post/edit/<%= post._id %>" class="btn btn-primary">

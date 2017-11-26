@@ -8,10 +8,11 @@
 
 <body>
     <%- include header.ejs %>
+    <% if(!data.name){ %>
         <div class="container">
             <h2>Create Category</h2>
             <div class="row">
-                <form action="">
+                <form id="categoryForm">
                     <table id="post-table">                                                
                         <tr>
                             <td>
@@ -19,17 +20,67 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Name">
+                                    <input type="text" id="name" class="form-control" placeholder="Name">
                                 </div>
                             </td>
-                        </tr>                        
+                        </tr>  
+                        <tr>
+                            <td>
+                                <label for="">Active</label>
+                            </td>
+                            <td>
+                                <input type="radio" name="active" value="true" style="margin-right:10px;">Active
+                                <br>
+                                <br>
+                                <input type="radio" name="active" value="false" style="margin-right:10px;">Not Active
+                            </td>
+                        </tr>                      
                     </table>
+                    <br>
                     <p>
-                        <button type="button" class="btn btn-primary btn-lg btn-block">Create Category</button>
+                        <input type="submit" class="btn btn-primary btn-sm btn-block" value="Create Category" />
+                        <input type="button" id="cancel" class="btn btn-default btn-sm btn-block" value="Cancel" />
                     </p>
                 </form>
             </div>
         </div>
+    <% } else { %>
+        <div class="container">
+            <h2>Edit Category</h2>
+            <div class="row">
+                <form id="editForm">
+                    <table id="post-table">
+                        <tr>
+                            <td>
+                                <label for="">Category Name</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" id="name" class="form-control" placeholder="Name" value=<%= data.name %>>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Active</label>
+                            </td>
+                            <td>
+                                <input type="radio" name="active" value="true" style="margin-right:10px;" <%= data.active ? 'checked' : '' %>>Active
+                                <br>
+                                <br>
+                                <input type="radio" name="active" value="false" style="margin-right:10px;" <%= !data.active ? 'checked' : '' %>>Not Active
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    <p>
+                        <input type="submit" class="btn btn-primary btn-sm btn-block" value="Update Category" />
+                        <input type="button" id="cancel" class="btn btn-default btn-sm btn-block" value="Cancel" />
+                    </p>
+                </form>
+            </div>
+        </div>
+    <% } %>
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -41,6 +92,86 @@
                     $(this).parent('li').addClass('active');
                 }
             })
-        });
+    
+            
+    });   
+        
+     $("#cancel").on("click", cancel);
+
+    function cancel() {
+        window.location.href = '/category/show';
+    }
+    
+
+    $('#categoryForm').submit(function(e){
+        e.preventDefault();
+        var inValid = /[^a-zA-Z0-9\-\/]/;
+        var name = $('#name').val();
+        var active = $('input:radio[name=active]:checked').val();
+        if(!name){
+            alert("Please enter the category name");
+            return false;
+        } else if(inValid.test(name)){
+            alert("Category name should not contain spaces or special chars");
+            return false;
+        }
+        if(!active){
+             alert("Please select the active status");
+            return false;
+        }
+        var data = {
+            category: {name: name, active: active }
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/category/create',
+            data: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
+            success: function (response) {
+                console.log(response);
+                window.location.replace("/category/show");
+            },
+            error: function (response) {
+                alert(response.responseJSON.message);
+            }
+        })
+
+    })
+
+    $('#editForm').submit(function (e) {
+        e.preventDefault();
+        var id = '<%= data._id %>';
+        var inValid = /[^a-zA-Z0-9\-\/]/;
+        var name = $('#name').val();
+        var active = $('input:radio[name=active]:checked').val();
+        if (!name) {
+            alert("Please enter the category name");
+            return false;
+        } else if (inValid.test(name)) {
+            alert("Category name should not contain spaces or special chars");
+            return false;
+        }
+        if (!active) {
+            alert("Please select the active status");
+            return false;
+        }
+        var data = {
+            category: { name: name, active: active }
+        }
+        $.ajax({
+            type: 'PUT',
+            url: '/category/update/' + id,
+            data: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
+            success: function (response) {
+                console.log(response);
+                window.location.replace("/category/show");
+            },
+            error: function (response) {
+                alert(response.responseJSON.message);
+            }
+        })
+
+        })
 </script>
 </html>

@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <%- include header.ejs %>
+        <div class="container">
+            <h2>Category</h2>
+            <div class="row" style="float:right">
+                <div class="btn-group">
+                    <a href="/category/create" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add Category
+                    </a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="row">
+                <table class="table table-hover">
+                    <tr>
+                        <th width="10%">#</th>
+                        <th width="30%">Name</th>                        
+                        <th width="30%">Modified</th>
+                        <th width="15%">Active</th>
+                        <th width="15%">Options</th>
+                    </tr>
+                    <% categories.forEach(function(cat, index){ %>
+                        <tr>
+                            <td>
+                                <%= index + 1 %>
+                            </td>
+                            <td>
+                                <%= cat.name %>
+                            </td>
+                            <td>                                
+                                <%= cat.modified.toDateString() %> <%= cat.modified.toLocaleTimeString() %>                                
+                            </td>
+                            <td>
+                                <%= cat.active %>                                    
+                            </td>
+                            <td>
+                                <p>
+                                    <a href="/category/edit/<%= cat._id %>" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                    <a href="/category/delete/<%= cat._id %>" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                </p>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </table>
+            </div>
+        </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var path = window.location.href;
+        $('ul.nav li a').each(function () {
+            if (this.href === path) {
+                $(this).parent('li').addClass('active');
+            } else {
+                $('#categories').addClass('active');
+            }
+        })
+    });
+</script>
+
+</html>
