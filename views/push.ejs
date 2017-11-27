@@ -11,14 +11,15 @@
         <div class="container">
             <h2>Create Category</h2>
             <div class="row">
-                <form action="">
+                <form id="pushForm">
                     <table id="post-table">
                         <tr>
                             <td>
+                                <input type="radio" name="choice" id="choice" value="location">
                                 <label for="">Location</label>
                             </td>
                             <td>
-                                <select id="volume" class="form-control">                                
+                                <select id="location" class="form-control">                                
                                 <%                                    
                                     for ( var i = 0; i < options.length; i++ )
                                     {                                       
@@ -37,10 +38,11 @@
                     <table id="post-table">
                         <tr>
                             <td>
+                                <input type="radio" name="choice" id="" value="platform">
                                 <label for="">Platform</label>
                             </td>
                             <td>
-                                <select id="volume" class="form-control">
+                                <select id="platform" class="form-control">
                                 <option value="0">ALL</option>
                                 <option value="1">Android</option>
                                 <option value="2">IOS</option>
@@ -56,7 +58,7 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Push Notification Title">
+                                    <input type="text" id="title" class="form-control" placeholder="Push Notification Title">
                                 </div>
                             </td>
                         </tr>
@@ -66,13 +68,15 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Push Notification Body">
+                                    <input type="text" id="body" class="form-control" placeholder="Push Notification Body">
                                 </div>
                             </td>
                         </tr>
+                        <input type="hidden" id="option">
                     </table>
                     <p>
-                        <button type="button" class="btn btn-primary btn-lg btn-block">Send Push</button>
+                        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Send Push Notifications" />
+                        <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
                     </p>
                 </form>
             </div>
@@ -87,8 +91,58 @@
             if (this.href === path) {
                 $(this).parent('li').addClass('active');
             }
-        });        
+        });  
+        
+        $('input[type=radio][name=choice]').change(function () {
+            if(this.value == "platform"){
+                $('#location').attr('disabled', 'disabled');
+                $('#platform').removeAttr('disabled');
+                $('#option').val("platform");
+            } else {
+                $('#platform').attr('disabled', 'disabled');
+                $('#location').removeAttr('disabled');
+                $('#option').val("location");
+            }
+        });
     });
+
+    $("#cancel").on("click", cancel);
+
+    function cancel() {
+        window.location.href = '/';
+    }
+
+    $('#pushForm').submit(function(e){
+        e.preventDefault();
+        if($('#option').val() == "platform"){            
+            var type = "platform";
+            var selected = $("#platform option:selected").val()            
+        } else {            
+            var type = "location";
+            var selected = $("#location option:selected").val()            
+        }
+        var title = $('#title').val();
+        var body = $('#body').val();
+
+        if (type != "platform" && type != "location") {
+            alert("Unknown Push type, Please select either location or platform!");
+            return false;
+        }
+
+        if(!body){
+            alert("Body is required to send push");
+            return false;
+        }       
+
+        var data = {
+            type: type,
+            value: selected,
+            title: title,
+            body: body
+        }
+        console.log(data);
+    })
+   
 </script>
 
 </html>

@@ -31,6 +31,7 @@ module.exports = function(app){
     app.get('/posts/:index', postController.showPost);
     app.get('/post/create', postController.postForm);
     app.post('/post/create', postController.createPost);
+    app.put('/post/create/:id', postController.updatePost);
     app.post('/post/image', upload.single('files'), postController.uploadImage);
     app.get('/post/edit/:id', postController.editPost);
     app.get('/post/delete/:id', postController.deletePost);

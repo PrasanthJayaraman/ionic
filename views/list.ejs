@@ -3,8 +3,18 @@
 <head>
     <title>Jobswala</title>
     <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+        .green-bg {
+            background-color: green;
+            border-radius: 20px;
+        }
+    
+        .red-bg {
+            background-color: red;
+            border-radius: 20px;
+        }
+    </style>
 </head>
-
 <body>
     <%- include header.ejs %>
         <div class="container">
@@ -20,43 +30,54 @@
             <br>
             <br>
             <div class="row">
-                <table class="table table-hover">
-                    <tr>
-                        <th width="10%">#</th>
-                        <th width="30%">Name</th>                        
-                        <th width="30%">Modified</th>
-                        <th width="15%">Active</th>
-                        <th width="15%">Options</th>
-                    </tr>
-                    <% categories.forEach(function(cat, index){ %>
-                        <tr>
-                            <td>
-                                <%= index + 1 %>
-                            </td>
-                            <td>
-                                <%= cat.name %>
-                            </td>
-                            <td>                                
-                                <%= cat.modified.toDateString() %> <%= cat.modified.toLocaleTimeString() %>                                
-                            </td>
-                            <td>
-                                <%= cat.active %>                                    
-                            </td>
-                            <td>
-                                <p>
-                                    <a href="/category/edit/<%= cat._id %>" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
-                                    <a href="/category/delete/<%= cat._id %>" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
-                                </p>
-                            </td>
-                        </tr>
-                        <% }) %>
-                </table>
-            </div>
+                <% if(categories.length == 0) { %>
+                    <h3>No categories Available, Add one..</h3>
+                    <% } else { %>
+                        <table class="table table-hover">
+                            <tr>
+                                <th width="10%">#</th>
+                                <th width="30%">Name</th>
+                                <th width="30%">Modified</th>
+                                <th width="15%">Active</th>
+                                <th width="15%">Options</th>
+                            </tr>
+                            <% categories.forEach(function(cat, index){ %>
+                                <tr>
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td>
+                                        <%= cat.name %>
+                                    </td>
+                                    <td>
+                                        <%= cat.modified.toDateString() %>
+                                            <%= cat.modified.toLocaleTimeString() %>
+                                    </td>
+                                    <% if(cat.active) { %>
+                                        <td>
+                                            <div class="green-bg" style="width: 60px;height: 30px;"></div>
+                                        </td>
+                                        <% } else { %>
+                                            <td>
+                                                <div class="red-bg" style="width: 60px;height: 30px;"></div>
+                                            </td>
+                                        <% } %>
+                                    <td>
+                                        <p>
+                                            <a href="/category/edit/<%= cat._id %>" class="btn btn-primary">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </a>
+                                            <a href="/category/delete/<%= cat._id %>" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-primary">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </a>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </table>                        
+                    <% } %>     
         </div>
+    </div>
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>

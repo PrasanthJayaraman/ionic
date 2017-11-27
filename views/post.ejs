@@ -9,9 +9,116 @@
 
 <body>
     <%- include header.ejs %>
+    <% if(data.title) { %>
+        <div class="container">
+            <h2>Update Post</h2>
+            <div class="row">
+                <form id="updateForm">
+                    <table id="post-table">
+                        <tr>
+                            <td>
+                                <label for="">Select Categories</label>
+                            </td>
+                            <td>
+                                <div class="dropdown-container" id="dropdown-container">
+                                    <div class="dropdown-button noselect">
+                                        <div class="dropdown-label">Categories</div>
+                                        <div class="dropdown-quantity">(
+                                            <span class="quantity">Any</span>)</div>
+                                    </div>
+                                    <div class="dropdown-list" id="dropdown-list" style="display: none;">
+                                        <input type="search" class="form-control dropdown-search" placeholder="Search states" id="dropdown-search" style="padding-left: 10px;"
+                                        />
+                                        <ul>
+                                            <% categories.forEach(function(cat){ %>                                                                                                
+                                                <% if(data.categories.indexOf(cat.name) > -1) { %>                                                                                                
+                                                <li class="list-cat">
+                                                    <input class="select-check" name=<%=cat.name %> value=<%=cat.name %> checked="true" type="checkbox">
+                                                        <label for=<%=cat.name %>>
+                                                            <%= cat.name %>
+                                                        </label>
+                                                </li>
+                                                <% } else { %>
+                                                    <li class="list-cat">
+                                                        <input class="select-check" name=<%=cat.name.toString() %> value=
+                                                        <%=cat.name.toString() %> type="checkbox">
+                                                            <label for=<%=cat.name %>>
+                                                                <%= cat.name %>
+                                                            </label>
+                                                    </li>
+                                                <% } %>
+                                            <% }) %>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="" >Upload Image</label>
+                            </td>
+                            <td>
+                                <input id="fileupload" type="file" name="files" data-url="/post/image">
+                                <p style="font-size:12;margin-top:5px;">Upload a new image only if you want to replace the old image..</p>
+                            </td>
+                            <input type="hidden" id="url" value=<%=data.image %>>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Title</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" id="title" class="form-control" value="<%=data.title %>" placeholder="Title">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Notification URL</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" id="notify" class="form-control" value="<%=data.notifyUrl %>" placeholder="Notification URL">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Apply URL</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" id="apply" class="form-control" value="<%=data.applyUrl %>" placeholder="Apply URL">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Active</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="active" id="active" <%= data.active ? 'checked' : '' %>>
+                                <label for="">Make Post Active</label>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="form-group" style="padding-left:10px;">
+                        <label for="">Post Content</label>
+                        <textarea name="textarea" id="content"  class="jqte-test"><%=data.body %></textarea>
+                    </div>
+                    <p>
+                        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Update" />
+                        <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
+                    </p>                    
+                </form>
+                <br>
+            </div>
+        </div>
+    <% } else { %>
         <div class="container">
             <h2>Create Post</h2>
-            <div class="row">
+            <div class="row">                
                 <form id="postForm">
                     <table id="post-table">
                         <tr>
@@ -31,7 +138,8 @@
                                         <ul>
                                             <% categories.forEach(function(cat){ %>
                                                 <li class="list-cat">
-                                                    <input class="select-check" name=<%=cat.name.toString() %> value=<%=cat.name.toString() %> type="checkbox">
+                                                    <input class="select-check" name=<%=cat.name.toString() %> value=
+                                                    <%=cat.name.toString() %> type="checkbox">
                                                         <label for=<%=cat.name %>>
                                                             <%= cat.name %>
                                                         </label>
@@ -44,7 +152,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <label for="" >Upload Image</label>
+                                <label for="">Upload Image</label>
                             </td>
                             <td>
                                 <input id="fileupload" type="file" name="files" data-url="/post/image">
@@ -81,6 +189,15 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label for="">Active</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="active" id="active">
+                                <label for="">Make Post Active</label>
+                            </td>
+                        </tr>
                     </table>
                     <div class="form-group" style="padding-left:10px;">
                         <label for="">Post Content</label>
@@ -88,10 +205,13 @@
                     </div>
                     <p>
                         <input type="submit" class="btn btn-primary btn-lg btn-block" value="POST" />
+                        <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
                     </p>
                 </form>
+                <br>
             </div>
         </div>
+    <% } %>
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -100,7 +220,12 @@
 <script src="/assets/js/jquery.iframe-transport.js"></script>
 <script src="/assets/js/jquery.fileupload.js"></script>
 <script>
-    var file;
+    $("#cancel").on("click", cancel);
+
+    function cancel() {
+        window.location.href = '/';
+    }
+
     $('#dropdown-list').toggle();
     $('#dropdown-container')
         .on('input', '#dropdown-search', function () {
@@ -128,6 +253,8 @@
         $('ul.nav li a').each(function () {
             if (this.href === path) {
                 $(this).parent('li').addClass('active');
+            } else {
+                $('#dashboard').addClass('active');
             }
         });
        
@@ -174,6 +301,7 @@
             alert("Please enter post content");
             return false;
         } 
+        var active = $('#active').is(":checked");
         var notify = $('#notify').val(); 
         var apply = $('#apply').val();        
         formData.notifyUrl = notify;
@@ -182,7 +310,7 @@
         formData.categories = checkboxValues;
         formData.image = url;
         formData.title = title;
-        formData.active = true;
+        formData.active = active;
         var data = {
             post: formData
         }             
@@ -196,6 +324,60 @@
                 window.location.replace("/");
             },
             error: function(response){
+                alert(response.responseJSON.message);
+            }
+        })
+    });
+
+    $('#updateForm').submit(function(e){
+         e.preventDefault();
+        var checkboxValues = [];
+        var formData = {};
+        $('input.select-check:checkbox:checked').each(function () {
+            checkboxValues.push($(this).val());
+        });
+        if (checkboxValues.length == 0) {
+            alert("Please select categories");
+            return false;
+        }
+        var url = $('#url').val();
+        if (!url) {
+            alert("Please upload a new image");
+            return false;
+        }
+        var title = $('#title').val();
+        if (!title) {
+            alert("Please enter a title");
+            return false;
+        }
+        var content = $('#content').val();
+        if (!content) {
+            alert("Please enter post content");
+            return false;
+        }
+        var active = $('#active').is(":checked");
+        var notify = $('#notify').val();
+        var apply = $('#apply').val();
+        formData.notifyUrl = notify;
+        formData.applyUrl = apply;
+        formData.body = content;
+        formData.categories = checkboxValues;
+        formData.image = url;
+        formData.title = title;
+        formData.active = active;
+        var data = {
+            post: formData
+        }
+        $.ajax({
+            type: 'PUT',
+            url: '/post/create/'+ "<%= data._id %>",
+            data: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
+            success: function (response) {
+                console.log(response);                
+                window.location.replace("/");
+            },
+            error: function (response) {
                 alert(response.responseJSON.message);
             }
         })

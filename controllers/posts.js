@@ -51,9 +51,9 @@ exports.postForm = function(req, res, next){
             });
         } else if(categories){
             console.log(categories);
-            return res.render('post', { categories: categories});
+            return res.render('post', { data: { title: false }, categories: categories});
         } else {
-            return res.render('post', { categories: {name : "No Categories", value: ""} });
+            return res.render('post', { data: { title: false }, categories: {name : "NoCategories"} });
         }
     })
 }
@@ -73,15 +73,15 @@ exports.editPost = function(req, res, next){
                 message: "Server is Busy, Please try again!"
             });
         } else {
-            Category.find({}, function (err, categories) {
+            post = post.toObject();
+            Category.find({}, 'name', function (err, categories) {
                 if (err) {
                     return res.status(500).send({
                         message: "Server is Busy, Please try again!"
                     });
-                } else {                                        
-                    post.categories = categories;
+                } else {     
                     console.log(post);
-                    return res.render('post', {data: post});
+                    return res.render('post', {data: post, categories: categories });
                 }
             })
         }
@@ -124,4 +124,34 @@ exports.uploadImage = function(req, res, next){
     res.send(obj);
 }
 
+exports.updatePost = function(req, res, next){
+    var id = req.params.id;
+    var updateData = req.body.post;
 
+    if (!id) {
+        return res.status(400).send({
+            message: "Cannot edit the selected post"
+        })
+    }
+
+    console.log(updateData);
+
+    Post.findById({_id: id}, function(err, post){
+        if (err) {
+            return res.status(500).send({
+                message: "Server is Busy, Please try again!"
+            });
+        } else {
+            post.update(updateData, function(err, updated){
+                if (err) {
+                    return res.status(500).send({
+                        message: "Server is Busy, Please try again!"
+                    });
+                } else {
+                    return res.status(200).send();
+                }
+            })
+        }
+    })
+    
+}

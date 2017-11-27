@@ -21,7 +21,7 @@ var postSchema = new Schema({
         type: String
     },
     categories : {
-        type: String,        
+        type: [String],        
     },
     created: {
         type: Date
@@ -42,5 +42,20 @@ postSchema.statics.create = function(obj, cb){
 postSchema.statics.findPostById = function (id, cb) {
     this.findOne({_id: id}, cb);
 }
+
+postSchema.methods.update = function (updates, options, cb) {
+    var userToUpdate = this;
+    if (typeof options !== 'object' && typeof options === 'function') {
+        cb = options;
+    }
+    var editableFields = ['image', 'body', 'title', 'notifyUrl', 'applyUrl', 'active', 'categories'];
+    editableFields.forEach(function (field) {
+        if (updates[field] || updates[field] == false) {
+            userToUpdate[field] = updates[field];
+        }
+    });
+    userToUpdate.modified = new Date();
+    userToUpdate.save(cb);
+};
 
 mongoose.model('Post', postSchema);
