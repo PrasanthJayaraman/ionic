@@ -125,7 +125,7 @@ exports.updateDeviceInfo = function(req, res, next){
                         temp = body;
                     }
                     if (temp.status == "OK") {
-                        var full = temp.results[1].formatted_address;
+                        var full = temp.results[2].formatted_address;
                         var splitted = full.split(",");
                         var length = splitted.length;
                         var obj = {
@@ -168,3 +168,4 @@ exports.updateDeviceInfo = function(req, res, next){
         }       
     }
 }
+

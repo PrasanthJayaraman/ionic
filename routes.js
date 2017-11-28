@@ -46,4 +46,5 @@ module.exports = function(app){
     
     // Push API
     app.get('/notification/create', pushController.createPush);
+    app.post('/notification/send', pushController.sendPush);
 }

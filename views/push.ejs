@@ -43,9 +43,9 @@
                             </td>
                             <td>
                                 <select id="platform" class="form-control">
-                                <option value="0">ALL</option>
-                                <option value="1">Android</option>
-                                <option value="2">IOS</option>
+                                <option value="all">ALL</option>
+                                <option value="android">Android</option>
+                                <option value="ios">IOS</option>
                                 </select>
                             </td>
                         </tr>
@@ -135,12 +135,27 @@
         }       
 
         var data = {
-            type: type,
-            value: selected,
-            title: title,
-            body: body
+            push : {
+                type: type,
+                value: selected,
+                title: title,
+                body: body
+            }
         }
-        console.log(data);
+
+         $.ajax({
+            type: 'POST',
+            url: '/notification/send',
+            data: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
+            success: function (response) {
+                alert("Push sent successfully");
+                window.location.replace("/");
+            },
+            error: function (response) {
+                alert(response.responseJSON.message);
+            }
+        })
     })
    
 </script>

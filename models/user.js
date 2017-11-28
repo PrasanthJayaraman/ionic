@@ -35,6 +35,9 @@ var userSchema = new Schema({
     },
     country: {
         type: String
+    },
+    platform: {
+        type: String
     }
 });
 
