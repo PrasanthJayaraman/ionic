@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/app.css">
+    <link rel="stylesheet" href="/assets/header.css">    
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
+</head>
+<body style="padding-top: 60px;">    
+    <div id="loader" class="hide overlay">
+        <div class="loader"></div>
+    </div>
+        <div class="container" style="width: 50%; margin: 0 auto;">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="Email">Email Address</label>
+                    <input type="email" class="form-control" placeholder="Email" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" placeholder="Password" id="password">
+                </div>
+                <input type="submit" value="Login" class="btn btn-success btn-lg btn-block">
+            </form>
+        </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/modules/toastr/build/toastr.min.js"></script>
+<script>
+    function showLoader() {
+        $('#loader').addClass('show');
+        $('#loader').removeClass('hide');
+    }
+
+    function hideLoader() {
+        $('#loader').addClass('hide');
+        $('#loader').removeClass('show');
+    }
+
+    $(document).ready(function(){
+        if(window.localStorage.getItem('loggedIn')){
+            window.location.replace('/posts/1');
+        }
+    })
+
+     $('#loginForm').submit(function (e) {
+            showLoader();
+            e.preventDefault();           
+            var email = $('#email').val();
+            if (!email) {
+                hideLoader();
+                toastr.error("Please enter your email");
+                return false;
+            }
+            var password = $('#password').val();
+            if (!password) {
+                hideLoader();
+                toastr.error("Please enter your password");
+                return false;
+            }
+            
+            var data = {
+                email: email,
+                password: password
+            }
+            
+            $.ajax({
+                type: 'POST',
+                url: '/user/login',
+                data: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' },
+                success: function (response) {
+                    hideLoader();
+                    toastr.success("Login Successfully");
+                    window.localStorage.setItem('loggedIn', true);
+                    window.location.replace("/posts/1");
+                },
+                error: function (response) {
+                    hideLoader();
+                    toastr.error(response.responseJSON.message);
+                }
+            })
+        });
+
+</script>
+</html>

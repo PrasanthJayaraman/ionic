@@ -3,6 +3,8 @@
 <head>
     <title>Jobswala</title>
     <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="/assets/header.css">
     <style>
         .green-bg {
             background-color: green;
@@ -81,16 +83,22 @@
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/modules/toastr/build/toastr.min.js"></script>
 <script>
     $(document).ready(function () {
         var path = window.location.href;
+
+        if (!window.localStorage.getItem('loggedIn')) {
+            window.location.replace('/login');
+        } 
+        
         $('ul.nav li a').each(function () {
             if (this.href === path) {
                 $(this).parent('li').addClass('active');
             } else {
                 $('#categories').addClass('active');
             }
-        })
+        })        
     });
 </script>
 

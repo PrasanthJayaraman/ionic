@@ -3,7 +3,9 @@
 <head>
     <title>Jobswala</title>
     <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="/assets/app.css">
+    <link rel="stylesheet" href="/assets/header.css">
 </head>
 
 <body>
@@ -84,16 +86,18 @@
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/modules/toastr/build/toastr.min.js"></script>
 <script>
     $(document).ready(function () {
             var path = window.location.href;
+            if (!window.localStorage.getItem('loggedIn')) {
+                window.location.replace('/login');
+            } 
             $('ul.nav li a').each(function () {
                 if (this.href === path) {
                     $(this).parent('li').addClass('active');
                 }
-            })
-    
-            
+            })                    
     });   
         
      $("#cancel").on("click", cancel);
@@ -104,19 +108,20 @@
     
 
     $('#categoryForm').submit(function(e){
+        showLoader();
         e.preventDefault();
-        var inValid = /[^a-zA-Z0-9\-\/]/;
+        
         var name = $('#name').val();
         var active = $('input:radio[name=active]:checked').val();
         if(!name){
-            alert("Please enter the category name");
+            hideLoader();
+            toastr.error("Please enter the category name");
             return false;
-        } else if(inValid.test(name)){
-            alert("Category name should not contain spaces or special chars");
-            return false;
-        }
+        } 
+
         if(!active){
-             alert("Please select the active status");
+            hideLoader();
+             toastr.error("Please select the active status");
             return false;
         }
         var data = {
@@ -128,31 +133,34 @@
             data: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' },
             success: function (response) {
-                console.log(response);
+                hideLoader();
+                toastr.success("Category Added Successfully");
                 window.location.replace("/category/show");
             },
             error: function (response) {
-                alert(response.responseJSON.message);
+                hideLoader();
+                toastr.error(response.responseJSON.message);
             }
         })
 
     })
 
     $('#editForm').submit(function (e) {
-        e.preventDefault();
+        showLoader();
+        e.preventDefault();        
         var id = '<%= data._id %>';
         var inValid = /[^a-zA-Z0-9\-\/]/;
         var name = $('#name').val();
         var active = $('input:radio[name=active]:checked').val();
         if (!name) {
-            alert("Please enter the category name");
-            return false;
-        } else if (inValid.test(name)) {
-            alert("Category name should not contain spaces or special chars");
+            hideLoader();
+            toastr.error("Please enter the category name");
             return false;
         }
+        
         if (!active) {
-            alert("Please select the active status");
+            hideLoader();
+            toastr.error("Please select the active status");
             return false;
         }
         var data = {
@@ -164,11 +172,13 @@
             data: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' },
             success: function (response) {
-                console.log(response);
+                hideLoader();
+                toastr.success("Category Updated Successfully");
                 window.location.replace("/category/show");
             },
             error: function (response) {
-                alert(response.responseJSON.message);
+                hideLoader();
+                toastr.error(response.responseJSON.message);
             }
         })
 

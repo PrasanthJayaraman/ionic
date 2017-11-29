@@ -2,13 +2,15 @@ var multer = require('multer');
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads')
-    },
+    },   
     filename: function (req, file, cb) {
         var extArray = file.mimetype.split("/");
-        var extension = extArray[extArray.length - 1]
-        cb(null, Date.now() + '.' + extension) //Appending .jpg
+        var extension = extArray[extArray.length - 1].toLowerCase();
+        cb(null, Date.now() + '.' + extension) //Appending .jpg        
     }
 });
+
+
 var upload = multer({ storage: storage });
 
 
@@ -27,7 +29,9 @@ module.exports = function(app){
     app.post("/api/v1/user/device", cookieController.authenticate, userController.updateDeviceInfo);
 
     // Post API
-    app.get('/', postController.showPost);
+    app.get('/login', postController.showLogin);
+    app.get('/', postController.showLogin);
+    app.post('/user/login', postController.login);
     app.get('/posts/:index', postController.showPost);
     app.get('/post/create', postController.postForm);
     app.post('/post/create', postController.createPost);

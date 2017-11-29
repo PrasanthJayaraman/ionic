@@ -4,7 +4,9 @@
     <title>Jobswala</title>
     <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/app.css">
+    <link rel="stylesheet" href="/assets/header.css">
     <link rel="stylesheet" href="/assets/editor/jquery-te-1.4.0.css">
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
 </head>
 
 <body>
@@ -33,16 +35,15 @@
                                             <% categories.forEach(function(cat){ %>                                                                                                
                                                 <% if(data.categories.indexOf(cat.name) > -1) { %>                                                                                                
                                                 <li class="list-cat">
-                                                    <input class="select-check" name=<%=cat.name %> value=<%=cat.name %> checked="true" type="checkbox">
-                                                        <label for=<%=cat.name %>>
+                                                    <input class="select-check" name="<%=cat.name %>" value="<%=cat.name %>" checked="true" type="checkbox">
+                                                        <label for="<%=cat.name %>">
                                                             <%= cat.name %>
                                                         </label>
                                                 </li>
                                                 <% } else { %>
                                                     <li class="list-cat">
-                                                        <input class="select-check" name=<%=cat.name.toString() %> value=
-                                                        <%=cat.name.toString() %> type="checkbox">
-                                                            <label for=<%=cat.name %>>
+                                                        <input class="select-check" name="<%=cat.name %>" value="<%=cat.name %>" type="checkbox">
+                                                            <label for="<%=cat.name %>">
                                                                 <%= cat.name %>
                                                             </label>
                                                     </li>
@@ -137,10 +138,10 @@
                                         />
                                         <ul>
                                             <% categories.forEach(function(cat){ %>
+                                                <% console.log(cat); %>
                                                 <li class="list-cat">
-                                                    <input class="select-check" name=<%=cat.name.toString() %> value=
-                                                    <%=cat.name.toString() %> type="checkbox">
-                                                        <label for=<%=cat.name %>>
+                                                    <input class="select-check" name="<%= cat.name %>" value="<%= cat.name %>" type="checkbox">
+                                                        <label for="<%=cat.name %>">
                                                             <%= cat.name %>
                                                         </label>
                                                 </li>
@@ -219,6 +220,7 @@
 <script src="/assets/js/jquery.ui.widget.js"></script>
 <script src="/assets/js/jquery.iframe-transport.js"></script>
 <script src="/assets/js/jquery.fileupload.js"></script>
+<script src="/modules/toastr/build/toastr.min.js"></script>
 <script>
     $("#cancel").on("click", cancel);
 
@@ -250,6 +252,11 @@
 
     $(document).ready(function () {
         var path = window.location.href;
+
+        if (!window.localStorage.getItem('loggedIn')) {
+            window.location.replace('/login');
+        } 
+
         $('ul.nav li a').each(function () {
             if (this.href === path) {
                 $(this).parent('li').addClass('active');
@@ -260,13 +267,18 @@
        
          $('#fileupload').fileupload({ 
              dataType: 'json', 
+             progress: function (e, data) {
+                 var progress = parseInt(data.loaded / data.total * 100, 10);
+                 showLoader();
+             },
              done: function (e, data) { 
+                 hideLoader();
                 if(data.result){
                     if(data.result.response == 200){
                         document.getElementById("url").value = data.result.name;
-                        alert("File uploaded successfully", $('#url').val());
+                        toastr.success("File uploaded successfully");
                     } else {
-                        alert("Please upload a new file");
+                        toastr.error("Please upload a new file");
                     }
                 }
             } 
@@ -276,6 +288,7 @@
     });
 
     $('#postForm').submit(function(e) {
+        showLoader();
         e.preventDefault();
         var checkboxValues = [];
         var formData = {};
@@ -283,22 +296,26 @@
             checkboxValues.push($(this).val());
         });
         if (checkboxValues.length == 0) {
-            alert("Please select categories");
+            hideLoader();
+            toastr.error("Please select categories");
             return false;
         }
         var url = $('#url').val();
         if(!url){
-            alert("Please upload a new image");
+            hideLoader();
+            toastr.error("Please upload a new image");
             return false;
         }         
         var title = $('#title').val();
         if(!title){
-            alert("Please enter a title");
+            hideLoader();
+            toastr.error("Please enter a title");
             return false;
         } 
         var content = $('#content').val();
         if(!content){
-            alert("Please enter post content");
+            hideLoader();
+            toastr.error("Please enter post content");
             return false;
         } 
         var active = $('#active').is(":checked");
@@ -320,39 +337,46 @@
             data: JSON.stringify(data),
             headers: {'Content-Type': 'application/json'},
             success: function(response){
-                console.log(response);
-                window.location.replace("/");
+                hideLoader();
+                toastr.success("Post Created Successfully");
+                window.location.replace("/posts/1");
             },
             error: function(response){
-                alert(response.responseJSON.message);
+                hideLoader();
+                toastr.error(response.responseJSON.message);
             }
         })
     });
 
     $('#updateForm').submit(function(e){
-         e.preventDefault();
+        showLoader();
+        e.preventDefault();
         var checkboxValues = [];
         var formData = {};
         $('input.select-check:checkbox:checked').each(function () {
             checkboxValues.push($(this).val());
         });
         if (checkboxValues.length == 0) {
-            alert("Please select categories");
+            hideLoader();
+            toastr.error("Please select categories");
             return false;
         }
         var url = $('#url').val();
         if (!url) {
-            alert("Please upload a new image");
+            hideLoader();
+            toastr.error("Please upload a new image");
             return false;
         }
         var title = $('#title').val();
         if (!title) {
-            alert("Please enter a title");
+            hideLoader();
+            toastr.error("Please enter a title");
             return false;
         }
         var content = $('#content').val();
         if (!content) {
-            alert("Please enter post content");
+            hideLoader();
+            toastr.error("Please enter post content");
             return false;
         }
         var active = $('#active').is(":checked");
@@ -374,11 +398,13 @@
             data: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' },
             success: function (response) {
-                console.log(response);                
-                window.location.replace("/");
+                hideLoader();
+                toastr.success("Post Updated Successfully");
+                window.location.replace("/posts/1");
             },
             error: function (response) {
-                alert(response.responseJSON.message);
+                hideLoader();
+                toastr.error(response.responseJSON.message);
             }
         })
     });

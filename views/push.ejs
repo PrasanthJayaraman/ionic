@@ -3,7 +3,9 @@
 <head>
     <title>Jobswala</title>
     <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/app.css">    
+    <link rel="stylesheet" href="/assets/app.css">   
+    <link rel="stylesheet" href="/assets/header.css">
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
 </head>
 
 <body>
@@ -15,24 +17,34 @@
                     <table id="post-table">
                         <tr>
                             <td>
-                                <input type="radio" name="choice" id="choice" value="location">
+                                <input type="radio" name="choice" id="location" value="location">
                                 <label for="">Location</label>
                             </td>
                             <td>
-                                <select id="location" class="form-control">                                
-                                <%                                    
-                                    for ( var i = 0; i < options.length; i++ )
-                                    {                                       
-                                    %>
-                                        <option value="<%=options[i] %>" >
-                                            <%=options[i] %>
-                                        </option>
-                                    <%
-                                    }
-                                %>
-                                </select>
+                                <div class="dropdown-container" id="dropdown-container">
+                                    <div class="dropdown-button noselect">
+                                        <div class="dropdown-label">Categories</div>
+                                        <div class="dropdown-quantity">(
+                                            <span class="quantity">Any</span>)</div>
+                                    </div>
+                                    <div class="dropdown-list" id="dropdown-list" style="display: none;">
+                                        <input type="search" class="form-control dropdown-search" placeholder="Search states" id="dropdown-search" style="padding-left: 10px;"
+                                        />
+                                        <ul>
+                                            <% options.forEach(function(option){ %> 
+                                                <% console.log(option) %>                                               
+                                                    <li class="list-cat">
+                                                        <input class="select-check" name="<%= option.name %>" value="<%= option.name %>" type="checkbox">
+                                                        <label for="<%=option.name %>">
+                                                            <%= option.name %>
+                                                        </label>
+                                                    </li>
+                                                    <% }) %>
+                                        </ul>
+                                    </div>
+                                </div>
                             </td>
-                        </tr>
+                        </tr>                       
                     </table>                                        
                     <p class="or">Or</p>
                     <table id="post-table">
@@ -84,23 +96,58 @@
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/modules/toastr/build/toastr.min.js"></script>
 <script>
     $(document).ready(function () {
         var path = window.location.href;
+
+        if (!window.localStorage.getItem('loggedIn')) {
+            window.location.replace('/login');
+        } 
+
         $('ul.nav li a').each(function () {
             if (this.href === path) {
                 $(this).parent('li').addClass('active');
             }
         });  
+
+        $('#dropdown-list').toggle();
+        $('#dropdown-container')
+            .on('input', '#dropdown-search', function () {
+                var target = $(this);
+                var search = target.val().toLowerCase();
+
+                if (!search) {
+                    $('.list-cat').show();
+                    return false;
+                }
+
+                $('.list-cat').each(function () {
+                    var text = $(this).text().toLowerCase();
+                    var match = text.indexOf(search) > -1;
+                    $(this).toggle(match);
+                });
+            })
+            .on('change', '.select-check', function () {                
+                var numChecked = $('input:checkbox.select-check:checked').length;
+                if(numChecked > 0){
+                    $('#platform').attr('disabled', 'disabled');
+                    $('#option').val("location");
+                } else {
+                    $('#platform').removeAttr('disabled'); 
+                    $('#option').val("");   
+                }
+                $('.quantity').text(numChecked || 'Any');
+            });
         
         $('input[type=radio][name=choice]').change(function () {
             if(this.value == "platform"){
-                $('#location').attr('disabled', 'disabled');
+                $('#dropdown-list').toggle();
                 $('#platform').removeAttr('disabled');
                 $('#option').val("platform");
             } else {
                 $('#platform').attr('disabled', 'disabled');
-                $('#location').removeAttr('disabled');
+                $('#dropdown-list').toggle();
                 $('#option').val("location");
             }
         });
@@ -113,24 +160,36 @@
     }
 
     $('#pushForm').submit(function(e){
+        showLoader();
         e.preventDefault();
+        var checkboxValues = [];
         if($('#option').val() == "platform"){            
             var type = "platform";
             var selected = $("#platform option:selected").val()            
-        } else {            
+        } else if($('#option').val() == "location"){            
             var type = "location";
-            var selected = $("#location option:selected").val()            
+            $('input.select-check:checkbox:checked').each(function () {
+                checkboxValues.push($(this).val());
+            });
+            if (checkboxValues.length == 0) {
+                hideLoader();
+                toastr.error("Please select categories");
+                return false;
+            }
+            var selected = checkboxValues;
         }
         var title = $('#title').val();
         var body = $('#body').val();
 
         if (type != "platform" && type != "location") {
-            alert("Unknown Push type, Please select either location or platform!");
+            hideLoader();
+            toastr.error("Please select either location or platform!");
             return false;
         }
 
         if(!body){
-            alert("Body is required to send push");
+            hideLoader();
+            toastr.error("Body is required to send push");
             return false;
         }       
 
@@ -149,11 +208,13 @@
             data: JSON.stringify(data),
             headers: { 'Content-Type': 'application/json' },
             success: function (response) {
-                alert("Push sent successfully");
-                window.location.replace("/");
+                hideLoader();
+                toastr.success("Push sent successfully");
+                window.location.replace("/posts/1");
             },
             error: function (response) {
-                alert(response.responseJSON.message);
+                hideLoader();
+                toastr.error(response.responseJSON.message);
             }
         })
     })

@@ -1,3 +1,7 @@
+<div id="loader" class="hide overlay">
+    <div class="loader"></div>
+</div>
+
 <nav class="navbar navbar-default">
     <div class="container container-fluid">
         <div class="navbar-header">
@@ -13,6 +17,26 @@
             <li id="notifications">
                 <a href="/notification/create">Notifications</a>
             </li>
+            <li id="logout" class="pull-right">
+                <a href="/login" onclick="logout()">Logout</a>
+            </li>
         </ul>
     </div>
 </nav>
+
+<script>
+
+    function logout(){
+        window.localStorage.clear();        
+    }
+
+    function showLoader(){
+        $('#loader').addClass('show');
+        $('#loader').removeClass('hide');
+    }
+
+    function hideLoader(){
+        $('#loader').addClass('hide');
+        $('#loader').removeClass('show');
+    }
+</script>

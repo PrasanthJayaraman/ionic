@@ -7,7 +7,7 @@ var fcm = new FCM(serverKey)
 
 exports.send = function(tokens, title, body){
     var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-        registration_ids: tokens,
+        registration_ids: tokens,        
         notification : {}      
     }
     if(title){

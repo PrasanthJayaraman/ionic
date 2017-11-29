@@ -2,6 +2,28 @@ var mongoose = require('mongoose');
 var Post = mongoose.model('Post');
 var Category = mongoose.model('Category');
 
+exports.showLogin = function(req, res, next){
+    return res.render('login');
+}
+
+exports.login = function(req, res, next){
+    var data = req.body;
+
+    if(!data){
+        return res.status(400).send({
+            message: "Invalid Login credentials!"
+        })
+    }
+
+    if(data.email != "jobswalaapp@gmail.com" && data.password != "welcome"){
+        return res.status(400).send({
+            message: "Wrong email address or password!"
+        })
+    }
+
+    return res.status(200).send();
+}
+
 exports.showPost = function(req, res, next){
     Post.getAllPost(function(err, posts){
         if(err){
@@ -50,7 +72,7 @@ exports.postForm = function(req, res, next){
                 message: "Server is Busy, Please try again!"
             });
         } else if(categories){
-            console.log(categories);
+            console.log(categories);            
             return res.render('post', { data: { title: false }, categories: categories});
         } else {
             return res.render('post', { data: { title: false }, categories: {name : "NoCategories"} });
@@ -108,7 +130,12 @@ exports.deletePost = function(req, res, next){
     })
 }
 
-exports.uploadImage = function(req, res, next){    
+exports.uploadImage = function(req, res, next){  
+    if(req.error){
+        return res.status(400).send({
+            message: "Invalid file format, upload only jpg or png"
+        })
+    }
     var fileName = req.file.filename;
     if(fileName){
         var obj = {

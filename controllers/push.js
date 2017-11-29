@@ -12,10 +12,13 @@ exports.createPush = function(req, res, next){
                 message: "Server is busy, please try again!"
             })
         } else {            
-            var temp = _.sortBy(states);
-            temp.unshift('ALL');
-            console.log(temp);
-            res.render('push', { options: temp });
+            var keyValues = [];
+            states.forEach(function(state){
+                keyValues.push({name: state})
+            })            
+            keyValues.unshift({name: 'ALL'});
+            console.log(keyValues);
+            res.render('push', { options: keyValues });
         }
     })
 }
@@ -79,13 +82,15 @@ exports.sendPush = function(req, res, next){
             collectAndPush(query);
         }
     } else if (pushData.type == "location") {
-        if (pushData.value == 'ALL') {
-            query = { state: { $ne: null } }
-            collectAndPush(query, pushData.title, pushData.body);
-        } else {
-            query = { state: pushData.value }            
-            collectAndPush(query);
-        }        
+        if (pushData.value && pushData.value.length > 0) {
+            if(pushData.value.indexOf('ALL') > -1){
+                query = { state: { $ne: null } }
+                collectAndPush(query, pushData.title, pushData.body);
+            } else {
+                query = { state: { $in: pushData.value } }
+                collectAndPush(query, pushData.title, pushData.body);
+            }
+        } 
     }
 
     res.send(200);
