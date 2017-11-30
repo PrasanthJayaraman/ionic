@@ -17,7 +17,7 @@ app.use('/modules', express.static(__dirname + '/node_modules/'));
 app.use('/assets', express.static(__dirname + '/assets/'));
 app.use('/uploads', express.static(__dirname + '/uploads/'));
 
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 4000;
 var db = DB.connect(function(err){
     if(err){
         process.exit(-1);

@@ -153,7 +153,7 @@ exports.uploadImage = function(req, res, next){
     if(fileName){
         var obj = {
             response: 200,
-            name: "http://localhost:1234/uploads/"+fileName
+            name: "http://35.185.187.53:4000/uploads/" + fileName
         }
     } else {
         var obj = {
