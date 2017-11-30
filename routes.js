@@ -39,6 +39,7 @@ module.exports = function(app){
     app.post('/post/image', upload.single('files'), postController.uploadImage);
     app.get('/post/edit/:id', postController.editPost);
     app.get('/post/delete/:id', postController.deletePost);
+    app.post('/posts/search', postController.searchPost);
     
     // Category API
     app.get('/category/show', categoryController.listCategory);  

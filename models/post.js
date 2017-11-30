@@ -31,13 +31,22 @@ var postSchema = new Schema({
     }
 });
 
+postSchema.index({ title: 'text' });
+
 postSchema.statics.getAllPost = function(cb){
     this.find({}, null, {sort: {modified: -1}}, cb);
 }
 
+postSchema.statics.getPosts = function (skip, limit, cb) {
+    this.find({}, null, { sort: { modified: -1 }, skip: skip, limit: limit }, cb);
+}
+
+
 postSchema.statics.create = function(obj, cb){
     new this(obj).save(cb);
 }
+
+
 
 postSchema.statics.findPostById = function (id, cb) {
     this.findOne({_id: id}, cb);

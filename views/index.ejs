@@ -20,81 +20,150 @@
 
 <body>
     <%- include header.ejs %>
-        <div class="container">
-            <h2>Posts</h2>
-            <div class="row" style="float:right">
-                <div class="btn-group">
-                    <a href="/post/create" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        Add Post
-                    </a>
+        <div id="main" class="container">
+            <% if(clear){ %>
+                <h2>Search Results</h2>
+            <% } else { %>
+                <h2>Posts</h2>
+                <div class="row" style="float:right">
+                    <div class="btn-group">
+                        <a href="/post/create" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Add Post
+                        </a>
+                    </div>
                 </div>
-            </div>
+            <% } %>            
             <br>
             <br>
             <div class="row">
-                <% if(posts.length == 0) { %>
-                    <h3>No Posts Available, Add one..</h3>
-                <% } else { %>                    
-                <table class="table table-hover">
-                    <tr>
-                        <th width="5%">#</th>
-                        <th width="35%">Title</th>
-                        <th width="20%">Categories</th>
-                        <th width="15%">Modified</th>
-                        <th width="10%">Active</th>
-                        <th width="20%">Options</th>
-                    </tr>
-                    <% posts.forEach(function(post, index){ %>
+                <% if(posts.length == 0) { %>                    
+                    <% if(clear){ %>
+                        <h3>Try changing your keywords to search. Minimum 3 letters should be there.</h3>
+                    <% } else { %>
+                        <h3>No Posts Available..</h3>
+                    <% } %>
+                <% } else { %>   
+                    <% if(!clear){ %>
+                        <div class="row">
+                            <form id="searchForm" action="/posts/search" method="POST">
+                                <div class="form-group" style="width:100%;display:inline-flex">
+                                    <input type="search" id="search" name="search" placeholder="Search Posts.." style="width:70%" class="form-control">
+                                    <input type="submit" style="margin-left:20px;width:29%" class="btn btn-primary" value="Search">
+                                </div>
+                            </form>
+                        </div>
+                    <% }  %>                                                    
+                    <table id="oldTable" class="table table-hover">
                         <tr>
-                            <td><%= index + 1 %> </td>
-                            <td><%= post.title.length > 60 ? post.title.substring(0, 55) + '..' : post.title  %></td>
-                            <td><%= post.categories.toString() %></td>
-                            <td><%= post.modified.toDateString() %> <%= post.modified.toLocaleTimeString() %></td>
-                            <% if(post.active) { %>
-                                <td><div class="green-bg" style="width: 60px;height: 30px;"></div></td>
-                            <% } else { %>
-                                <td>
-                                    <div class="red-bg" style="width: 60px;height: 30px;"></div>
-                                </td>
-                            <% } %>
-                            <td>
-                                <p>
-                                    <a href="/post/edit/<%= post._id %>" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
-                                    <a href="/post/delete/<%= post._id %>" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
-                                </p>
-                            </td>
+                            <th width="5%">#</th>
+                            <th width="35%">Title</th>
+                            <th width="20%">Categories</th>
+                            <th width="15%">Modified</th>
+                            <th width="10%">Active</th>
+                            <th width="20%">Options</th>
                         </tr>
-                    <% }) %>                    
-                </table>
+                        <% posts.forEach(function(post, index){ %>
+                            <tr>
+                                <td><%= index + 1 %> </td>
+                                <td><%= post.title.length > 60 ? post.title.substring(0, 55) + '..' : post.title  %></td>
+                                <td><%= post.categories.toString() %></td>
+                                <td><%= post.modified.toDateString() %> <%= post.modified.toLocaleTimeString() %></td>
+                                <% if(post.active) { %>
+                                    <td><div class="green-bg" style="width: 60px;height: 30px;"></div></td>
+                                <% } else { %>
+                                    <td>
+                                        <div class="red-bg" style="width: 60px;height: 30px;"></div>
+                                    </td>
+                                <% } %>
+                                <td>
+                                    <p>
+                                        <a href="/post/edit/<%= post._id %>" class="btn btn-primary">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                        <a href="/post/delete/<%= post._id %>" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-primary">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>
+                                    </p>
+                                </td>
+                            </tr>
+                        <% }) %>                    
+                    </table>                                 
+                <% } %>
+                <br>
+                <% if(clear){ %>
+                    <a href="/posts/1" class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        Go back to Posts
+                    </a>
                 <% } %>
             </div>
-        </div>
+            <div>
+                <% if(!clear){ %>
+                    <ul id="pagination" class="pagination"></ul>
+                <% } %>                
+            </div>
+        </div>        
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/ejs/ejs.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="/modules/toastr/build/toastr.min.js"></script>
-<script>
-    $(document).ready(function () {
+<script>            
+    $(document).ready(function () {        
+        var postLength = '<%= posts.length%>';
         var path = window.location.href;        
 
         if (!window.localStorage.getItem('loggedIn')) {
             window.location.replace('/login');
-        } 
-
+        }         
+        
         $('ul.nav li a').each(function () {
             if (this.href === path) {
                 $(this).parent('li').addClass('active');
             } else {
                 $('#dashboard').addClass('active');
             }
-        })             
+        })  
+
+        var num = path.split('/');
+        num = parseInt(num[num.length - 1]);
+        var start, end;
+        
+        if(postLength > 0){
+            if (num - 1 != 0) {
+                start = num - 1;
+                end = start + 5;
+            } else {
+                start = 1;
+                end = num + 5;
+            }
+             makeList(start, end);
+        } else {
+            if(num - 1 == 0){
+                $('#pagination').addClass('hide');
+            } else {
+                start = 1;
+                end = 5;
+                var t = num - 1;
+                makeList(start, end)
+                if(t > 5){
+                    $("#pagination").append("<li><a href='/posts/" + t + "' class=''>" + t + "</a></li>");
+                }
+            }
+        }    
+        
+        function makeList(start, end){
+            for (var i = start; i <= end; i++) {
+                var url = '/posts/' + i;
+                if (i == num) {
+                    $("#pagination").append("<li class='active'><a href='" + url + "' class=''>" + i + "</a></li>");
+                } else {
+                    $("#pagination").append("<li><a href='" + url + "' class=''>" + i + "</a></li>");
+                }
+            }     
+        }
 
     });
 </script>
-
 </html>

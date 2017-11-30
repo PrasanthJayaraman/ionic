@@ -24,22 +24,20 @@
                                 <div class="dropdown-container" id="dropdown-container">
                                     <div class="dropdown-button noselect">
                                         <div class="dropdown-label">Categories</div>
-                                        <div class="dropdown-quantity">(
-                                            <span class="quantity">Any</span>)</div>
+                                        <div class="dropdown-quantity">(<span class="quantity">Any</span>)</div>
                                     </div>
                                     <div class="dropdown-list" id="dropdown-list" style="display: none;">
                                         <input type="search" class="form-control dropdown-search" placeholder="Search states" id="dropdown-search" style="padding-left: 10px;"
                                         />
                                         <ul>
-                                            <% options.forEach(function(option){ %> 
-                                                <% console.log(option) %>                                               
-                                                    <li class="list-cat">
-                                                        <input class="select-check" name="<%= option.name %>" value="<%= option.name %>" type="checkbox">
-                                                        <label for="<%=option.name %>">
-                                                            <%= option.name %>
-                                                        </label>
-                                                    </li>
-                                                    <% }) %>
+                                            <% options.forEach(function(option){ %>                                                                                        
+                                                <li class="list-cat">
+                                                    <input class="select-check" name="<%= option.name %>" value="<%= option.name %>" type="checkbox">
+                                                    <label for="<%=option.name %>">
+                                                        <%= option.name %>
+                                                    </label>
+                                                </li>
+                                            <% }) %>
                                         </ul>
                                     </div>
                                 </div>
@@ -50,7 +48,7 @@
                     <table id="post-table">
                         <tr>
                             <td>
-                                <input type="radio" name="choice" id="" value="platform">
+                                <input type="radio" name="choice" id="plat" value="platform">
                                 <label for="">Platform</label>
                             </td>
                             <td>
@@ -111,6 +109,15 @@
             }
         });  
 
+        $('#platform').change(function () {
+            if(!$('#plat').is(':checked')){
+                $('#dropdown-list').toggle();                                    
+                $('.quantity').text(0);   
+                $('#plat').prop('checked', true);
+                $('#option').val("platform");            
+            }
+        });
+
         $('#dropdown-list').toggle();
         $('#dropdown-container')
             .on('input', '#dropdown-search', function () {
@@ -131,6 +138,7 @@
             .on('change', '.select-check', function () {                
                 var numChecked = $('input:checkbox.select-check:checked').length;
                 if(numChecked > 0){
+                    $('#location').attr('checked', true);
                     $('#platform').attr('disabled', 'disabled');
                     $('#option').val("location");
                 } else {
@@ -144,8 +152,11 @@
             if(this.value == "platform"){
                 $('#dropdown-list').toggle();
                 $('#platform').removeAttr('disabled');
+                $('.quantity').text(0);
                 $('#option').val("platform");
-            } else {
+            } else {                
+                var numChecked = $('input:checkbox.select-check:checked').length;
+                $('.quantity').text(numChecked || 'Any');
                 $('#platform').attr('disabled', 'disabled');
                 $('#dropdown-list').toggle();
                 $('#option').val("location");
@@ -156,7 +167,7 @@
     $("#cancel").on("click", cancel);
 
     function cancel() {
-        window.location.href = '/';
+        window.location.href = '/posts/1';
     }
 
     $('#pushForm').submit(function(e){
@@ -185,7 +196,9 @@
             hideLoader();
             toastr.error("Please select either location or platform!");
             return false;
-        }
+        }        
+
+        console.log(type, selected)
 
         if(!body){
             hideLoader();
@@ -216,7 +229,7 @@
                 hideLoader();
                 toastr.error(response.responseJSON.message);
             }
-        })
+        }); 
     })
    
 </script>

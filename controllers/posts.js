@@ -25,13 +25,26 @@ exports.login = function(req, res, next){
 }
 
 exports.showPost = function(req, res, next){
-    Post.getAllPost(function(err, posts){
+    var index = req.params.index;
+    var limit, skip;
+    var numberOfPost = 20;
+    if (!index){
+        index = 1;
+    }
+    limit = numberOfPost;
+    if(index == 1){
+        skip = 0;
+    } else {
+        skip = (index - 1) * numberOfPost;
+    }    
+    Post.getPosts(skip, limit, function(err, posts){
         if(err){
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
             });
         } else {                    
-            return res.render('index', {posts: posts});
+            //console.log(posts);
+            return res.render('index', {posts: posts, clear: false});
         }
     });
 }
@@ -180,5 +193,28 @@ exports.updatePost = function(req, res, next){
             })
         }
     })
-    
+        
+}
+
+exports.searchPost = function(req, res, next){
+    var data = req.body;
+
+    console.log(data)
+
+    if(Object.keys(data).length === 0){
+        return res.status(400).send({
+            message: "Invalid search request"
+        })
+    }    
+
+    Post.find({ $text: { $search: data.search, $caseSensitive: false}}, function(err, posts){
+        if (err) {
+            return res.status(500).send({
+                message: "Server is Busy, Please try again!"
+            });
+        } else {
+            //console.log(posts);
+            return res.render('index', { posts: posts, clear: true });
+        }
+    })    
 }

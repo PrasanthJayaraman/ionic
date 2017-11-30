@@ -33,7 +33,7 @@ exports.categoryForm = function(req, res, next){
 }
 
 exports.listCategory = function(req, res, next){
-    Category.find({}, 'name modified active', function (err, categories) {
+    Category.find({}, 'name modified active', { sort: { active: -1}},  function (err, categories) {
         if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
