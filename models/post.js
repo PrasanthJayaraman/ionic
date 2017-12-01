@@ -41,6 +41,10 @@ postSchema.statics.getPosts = function (skip, limit, cb) {
     this.find({}, null, { sort: { modified: -1 }, skip: skip, limit: limit }, cb);
 }
 
+postSchema.statics.getActivePosts = function (skip, limit, cb) {
+    this.find({active: true}, null, { sort: { modified: -1 }, skip: skip, limit: limit }, cb);
+}
+
 
 postSchema.statics.create = function(obj, cb){
     new this(obj).save(cb);

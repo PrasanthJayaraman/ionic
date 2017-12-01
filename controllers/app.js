@@ -17,7 +17,7 @@ exports.getPosts = function(req, res, next){
         skip = (index - 1) * numberOfPosts;
     }    
     
-    Post.getPosts(skip, limit, function (err, posts) {
+    Post.getActivePosts(skip, limit, function (err, posts) {
         if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
