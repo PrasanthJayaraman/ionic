@@ -19,6 +19,7 @@ var cookieController = require('./controllers/cookie');
 var postController = require('./controllers/posts.js');
 var pushController = require('./controllers/push.js');
 var categoryController = require('./controllers/category.js');
+var appController = require('./controllers/app.js');
 
 module.exports = function(app){
     // APP API
@@ -27,6 +28,7 @@ module.exports = function(app){
     app.get("/api/v1/user", cookieController.authenticate, userController.getUser); 
     app.post("/api/v1/user/profile", cookieController.authenticate, userController.updateUser);
     app.post("/api/v1/user/device", cookieController.authenticate, userController.updateDeviceInfo);
+    app.get("/api/v1/posts/:id", cookieController.authenticate, appController.getPosts);
 
     // Post API
     app.get('/login', postController.showLogin);
