@@ -25,10 +25,10 @@ module.exports = function(app){
     // APP API
     app.post("/api/v1/user", userController.getStarted);
     app.post("/api/v1/user/social", userController.socialLogin);
-    app.get("/api/v1/user", cookieController.authenticate, userController.getUser); 
-    app.post("/api/v1/user/profile", cookieController.authenticate, userController.updateUser);
-    app.post("/api/v1/user/device", cookieController.authenticate, userController.updateDeviceInfo);
-    app.get("/api/v1/posts/:id", cookieController.authenticate, appController.getPosts);
+    app.get("/api/v1/user", userController.getUser); 
+    app.post("/api/v1/user/profile", userController.updateUser);
+    app.post("/api/v1/user/device", userController.updateDeviceInfo);
+    app.get("/api/v1/posts/:id", appController.getPosts);
 
     // Post API
     app.get('/login', postController.showLogin);
