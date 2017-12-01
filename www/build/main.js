@@ -460,6 +460,7 @@ var Home = (function () {
         this.timestamp = new Date().getTime();
         storage.set('page', 'Home');
         platform.ready().then(function () {
+            _this.getData(1);
             if (platform.is('cordova')) {
                 storage.get('isLoggedIn').then(function (val) {
                     if (!val) {
@@ -599,28 +600,38 @@ var Home = (function () {
         var daysDifference = Math.floor(difference / 1000 / 60 / 60 / 24);
         return daysDifference;
     };
-    Home.prototype.updateData = function (data) {
+    Home.prototype.getData = function (index) {
         var _this = this;
-        this.storage.get("profile")
-            .then(function (user) {
-            if (user.authKey) {
-                console.log("here");
-                var headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': user.authKey
-                };
-                _this.authService.postData('user/device', headers, data)
-                    .then(function (res) {
-                    console.log("Device data updated");
-                });
+        if (!index) {
+            index = 1;
+        }
+        this.authService.getData('posts/' + index)
+            .then(function (res) {
+            _this.storage.set('index', index);
+            try {
+                var temp = JSON.parse(res._body);
             }
+            catch (e) {
+                console.log('already obj');
+            }
+            _this.posts = temp || res._body;
+            console.log(_this.posts);
+        });
+    };
+    Home.prototype.updateData = function (data) {
+        var headers = {
+            'Content-Type': 'application/json'
+        };
+        this.authService.postData('user/device', headers, data)
+            .then(function (res) {
+            console.log("Device data updated");
         });
     };
     return Home;
 }());
 Home = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/' <ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <h2>Welcome to Ionic!</h2>\n  <p>Its COOL B-)</p>    \n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/' <ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <h2>Welcome to Ionic!</h2>\n  <ion-list>\n    <ion-item *ngFor="let post of posts">   \n        <ion-avatar item-start>\n            <img src="{{post.image}}">\n          </ion-avatar>   \n      <h2>{{post.title}}</h2>\n    </ion-item>\n  </ion-list>   \n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */]])
 ], Home);
@@ -650,7 +661,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var APIURL = "https://jobswala.herokuapp.com/api/v1/";
+var APIURL = "http://35.185.187.53:4000/api/v1/";
 /*
   Generated class for the AuthServiceProvider provider.
 
@@ -668,6 +679,22 @@ var AuthServiceProvider = (function () {
         console.log("Gonna post header", JSON.stringify(headers));
         return new Promise(function (resolve, reject) {
             _this.http.post(APIURL + url, JSON.stringify(data), { headers: headers })
+                .subscribe(function (res) {
+                resolve(res);
+            }, function (error) {
+                reject(error);
+            });
+        });
+    };
+    AuthServiceProvider.prototype.getData = function (url) {
+        var _this = this;
+        var headers = {
+            'Content-Type': 'application/json'
+        };
+        console.log("Gonna post url", APIURL + url);
+        console.log("Gonna post header", JSON.stringify(headers));
+        return new Promise(function (resolve, reject) {
+            _this.http.get(APIURL + url)
                 .subscribe(function (res) {
                 resolve(res);
             }, function (error) {

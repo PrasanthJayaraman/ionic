@@ -17,10 +17,14 @@ export class Home {
   public Error: any;
   public location: any;
   public timestamp = new Date().getTime();
+  public posts : String[];
 
   constructor(public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
     storage.set('page', 'Home');
     platform.ready().then(() => {      
+
+      this.getData(1);
+
       if (platform.is('cordova')) {
 
         storage.get('isLoggedIn').then((val) => {            
@@ -31,7 +35,7 @@ export class Home {
               modal.present();
             }, 10 * 1000);
           } 
-        });    
+        });            
 
         storage.get("firstTime",).then((first) => {
           storage.get("limit").then((limit) => {
@@ -51,7 +55,7 @@ export class Home {
               }
             }
           })
-        });
+        });       
         
         firebase.onNotificationOpen()
         .subscribe((notification) => {
@@ -165,20 +169,31 @@ export class Home {
     return daysDifference;
   }
 
+  getData(index){
+    if(!index){
+      index = 1;
+    }
+          
+    this.authService.getData('posts/'+index)
+    .then((res: any) => {
+      this.storage.set('index', index);
+      try {
+        var temp = JSON.parse(res._body);
+      } catch(e) {
+        console.log('already obj');
+      }      
+      this.posts = temp || res._body;
+      console.log(this.posts);
+    })
+  }
+
   updateData(data){
-    this.storage.get("profile")
-    .then((user) => {      
-      if(user.authKey){
-        console.log("here")
-        let headers = {
-          'Content-Type' : 'application/json',
-          'Authorization' : user.authKey
-        }        
-        this.authService.postData('user/device', headers, data)
-        .then((res: any) => {
-          console.log("Device data updated");
-        })
-      }
+    let headers = {
+      'Content-Type' : 'application/json'      
+    }        
+    this.authService.postData('user/device', headers, data)
+    .then((res: any) => {      
+      console.log("Device data updated");
     })
   }
 
