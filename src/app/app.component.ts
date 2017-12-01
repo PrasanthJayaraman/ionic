@@ -18,13 +18,7 @@ export class MyApp {
 
   constructor(public storage: Storage, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
 
-    storage.get('isLoggedIn').then((val) => {            
-      if (val) {
-        this.rootPage = Home;
-      } else {
-        this.rootPage = WelcomePage;
-      }
-    });    
+    this.rootPage = Home;    
 
     platform.ready().then(() => {      
       // Okay, so the platform is ready and our plugins are available.

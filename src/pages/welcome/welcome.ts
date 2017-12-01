@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController, ViewController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
@@ -23,23 +23,20 @@ import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 })
 export class WelcomePage {
 
-  public user: FormGroup;
-  public timestamp = new Date().getTime();
+  public user: FormGroup;  
   public loading;
 
   alert(title, content) {
     let alert = this.alertCtrl.create({
       title: title,
       subTitle: content,
-      buttons: ['Okay']
+      buttons: ['Ok']
     });
     alert.present();
   }
 
-  constructor(public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook, public googlePlus: GooglePlus, public authService: AuthServiceProvider, public loadingCtrl: LoadingController) {
-    storage.set('page', 'Welcome');
-    storage.set("firstTime", true);
-    storage.set("limit", this.timestamp);
+  constructor(public viewCtrl: ViewController, public storage: Storage, public formBuilder: FormBuilder, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public platform: Platform, private fb: Facebook, public googlePlus: GooglePlus, public authService: AuthServiceProvider, public loadingCtrl: LoadingController) {
+    storage.set('page', 'Welcome');    
     this.user = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', Validators.required],
@@ -104,6 +101,9 @@ export class WelcomePage {
 
   }
 
+  cancel(){
+    this.viewCtrl.dismiss();
+  }
 
   loginFB() {    
     this.fb.login(['public_profile', 'user_friends', 'email'])

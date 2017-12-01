@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { NavController, Platform, AlertController } from 'ionic-angular';
+import { NavController, Platform, AlertController, ModalController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+import { WelcomePage } from '../welcome/welcome';
 
 
 @Component({
@@ -15,17 +16,31 @@ import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 export class Home {  
   public Error: any;
   public location: any;
+  public timestamp = new Date().getTime();
 
-  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
+  constructor(public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
     storage.set('page', 'Home');
     platform.ready().then(() => {      
       if (platform.is('cordova')) {
+
+        storage.get('isLoggedIn').then((val) => {            
+          if (!val) {
+            setTimeout(() => {
+              //this.navCtrl.setRoot(WelcomePage);
+              let modal = this.modalCtrl.create(WelcomePage);
+              modal.present();
+            }, 10 * 1000);
+          } 
+        });    
+
         storage.get("firstTime",).then((first) => {
           storage.get("limit").then((limit) => {
-            if(first){              
+            if(!first && !limit){
               this.registerPush();
               this.getLocation();
-              storage.set("firstTime", false);
+              storage.set("firstTime", true);
+              storage.set("limit", this.timestamp);  
+              this.alert("firsttime");
             } else {              
               let now = new Date().getTime();
               let diff = this.diffDays(now, limit);
@@ -36,7 +51,7 @@ export class Home {
               }
             }
           })
-        })
+        });
         
         firebase.onNotificationOpen()
         .subscribe((notification) => {
