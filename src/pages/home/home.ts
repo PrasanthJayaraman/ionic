@@ -8,7 +8,6 @@ import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { WelcomePage } from '../welcome/welcome';
 
-
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -18,19 +17,24 @@ export class Home {
   public location: any;
   public timestamp = new Date().getTime();
   public posts : String[];
+  public options: any;
+  public data: any;
 
   constructor(public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
     storage.set('page', 'Home');
+    
     platform.ready().then(() => {      
 
       this.getData(1);
+      this.options = {
+        direction: 'vertical'
+      }            
 
       if (platform.is('cordova')) {
 
         storage.get('isLoggedIn').then((val) => {            
           if (!val) {
-            setTimeout(() => {
-              //this.navCtrl.setRoot(WelcomePage);
+            setTimeout(() => {              
               let modal = this.modalCtrl.create(WelcomePage);
               modal.present();
             }, 10 * 1000);

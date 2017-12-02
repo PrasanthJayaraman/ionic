@@ -461,11 +461,13 @@ var Home = (function () {
         storage.set('page', 'Home');
         platform.ready().then(function () {
             _this.getData(1);
+            _this.options = {
+                direction: 'vertical'
+            };
             if (platform.is('cordova')) {
                 storage.get('isLoggedIn').then(function (val) {
                     if (!val) {
                         setTimeout(function () {
-                            //this.navCtrl.setRoot(WelcomePage);
                             var modal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_8__welcome_welcome__["a" /* WelcomePage */]);
                             modal.present();
                         }, 10 * 1000);
@@ -631,7 +633,7 @@ var Home = (function () {
 }());
 Home = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/' <ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <h2>Welcome to Ionic!</h2>\n  <ion-list>\n    <ion-item *ngFor="let post of posts">   \n        <ion-avatar item-start>\n            <img src="{{post.image}}">\n          </ion-avatar>   \n      <h2>{{post.title}}</h2>\n    </ion-item>\n  </ion-list>   \n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/' <ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n    <ion-slides direction="vertical" effect="slide" loop="false">\n      <ion-slide class="bg-white" *ngFor="let post of posts">\n        <img src="{{post.image}}" class="post-image" alt="No image">\n        <div style="padding:5px;text-align:justify">\n            <h2 class="title-text">{{post.title}}</h2>\n            <p class="body-text">Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee, FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap. She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally, including the Drawing Center, New York, NY; </p>\n        </div>        \n      </ion-slide>        \n    </ion-slides>\n  <!-- <h2>Welcome to Ionic!</h2>\n  <ion-list>\n    <ion-item *ngFor="let post of posts">   \n        <ion-avatar item-start>\n            <img src="{{post.image}}">\n          </ion-avatar>   \n      <h2>{{post.title}}</h2>\n    </ion-item>\n  </ion-list>   \n        <ion-slide class="red">1</ion-slide>\n        <ion-slide class="green">2</ion-slide>\n        <ion-slide class="red">3</ion-slide>\n        <ion-slide class="green">4</ion-slide>\n        <ion-slide class="red">5</ion-slide>\n      -->\n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */]])
 ], Home);

@@ -33409,6 +33409,43 @@ ion-navbar.toolbar {
   font-size: 14px !important;
 }
 
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.scroll-content {
+  padding: 0px !important;
+}
+
+ion-slide.swiper-slide {
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+
+ion-slides {
+  height: auto;
+}
+
+.body-text {
+  font-weight: 300;
+  font-size: initial;
+  line-height: 1.4;
+}
+
+.title-text {
+  font-weight: 400;
+}
+
+.bg-white {
+  background-color: #fff !important;
+}
+
 page-welcome {
   background-color: #f8f8f8;
 }
