@@ -1,0 +1,22 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    }
+  }
+}

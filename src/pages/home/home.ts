@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
-import { NavController, Platform, AlertController, ModalController } from 'ionic-angular';
+import { NavController, Platform, AlertController, ModalController, ToastController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+import { Network } from '@ionic-native/network';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
 import { WelcomePage } from '../welcome/welcome';
 
 @Component({
@@ -16,21 +19,68 @@ export class Home {
   public Error: any;
   public location: any;
   public timestamp = new Date().getTime();
-  public posts : String[];
+  public posts : any;
   public options: any;
   public data: any;
+  public disconnectSubscription: any;
+  public connectSubscription: any;
+  public isOnline : any;
+  public type: any;
+  public current: any;
+  public fileTransfer: FileTransferObject;
 
-  constructor(public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage, public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
-    storage.set('page', 'Home');
+  constructor(private transfer: FileTransfer, private file: File, public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage, 
+    public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, 
+    public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
     
-    platform.ready().then(() => {      
+    this.fileTransfer = this.transfer.create();
+    this.getData(1);
+    storage.set('page', 'Home');          
+    platform.ready().then(() => {
+      if (platform.is('cordova')) {       
+        
+        this.disconnectSubscription = network.onDisconnect().subscribe(() => {
+          console.log("1 outside", this.current);
+          if(this.current){
+            this.current = false;
+            this.isOnline = false;
+          }          
+        });
 
-      this.getData(1);
-      this.options = {
-        direction: 'vertical'
-      }            
+        this.connectSubscription = network.onConnect().subscribe(() => {           
+          console.log("Internet subscribtion check");   
+          console.log("outside", this.current);
+          if(!this.current){            
+            this.current = true;
+            console.log("inside", this.current);
+            setTimeout(() => {            
+              this.getData(1);
+            }, 3000);
+          }          
+        });    
 
-      if (platform.is('cordova')) {
+        this.type = network.type;
+
+        if(this.type == "unknown" || this.type == "none" || this.type == undefined){          
+          this.isOnline = false;
+          this.current = false;
+        } else{          
+          this.isOnline = true
+          this.current = true;
+        }
+        
+        if(this.isOnline){
+          this.getData(1);  // download data
+        } else {
+          //show local data when no internet
+          storage.get('posts').then((posts) => {
+            this.posts = posts;
+          }, error => console.error("pro error", error))         
+        }
+
+        this.options = {
+          direction: 'vertical'
+        }   
 
         storage.get('isLoggedIn').then((val) => {            
           if (!val) {
@@ -39,8 +89,8 @@ export class Home {
               modal.present();
             }, 10 * 1000);
           } 
-        });            
-
+        });    
+        
         storage.get("firstTime",).then((first) => {
           storage.get("limit").then((limit) => {
             if(!first && !limit){
@@ -70,12 +120,21 @@ export class Home {
             this.alert(notification.body);
           }
         });
+
+        this.disconnectSubscription = this.network.onDisconnect().subscribe(() => {          
+          this.toast.create({
+            message: `No network connection!`,
+            duration: 3000
+          }).present();
+        });
+
+
       }
+
     });
 
     platform.registerBackButtonAction((e) => {
-      storage.get('page').then((page) => {
-        if (page == "Home") {
+      storage.get('page').then((page) => {        
           let alert = alertCtrl.create({
             title: 'Confirm',
             message: 'Do you want to exit?',
@@ -87,12 +146,10 @@ export class Home {
               role: 'cancel'
             }]
           })
-          alert.present();
-        } else if (page == "Welcome") {
-          this.exitApp();
-        }
+          alert.present();        
       });
     });
+
   }
 
   exitApp() {
@@ -185,9 +242,12 @@ export class Home {
         var temp = JSON.parse(res._body);
       } catch(e) {
         console.log('already obj');
-      }      
-      this.posts = temp || res._body;
-      console.log(this.posts);
+      }            
+      this.posts = temp || res._body;    
+      let image = this.download(temp.image);
+      this.storage.set('posts', this.posts).then(() => {
+        console.log("updated local storage");
+      }, error => console.error("pro error", error))
     })
   }
 
@@ -199,6 +259,18 @@ export class Home {
     .then((res: any) => {      
       console.log("Device data updated");
     })
-  }
+  }  
+
+  download(url) {
+    if(url) {
+      let name = Math.random().toString(36).substring(10);
+      this.fileTransfer.download(url, this.file.dataDirectory + name)
+      .then((entry) => {
+        console.log("entry", entry.toURL);        
+      }, (error) => {
+        console.log("err", error)        
+      })           
+    }    
+  }  
 
 }

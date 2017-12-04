@@ -17,6 +17,9 @@ import { Facebook } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 import { HttpModule } from '@angular/http';
+import { Network } from '@ionic-native/network';
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
 
 @NgModule({
   declarations: [
@@ -48,9 +51,12 @@ import { HttpModule } from '@angular/http';
     Firebase,
     IonicStorageModule,
     Facebook,
+    Network,
     GooglePlus,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthServiceProvider
+    AuthServiceProvider,
+    FileTransfer,
+    File
   ]
 })
 export class AppModule {}

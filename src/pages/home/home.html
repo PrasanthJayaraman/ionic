@@ -13,7 +13,7 @@
 
 
 <ion-content padding>
-    <ion-slides direction="vertical" effect="slide" loop="false">
+    <ion-slides direction="vertical" effect="coverflow" loop="false">
       <ion-slide class="bg-white" *ngFor="let post of posts">
         <img src="{{post.image}}" class="post-image" alt="No image">
         <div style="padding:5px;text-align:justify">

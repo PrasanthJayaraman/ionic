@@ -49,10 +49,19 @@
     "cordova-plugin-googleplus": {
       "REVERSED_CLIENT_ID": "com.googleusercontent.apps.361099237251-c7iln2cpankf3j3ume8hugl5ejlvaga5",
       "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
     }
   },
   "dependent_plugins": {
     "cordova-plugin-compat": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-file": {
       "PACKAGE_NAME": "io.ionicapp.jobswala"
     }
   }
