@@ -1,4 +1,4 @@
- <ion-header>
+<ion-header>
   <ion-navbar>
     <ion-buttons left>
       <button ion-button menuToggle>
@@ -13,28 +13,30 @@
 
 
 <ion-content padding>
-    <ion-slides direction="vertical" effect="coverflow" loop="false">
-      <ion-slide class="bg-white" *ngFor="let post of posts">
-        <img src="{{post.image}}" class="post-image" alt="No image">
-        <div style="padding:5px;text-align:justify">
-            <h2 class="title-text">{{post.title}}</h2>
-            <p class="body-text">Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee, FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap. She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally, including the Drawing Center, New York, NY; </p>
-        </div>        
-      </ion-slide>        
-    </ion-slides>
-  <!-- <h2>Welcome to Ionic!</h2>
-  <ion-list>
-    <ion-item *ngFor="let post of posts">   
-        <ion-avatar item-start>
-            <img src="{{post.image}}">
-          </ion-avatar>   
-      <h2>{{post.title}}</h2>
-    </ion-item>
-  </ion-list>   
-        <ion-slide class="red">1</ion-slide>
-        <ion-slide class="green">2</ion-slide>
-        <ion-slide class="red">3</ion-slide>
-        <ion-slide class="green">4</ion-slide>
-        <ion-slide class="red">5</ion-slide>
+  <ion-slides direction="vertical" effect="slide" loop="false">
+    <ion-slide class="bg-white" *ngFor="let post of posts">
+      <img src="{{post.image}}" class="post-image" alt="No image">
+      <div style="padding:5px;text-align:justify">
+        <h2 class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</h2>
+        <p class="body-text">{{post.body.length > 435 ? post.body.substring(0, 435) + "..." : post.body}}</p>
+        <div class="row">
+          <div class="column">            
+            <button ion-button color="secondary" outline>Apply</button>
+          </div>
+          <div class="column">            
+              <button ion-button color="secondary" class="button" round>Notify</button>
+          </div>
+          <div class="column">            
+              <button ion-button color="dark" class="button" clear>Share</button>
+          </div>
+        </div>
+      </div>
+    </ion-slide>
+  </ion-slides>
+  <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,
+          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.
+          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the
+          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,
+          including the Drawing Center, New York, NY; 
       -->
 </ion-content>
