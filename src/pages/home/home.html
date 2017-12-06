@@ -13,21 +13,23 @@
 
 
 <ion-content padding>
-  <ion-slides direction="vertical" effect="slide" loop="false">
+  <ion-slides direction='vertical' effect="slide" loop="false">
     <ion-slide class="bg-white" *ngFor="let post of posts">
-      <img src="{{post.image}}" class="post-image" alt="No image">
-      <div style="padding:5px;text-align:justify">
-        <h2 class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</h2>
-        <p class="body-text">{{post.body.length > 435 ? post.body.substring(0, 435) + "..." : post.body}}</p>
-        <div class="row">
+      <div class="post-image-div">
+          <img src="{{post.image}}" class="post-image" alt="No image">
+      </div>      
+      <div class="post-content-div">
+        <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
+        <p class="body-text">{{post.body}}</p>
+        <div class="row buttons-row">
           <div class="column">            
             <button ion-button color="secondary" outline>Apply</button>
           </div>
           <div class="column">            
-              <button ion-button color="secondary" class="button" round>Notify</button>
+              <button ion-button color="secondary" class="button" outline>Notify</button>
           </div>
           <div class="column">            
-              <button ion-button color="dark" class="button" clear>Share</button>
+              <button ion-button color="secondary" class="button" outline>Share</button>
           </div>
         </div>
       </div>
@@ -38,5 +40,6 @@
           She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the
           Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,
           including the Drawing Center, New York, NY; 
+          [ngStyle]="post.class"
       -->
 </ion-content>

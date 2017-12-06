@@ -24,26 +24,52 @@ ion-slides {
 
 .body-text {
     font-weight: 300;
-    font-size: initial;
+    font-size: 16px;
     line-height: 1.4;
     overflow: hidden;    
     margin-top: 0px;
+    height: 42vh;
 }
 
 .title-text {
     font-weight: 400;
     text-align: left;
+    font-size: 18px;
+    margin-top: 0px !important;
 }
 
 .bg-white {
     background-color: #fff !important;
 }
 
+.post-image-div {
+    width: 100% !important;    
+    height: 30vh !important;    
+    position: relative;
+}
+
 .post-image {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    botoom: 0px;
+    left: 0px;
     width: 100% !important;
-    max-width: 100% !important;
-    height: 230px !important;
-    max-height: 100% !important;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.post-content-div {
+    padding: 5px;
+    text-align: justify;
+    height: 60vh !important;
+    position: relative;    
+}
+
+.buttons-row {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 .column {
@@ -57,7 +83,7 @@ ion-slides {
 
 .column .button {
     margin: 0px !important;
-    height: 25px;
+    height: 25px;    
 }
 /* Clear floats after the columns */
 .row:after {
@@ -65,3 +91,36 @@ ion-slides {
     display: table;
     clear: both;
 }
+
+@media (max-width: 320px) {
+    .title-text {        
+        font-size: 14px !important;
+        margin-top: 0px !important;
+    }
+  
+    .body-text {        
+        font-size: 14px !important;        
+    }
+  
+}
+
+@media (max-height: 570px) {    
+    .post-content-div {
+        padding: 5px;
+        text-align: justify;
+        height: 62vh !important;
+        position: relative;
+        border: 1px solid #000
+    }
+}
+
+@media (max-height: 640px) {    
+    .post-content-div {
+        padding: 5px;
+        text-align: justify;
+        height: 61vh !important;
+        position: relative;
+        border: 1px solid #000
+    }
+}
+  

@@ -412,7 +412,7 @@ var WelcomePage = (function () {
 }());
 WelcomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-welcome',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/'<!--\n  Generated template for the WelcomePage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n\n<ion-content center text-center padding>\n  <br>\n  <button (click)="cancel()" style="right: 0;position: absolute;margin-right: 12px;font-size:20px;">\n    <ion-icon name="close"></ion-icon>\n  </button>\n  <img src="assets/imgs/icon.png" class="logo-medium" alt="logo" >\n  <h5 class="secondary bold">Please sign in to explore more jobs..</h5>\n  <div>\n    <span class="light">-- Sign in with --</span>\n    <br>\n    <br>\n    <div class="button-wrapper">\n      <button ion-button class="whitey-background circle shadow" (click)="loginFB()" style="margin-right:30px;">\n        <img src="assets/imgs/facebook.png" class="logo-small" alt="fb">\n      </button>\n      <br>\n      <button ion-button class="whitey-background circle shadow" (click)="loginGoogle()">\n        <img src="assets/imgs/google.png" class="logo-small" alt="g+">\n      </button>\n    </div>\n    <br>\n    <span class="light">-- Or --</span>\n    <form [formGroup]="user" (ngSubmit)="login()">\n      <ion-item class="inputPadding">\n        <ion-label fixed>Name</ion-label>\n        <ion-input type="text" formControlName="name"></ion-input>\n      </ion-item>\n      <ion-item class="inputPadding">\n        <ion-label fixed>Email</ion-label>\n        <ion-input type="email" formControlName="email"></ion-input>\n      </ion-item>\n      <ion-item class="inputPadding">\n        <ion-label fixed>Phone</ion-label>\n        <ion-input type="tel" formControlName="phone"></ion-input>\n      </ion-item>\n      <br>\n      <button ion-button color="secondary" type="submit" class="shadow bottom-space" round style="width:95%" >Get Started</button>\n    </form>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/,
+        selector: 'page-welcome',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/'<!--\n  Generated template for the WelcomePage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n\n<ion-content center text-center padding>\n  <br>\n  <button (click)="cancel()" style="right: 0;position: absolute;margin-right: 12px;font-size:20px;">\n    <ion-icon name="close"></ion-icon>\n  </button>\n  <img src="assets/imgs/icon.png" class="logo-medium" alt="logo" >\n  <h5 class="secondary bold">Please sign in to explore more jobs..</h5>\n  <div>\n    <!-- <span class="light">-- Sign in with --</span> -->\n    <br>\n    <br>\n    <div class="button-wrapper">\n      <button ion-button class="whitey-background circle shadow" (click)="loginFB()" style="margin-right:30px;">\n        <img src="assets/imgs/facebook.png" class="logo-small" alt="fb">\n      </button>\n      <br>\n      <button ion-button class="whitey-background circle shadow" (click)="loginGoogle()">\n        <img src="assets/imgs/google.png" class="logo-small" alt="g+">\n      </button>\n    </div>\n    <br>\n    <span class="light">-- Or --</span>\n    <form [formGroup]="user" (ngSubmit)="login()">\n      <ion-item class="inputPadding">\n        <ion-label fixed>Name</ion-label>\n        <ion-input type="text" formControlName="name"></ion-input>\n      </ion-item>\n      <ion-item class="inputPadding">\n        <ion-label fixed>Email</ion-label>\n        <ion-input type="email" formControlName="email"></ion-input>\n      </ion-item>\n      <ion-item class="inputPadding">\n        <ion-label fixed>Phone</ion-label>\n        <ion-input type="tel" formControlName="phone"></ion-input>\n      </ion-item>\n      <br>\n      <button ion-button color="secondary" type="submit" class="shadow bottom-space" round style="width:95%" >Get Started</button>\n    </form>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */], __WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_7_ionic_angular_platform_platform__["a" /* Platform */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_facebook__["a" /* Facebook */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_google_plus__["a" /* GooglePlus */], __WEBPACK_IMPORTED_MODULE_8__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */]])
 ], WelcomePage);
@@ -477,81 +477,24 @@ var Home = (function () {
         this.firebase = firebase;
         this.authService = authService;
         this.timestamp = new Date().getTime();
-        this.fileTransfer = this.transfer.create();
-        this.getData(1);
-        storage.set('page', 'Home');
         platform.ready().then(function () {
             if (platform.is('cordova')) {
                 _this.disconnectSubscription = network.onDisconnect().subscribe(function () {
-                    console.log("1 outside", _this.current);
                     if (_this.current) {
                         _this.current = false;
                         _this.isOnline = false;
                     }
                 });
                 _this.connectSubscription = network.onConnect().subscribe(function () {
-                    console.log("Internet subscribtion check");
-                    console.log("outside", _this.current);
                     if (!_this.current) {
                         _this.current = true;
-                        console.log("inside", _this.current);
                         setTimeout(function () {
                             _this.getData(1);
                         }, 3000);
                     }
                 });
-                _this.type = network.type;
-                if (_this.type == "unknown" || _this.type == "none" || _this.type == undefined) {
-                    _this.isOnline = false;
-                    _this.current = false;
-                }
-                else {
-                    _this.isOnline = true;
-                    _this.current = true;
-                }
-                if (_this.isOnline) {
-                    _this.getData(1); // download data
-                }
-                else {
-                    //show local data when no internet
-                    storage.get('posts').then(function (posts) {
-                        _this.posts = posts;
-                    }, function (error) { return console.error("pro error", error); });
-                }
-                _this.options = {
-                    direction: 'vertical'
-                };
-                storage.get('isLoggedIn').then(function (val) {
-                    if (!val) {
-                        setTimeout(function () {
-                            var modal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_11__welcome_welcome__["a" /* WelcomePage */]);
-                            modal.present();
-                        }, 10 * 1000);
-                    }
-                });
-                storage.get("firstTime").then(function (first) {
-                    storage.get("limit").then(function (limit) {
-                        if (!first && !limit) {
-                            _this.registerPush();
-                            _this.getLocation();
-                            storage.set("firstTime", true);
-                            storage.set("limit", _this.timestamp);
-                            _this.alert("firsttime");
-                        }
-                        else {
-                            var now = new Date().getTime();
-                            var diff = _this.diffDays(now, limit);
-                            if (diff > 0) {
-                                _this.registerPush();
-                                _this.getLocation();
-                                storage.set("limit", now);
-                            }
-                        }
-                    });
-                });
                 firebase.onNotificationOpen()
                     .subscribe(function (notification) {
-                    console.log("Got", notification);
                     if (notification.tap) {
                         _this.alert(notification.body);
                     }
@@ -584,6 +527,62 @@ var Home = (function () {
             });
         });
     }
+    Home.prototype.ionViewDidLoad = function () {
+        var _this = this;
+        this.getData(1);
+        this.alert("platform height " + this.platform.height());
+        if (this.platform.is('cordova')) {
+            this.type = this.network.type;
+            this.fileTransfer = this.transfer.create();
+            this.storage.set('page', 'Home');
+            if (this.type == "unknown" || this.type == "none" || this.type == undefined) {
+                this.isOnline = false;
+                this.current = false;
+            }
+            else {
+                this.isOnline = true;
+                this.current = true;
+            }
+            if (this.isOnline) {
+                this.getData(1); // download data
+            }
+            else {
+                //show local data when no internet
+                this.storage.get('posts').then(function (posts) {
+                    _this.posts = posts;
+                }, function (error) { return console.error("pro error", error); });
+            }
+            this.ionOptions = {};
+            this.storage.get('isLoggedIn').then(function (val) {
+                if (!val) {
+                    setTimeout(function () {
+                        var modal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_11__welcome_welcome__["a" /* WelcomePage */]);
+                        modal.present();
+                    }, 10 * 1000);
+                }
+            });
+            this.storage.get("firstTime").then(function (first) {
+                _this.storage.get("limit").then(function (limit) {
+                    if (!first && !limit) {
+                        _this.registerPush();
+                        _this.getLocation();
+                        _this.storage.set("firstTime", true);
+                        _this.storage.set("limit", _this.timestamp);
+                        _this.alert("firsttime");
+                    }
+                    else {
+                        var now = new Date().getTime();
+                        var diff = _this.diffDays(now, limit);
+                        if (diff > 0) {
+                            _this.registerPush();
+                            _this.getLocation();
+                            _this.storage.set("limit", now);
+                        }
+                    }
+                });
+            });
+        }
+    };
     Home.prototype.exitApp = function () {
         this.platform.exitApp();
     };
@@ -674,7 +673,14 @@ var Home = (function () {
                 console.log('already obj');
             }
             _this.posts = temp || res._body;
-            var image = _this.download(temp.image);
+            //let image = this.download(temp.image);
+            _this.posts.forEach(function (element) {
+                var a = {
+                    height: _this.platform.height() + "px"
+                };
+                console.log(a);
+                //element.class = a
+            });
             _this.storage.set('posts', _this.posts).then(function () {
                 console.log("updated local storage");
             }, function (error) { return console.error("pro error", error); });
@@ -704,7 +710,7 @@ var Home = (function () {
 }());
 Home = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <ion-slides direction="vertical" effect="slide" loop="false">\n    <ion-slide class="bg-white" *ngFor="let post of posts">\n      <img src="{{post.image}}" class="post-image" alt="No image">\n      <div style="padding:5px;text-align:justify">\n        <h2 class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</h2>\n        <p class="body-text">{{post.body.length > 435 ? post.body.substring(0, 435) + "..." : post.body}}</p>\n        <div class="row">\n          <div class="column">            \n            <button ion-button color="secondary" outline>Apply</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="secondary" class="button" round>Notify</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="dark" class="button" clear>Share</button>\n          </div>\n        </div>\n      </div>\n    </ion-slide>\n  </ion-slides>\n  <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,\n          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.\n          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the\n          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,\n          including the Drawing Center, New York, NY; \n      -->\n</ion-content>'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Home\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <ion-slides direction=\'vertical\' effect="slide" loop="false">\n    <ion-slide class="bg-white" *ngFor="let post of posts">\n      <div class="post-image-div">\n          <img src="{{post.image}}" class="post-image" alt="No image">\n      </div>      \n      <div class="post-content-div">\n        <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>\n        <p class="body-text">{{post.body}}</p>\n        <div class="row buttons-row">\n          <div class="column">            \n            <button ion-button color="secondary" outline>Apply</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="secondary" class="button" outline>Notify</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="secondary" class="button" outline>Share</button>\n          </div>\n        </div>\n      </div>\n    </ion-slide>\n  </ion-slides>\n  <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,\n          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.\n          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the\n          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,\n          including the Drawing Center, New York, NY; \n          [ngStyle]="post.class"\n      -->\n</ion-content>'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_9__ionic_native_file_transfer__["a" /* FileTransfer */], __WEBPACK_IMPORTED_MODULE_10__ionic_native_file__["a" /* File */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ToastController */], __WEBPACK_IMPORTED_MODULE_8__ionic_native_network__["a" /* Network */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */],
