@@ -55,6 +55,9 @@
     },
     "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-inappbrowser": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
     }
   },
   "dependent_plugins": {

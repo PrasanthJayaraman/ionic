@@ -36524,7 +36524,6 @@ ion-slides {
   line-height: 1.4;
   overflow: hidden;
   margin-top: 0px;
-  height: 42vh;
 }
 
 .title-text {
@@ -36540,7 +36539,6 @@ ion-slides {
 
 .post-image-div {
   width: 100% !important;
-  height: 30vh !important;
   position: relative;
 }
 
@@ -36558,7 +36556,6 @@ ion-slides {
 .post-content-div {
   padding: 5px;
   text-align: justify;
-  height: 60vh !important;
   position: relative;
 }
 
@@ -36566,6 +36563,7 @@ ion-slides {
   position: absolute;
   bottom: 0;
   width: 100%;
+  margin-bottom: 10px;
 }
 
 .column {
@@ -36617,6 +36615,10 @@ ion-slides {
     position: relative;
     border: 1px solid #000;
   }
+}
+
+.scroll-refresher {
+  width: 100%;
 }
 
 page-welcome {

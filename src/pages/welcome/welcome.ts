@@ -5,7 +5,6 @@ import { Storage } from '@ionic/storage';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
 
-import { Home } from '../home/home';
 import { Platform } from 'ionic-angular/platform/platform';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
@@ -87,7 +86,7 @@ export class WelcomePage {
           this.storage.set('profile', data).then(() => {
             this.storage.set('isLoggedIn', true).then(() => {
               loading.dismiss();
-              this.navCtrl.setRoot(Home);
+              this.viewCtrl.dismiss();
             }, error => console.error("islogg error", error))
           }, error => console.error("pro error", error))
         } else {

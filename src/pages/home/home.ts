@@ -9,6 +9,8 @@ import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { Network } from '@ionic-native/network';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
+import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser';
+
 import { WelcomePage } from '../welcome/welcome';
 
 @Component({
@@ -20,7 +22,7 @@ export class Home {
   public location: any;
   public timestamp = new Date().getTime();
   public posts: any;
-  public ionOptions: any;
+  public platformHeight: any;
   public data: any;
   public disconnectSubscription: any;
   public connectSubscription: any;
@@ -31,7 +33,7 @@ export class Home {
 
   constructor(private transfer: FileTransfer, private file: File, public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
     public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy,
-    public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider) {
+    public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser) {
 
     platform.ready().then(() => {
       if (platform.is('cordova')) {
@@ -90,8 +92,15 @@ export class Home {
   }
 
   ionViewDidLoad() {
-    this.getData(1);
-    this.alert(`platform height ${this.platform.height()}`);
+    this.getData(1);    
+    this.storage.get('isLoggedIn').then((val) => {
+      if (!val) {
+        setTimeout(() => {
+          let modal = this.modalCtrl.create(WelcomePage);
+          modal.present();
+        }, 10 * 1000);
+      }
+    });
     if (this.platform.is('cordova')) {
       this.type = this.network.type;
       this.fileTransfer = this.transfer.create();      
@@ -111,11 +120,7 @@ export class Home {
         this.storage.get('posts').then((posts) => {
           this.posts = posts;
         }, error => console.error("pro error", error))
-      }
-
-      this.ionOptions = {
-        
-      }
+      }      
 
       this.storage.get('isLoggedIn').then((val) => {
         if (!val) {
@@ -239,14 +244,20 @@ export class Home {
         } catch (e) {
           console.log('already obj');
         }
-        this.posts = temp || res._body;
-        //let image = this.download(temp.image);
-        this.posts.forEach(element => {  
-          let a = {
-            height: `${this.platform.height()}px`
-          };      
-          console.log(a);
-          //element.class = a
+        this.posts = temp || res._body;        
+        this.platformHeight = this.platform.height();
+        if(this.platform.is('ios')){
+          if(this.platformHeight == 812) {
+            this.platformHeight -= 70; //iphone X
+          } else {
+            this.platformHeight -= 44;
+          }          
+        }
+        this.posts.forEach(element => {                      
+          element.slideH = `${this.platformHeight}px`;
+          element.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
+          element.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
+          console.log(element);
         });
         this.storage.set('posts', this.posts).then(() => {
           console.log("updated local storage");
@@ -275,5 +286,12 @@ export class Home {
         })
     }
   }
+
+  openWithSystemBrowser(url : string){    
+    const options : InAppBrowserOptions = {
+      clearCache: 'no'
+    }
+    this.inAppBrowser.create(url, '_blank', options);
+  }  
 
 }

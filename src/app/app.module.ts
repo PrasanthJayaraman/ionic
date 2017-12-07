@@ -20,6 +20,7 @@ import { HttpModule } from '@angular/http';
 import { Network } from '@ionic-native/network';
 import { FileTransfer } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { File } from '@ionic-native/file';
     Facebook,
     Network,
     GooglePlus,
+    InAppBrowser,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     AuthServiceProvider,
     FileTransfer,

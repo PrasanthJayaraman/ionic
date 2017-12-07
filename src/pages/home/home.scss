@@ -27,8 +27,7 @@ ion-slides {
     font-size: 16px;
     line-height: 1.4;
     overflow: hidden;    
-    margin-top: 0px;
-    height: 42vh;
+    margin-top: 0px;    
 }
 
 .title-text {
@@ -43,8 +42,7 @@ ion-slides {
 }
 
 .post-image-div {
-    width: 100% !important;    
-    height: 30vh !important;    
+    width: 100% !important;        
     position: relative;
 }
 
@@ -61,8 +59,7 @@ ion-slides {
 
 .post-content-div {
     padding: 5px;
-    text-align: justify;
-    height: 60vh !important;
+    text-align: justify;    
     position: relative;    
 }
 
@@ -70,6 +67,7 @@ ion-slides {
     position: absolute;
     bottom: 0;
     width: 100%;
+    margin-bottom: 10px;
 }
 
 .column {
@@ -123,4 +121,7 @@ ion-slides {
         border: 1px solid #000
     }
 }
-  
+
+.scroll-refresher {
+    width: 100%;
+  }
