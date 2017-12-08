@@ -54,9 +54,9 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
     Facebook,
     Network,
     GooglePlus,
-    InAppBrowser,
+    InAppBrowser,    
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthServiceProvider,
+    AuthServiceProvider,    
     FileTransfer,
     File
   ]

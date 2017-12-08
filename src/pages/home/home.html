@@ -12,13 +12,13 @@
 </ion-header>
 
 
-<ion-content padding>             
+<ion-content padding>    
    <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false">                             
-    <ion-slide class="bg-white" *ngFor="let post of posts" [style.height]="post.slideH">                       
-      <div class="post-image-div" [style.height]="post.imageH">
-          <img src="{{post.image}}" class="post-image" alt="No image">
+    <ion-slide class="bg-white" *ngFor="let post of posts" [style.height]="heights.slideH">                       
+      <div class="post-image-div" [style.height]="heights.imageH">
+        <img [attr.id]="post._id" [src]="post.image" class="post-image" alt="No image" crossOrigin="Anonymous" />          
       </div>      
-      <div class="post-content-div" [style.height]="post.bodyH">
+      <div class="post-content-div" [style.height]="heights.bodyH">
         <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
         <p class="body-text">{{post.body}}</p>
         <div class="row buttons-row">

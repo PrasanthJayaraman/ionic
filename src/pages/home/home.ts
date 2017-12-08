@@ -7,8 +7,6 @@ import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { Network } from '@ionic-native/network';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
-import { File } from '@ionic-native/file';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser';
 
 import { WelcomePage } from '../welcome/welcome';
@@ -29,12 +27,13 @@ export class Home {
   public isOnline: any;
   public type: any;
   public current: any;
-  public fileTransfer: FileTransferObject;
-
-  constructor(private transfer: FileTransfer, private file: File, public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
+  public index: any;
+  public heights = <any>{};
+    
+  constructor(public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
     public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy,
     public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser) {
-
+    storage.set('page', 'Home');
     platform.ready().then(() => {
       if (platform.is('cordova')) {
         this.disconnectSubscription = network.onDisconnect().subscribe(() => {
@@ -42,7 +41,7 @@ export class Home {
             this.current = false;
             this.isOnline = false;
           }
-        });
+        });        
 
         this.connectSubscription = network.onConnect().subscribe(() => {
           if (!this.current) {
@@ -92,65 +91,60 @@ export class Home {
   }
 
   ionViewDidLoad() {
-    this.getData(1);    
-    this.storage.get('isLoggedIn').then((val) => {
-      if (!val) {
-        setTimeout(() => {
-          let modal = this.modalCtrl.create(WelcomePage);
-          modal.present();
-        }, 10 * 1000);
-      }
-    });
-    if (this.platform.is('cordova')) {
-      this.type = this.network.type;
-      this.fileTransfer = this.transfer.create();      
-      this.storage.set('page', 'Home');
-      if (this.type == "unknown" || this.type == "none" || this.type == undefined) {
-        this.isOnline = false;
-        this.current = false;
-      } else {
-        this.isOnline = true
-        this.current = true;
-      }
-
-      if (this.isOnline) {
-        this.getData(1);  // download data
-      } else {
-        //show local data when no internet
-        this.storage.get('posts').then((posts) => {
-          this.posts = posts;
-        }, error => console.error("pro error", error))
-      }      
-
-      this.storage.get('isLoggedIn').then((val) => {
-        if (!val) {
-          setTimeout(() => {
-            let modal = this.modalCtrl.create(WelcomePage);
-            modal.present();
-          }, 10 * 1000);
+    //this.getData(1);
+    //this.getPlatformHeight();
+    this.platform.ready().then(() => {
+      if (this.platform.is('cordova')) {
+        this.getPlatformHeight();
+        this.type = this.network.type;
+        this.storage.set('page', 'Home');
+        if (this.type == "unknown" || this.type == "none" || this.type == undefined) {
+          this.isOnline = false;
+          this.current = false;
+        } else {
+          this.isOnline = true
+          this.current = true;
         }
-      });
+        console.log("online", this.isOnline)
+        if (this.isOnline) {
+          this.getData(1);  // download data
+        } else {
+          //show local data when no internet
+          this.storage.get('posts').then((posts) => {
+            this.posts = posts;
+          }, error => console.error("pro error", error))
+        }
 
-      this.storage.get("firstTime", ).then((first) => {
-        this.storage.get("limit").then((limit) => {
-          if (!first && !limit) {
-            this.registerPush();
-            this.getLocation();
-            this.storage.set("firstTime", true);
-            this.storage.set("limit", this.timestamp);
-            this.alert("firsttime");
-          } else {
-            let now = new Date().getTime();
-            let diff = this.diffDays(now, limit);
-            if (diff > 0) {
+        this.storage.get('isLoggedIn').then((val) => {
+          if (!val) {
+            setTimeout(() => {
+              let modal = this.modalCtrl.create(WelcomePage);
+              modal.present();
+            }, 10 * 1000);
+          }
+        });
+
+        this.storage.get("firstTime", ).then((first) => {
+          this.storage.get("limit").then((limit) => {
+            if (!first && !limit) {
               this.registerPush();
               this.getLocation();
-              this.storage.set("limit", now);
+              this.storage.set("firstTime", true);
+              this.storage.set("limit", this.timestamp);
+              this.alert("firsttime");
+            } else {
+              let now = new Date().getTime();
+              let diff = this.diffDays(now, limit);
+              if (diff > 0) {
+                this.registerPush();
+                this.getLocation();
+                this.storage.set("limit", now);
+              }
             }
-          }
-        })
-      });
-    }
+          })
+        });
+      }
+    });
   }
 
   exitApp() {
@@ -235,34 +229,41 @@ export class Home {
     if (!index) {
       index = 1;
     }
-
+    this.posts = [];
     this.authService.getData('posts/' + index)
       .then((res: any) => {
-        this.storage.set('index', index);
+        this.index = index;
+        let temp;
         try {
-          var temp = JSON.parse(res._body);
+          temp = JSON.parse(res._body);
         } catch (e) {
           console.log('already obj');
-        }
-        this.posts = temp || res._body;        
-        this.platformHeight = this.platform.height();
-        if(this.platform.is('ios')){
-          if(this.platformHeight == 812) {
-            this.platformHeight -= 70; //iphone X
-          } else {
-            this.platformHeight -= 44;
-          }          
-        }
-        this.posts.forEach(element => {                      
-          element.slideH = `${this.platformHeight}px`;
-          element.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
-          element.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
-          console.log(element);
-        });
-        this.storage.set('posts', this.posts).then(() => {
-          console.log("updated local storage");
-        }, error => console.error("pro error", error))
+          temp = res._body;
+        }        
+        this.posts = temp;
+        var localPosts = [];
+        setTimeout(() => {
+          temp.forEach(element => {                               
+            element.image = this.getBase64(document.getElementById(element._id));
+            localPosts.push(element);
+          });
+          this.updateStorage(localPosts);
+        }, 3000)                
       })
+  }
+
+  getPlatformHeight(){
+    this.platformHeight = this.platform.height();
+    if (this.platform.is('ios')) {
+      if (this.platformHeight == 812) {
+        this.platformHeight -= 70; //iphone X
+      } else {
+        this.platformHeight -= 44;
+      }
+    }
+    this.heights.slideH = `${this.platformHeight}px`;
+    this.heights.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
+    this.heights.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
   }
 
   updateData(data) {
@@ -272,26 +273,69 @@ export class Home {
     this.authService.postData('user/device', headers, data)
       .then((res: any) => {
         console.log("Device data updated");
+      }, (error) => {
+        console.log("device update error",error);
+      })
+      .catch((e) => {
+        console.log("device update catch",e);
       })
   }
 
-  download(url) {
-    if (url) {
-      let name = Math.random().toString(36).substring(10);
-      this.fileTransfer.download(url, this.file.dataDirectory + name)
-        .then((entry) => {
-          console.log("entry", entry.toURL);
-        }, (error) => {
-          console.log("err", error)
-        })
-    }
-  }
-
-  openWithSystemBrowser(url : string){    
-    const options : InAppBrowserOptions = {
+  openWithSystemBrowser(url: string) {
+    const options: InAppBrowserOptions = {
       clearCache: 'no'
     }
     this.inAppBrowser.create(url, '_blank', options);
-  }  
+  }
+
+  getBase64(img){
+    var canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var dataURL = canvas.toDataURL("image/png");
+    //return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    return dataURL;
+  }
+
+  updateStorage(arr){    
+    var oldPosts = []; //existing post available in localstorage
+    var allPosts = []; // new posts to download images
+    console.log("incoming",arr.length)
+    this.storage.get('posts').then((posts: any) => {      
+      console.log("posts length", posts && posts.length);      
+      if(posts && posts.length > 0){  
+        for(let i=0; i<arr.length; i++){          
+          let newPosts = []; let existing = false;
+          for(let j=0; j<posts.length; j++){
+            if(arr[i] && posts[j]){
+              if(arr[i]._id == posts[j]._id){  // If same post is coming then take add to old posts
+                oldPosts.push(posts[j]);
+                existing = true;
+                break;
+              } 
+            }            
+          }
+          if(!existing && arr[i]){ // if it is a new post then take the new post
+            newPosts.push(arr[i]);
+          }
+          allPosts.push(...newPosts);
+        }          
+      } else {
+        allPosts = [...arr];  // if localstorage is empty save current posts
+      }   
+      console.log("oldPosts", oldPosts.length);      
+      console.log("allPosts", allPosts.length);
+      var finalArr = [];      
+      finalArr.push(...oldPosts);
+      finalArr.push(...allPosts);
+      console.log("finalArr lrngth", finalArr.length);
+      this.storage.set('posts', finalArr);
+      this.storage.get('posts').then((posts) => {
+        //console.log("final", JSON.stringify(posts));
+      });    
+    });
+  }
 
 }

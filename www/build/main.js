@@ -1,6 +1,6 @@
 webpackJsonp([1],{
 
-/***/ 113:
+/***/ 114:
 /***/ (function(module, exports) {
 
 function webpackEmptyAsyncContext(req) {
@@ -13,16 +13,16 @@ function webpackEmptyAsyncContext(req) {
 webpackEmptyAsyncContext.keys = function() { return []; };
 webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
 module.exports = webpackEmptyAsyncContext;
-webpackEmptyAsyncContext.id = 113;
+webpackEmptyAsyncContext.id = 114;
 
 /***/ }),
 
-/***/ 155:
+/***/ 156:
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
 	"../pages/welcome/welcome.module": [
-		281,
+		282,
 		0
 	]
 };
@@ -37,29 +37,28 @@ function webpackAsyncContext(req) {
 webpackAsyncContext.keys = function webpackAsyncContextKeys() {
 	return Object.keys(map);
 };
-webpackAsyncContext.id = 155;
+webpackAsyncContext.id = 156;
 module.exports = webpackAsyncContext;
 
 /***/ }),
 
-/***/ 200:
+/***/ 201:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Home; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__ = __webpack_require__(201);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__ = __webpack_require__(202);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__ = __webpack_require__(203);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_storage__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__ = __webpack_require__(204);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__ = __webpack_require__(202);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__ = __webpack_require__(203);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__ = __webpack_require__(204);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_storage__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__ = __webpack_require__(205);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_network__ = __webpack_require__(205);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_file_transfer__ = __webpack_require__(206);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_file__ = __webpack_require__(207);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_in_app_browser__ = __webpack_require__(208);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__welcome_welcome__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_network__ = __webpack_require__(206);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_in_app_browser__ = __webpack_require__(207);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__providers_file_transfer_file_transfer__ = __webpack_require__(208);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__welcome_welcome__ = __webpack_require__(52);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -81,12 +80,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var Home = (function () {
-    function Home(transfer, file, toast, network, modalCtrl, navCtrl, storage, platform, geolocation, locationAccuracy, diagnostic, alertCtrl, firebase, authService, inAppBrowser) {
+    function Home(fileTransfer, toast, network, modalCtrl, navCtrl, storage, platform, geolocation, locationAccuracy, diagnostic, alertCtrl, firebase, authService, inAppBrowser) {
         var _this = this;
-        this.transfer = transfer;
-        this.file = file;
+        this.fileTransfer = fileTransfer;
         this.toast = toast;
         this.network = network;
         this.modalCtrl = modalCtrl;
@@ -101,6 +98,8 @@ var Home = (function () {
         this.authService = authService;
         this.inAppBrowser = inAppBrowser;
         this.timestamp = new Date().getTime();
+        this.heights = {};
+        storage.set('page', 'Home');
         platform.ready().then(function () {
             if (platform.is('cordova')) {
                 _this.disconnectSubscription = network.onDisconnect().subscribe(function () {
@@ -153,65 +152,61 @@ var Home = (function () {
     }
     Home.prototype.ionViewDidLoad = function () {
         var _this = this;
-        this.getData(1);
-        this.storage.get('isLoggedIn').then(function (val) {
-            if (!val) {
-                setTimeout(function () {
-                    var modal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_12__welcome_welcome__["a" /* WelcomePage */]);
-                    modal.present();
-                }, 10 * 1000);
-            }
-        });
-        if (this.platform.is('cordova')) {
-            this.type = this.network.type;
-            this.fileTransfer = this.transfer.create();
-            this.storage.set('page', 'Home');
-            if (this.type == "unknown" || this.type == "none" || this.type == undefined) {
-                this.isOnline = false;
-                this.current = false;
-            }
-            else {
-                this.isOnline = true;
-                this.current = true;
-            }
-            if (this.isOnline) {
-                this.getData(1); // download data
-            }
-            else {
-                //show local data when no internet
-                this.storage.get('posts').then(function (posts) {
-                    _this.posts = posts;
-                }, function (error) { return console.error("pro error", error); });
-            }
-            this.storage.get('isLoggedIn').then(function (val) {
-                if (!val) {
-                    setTimeout(function () {
-                        var modal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_12__welcome_welcome__["a" /* WelcomePage */]);
-                        modal.present();
-                    }, 10 * 1000);
+        //this.getData(1);
+        //this.getPlatformHeight();
+        this.platform.ready().then(function () {
+            if (_this.platform.is('cordova')) {
+                _this.getPlatformHeight();
+                _this.type = _this.network.type;
+                _this.storage.set('page', 'Home');
+                if (_this.type == "unknown" || _this.type == "none" || _this.type == undefined) {
+                    _this.isOnline = false;
+                    _this.current = false;
                 }
-            });
-            this.storage.get("firstTime").then(function (first) {
-                _this.storage.get("limit").then(function (limit) {
-                    if (!first && !limit) {
-                        _this.registerPush();
-                        _this.getLocation();
-                        _this.storage.set("firstTime", true);
-                        _this.storage.set("limit", _this.timestamp);
-                        _this.alert("firsttime");
-                    }
-                    else {
-                        var now = new Date().getTime();
-                        var diff = _this.diffDays(now, limit);
-                        if (diff > 0) {
-                            _this.registerPush();
-                            _this.getLocation();
-                            _this.storage.set("limit", now);
-                        }
+                else {
+                    _this.isOnline = true;
+                    _this.current = true;
+                }
+                console.log("online", _this.isOnline);
+                if (_this.isOnline) {
+                    _this.getData(1); // download data
+                }
+                else {
+                    //show local data when no internet
+                    _this.storage.get('posts').then(function (posts) {
+                        _this.posts = posts;
+                    }, function (error) { return console.error("pro error", error); });
+                }
+                _this.storage.get('isLoggedIn').then(function (val) {
+                    if (!val) {
+                        setTimeout(function () {
+                            var modal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_11__welcome_welcome__["a" /* WelcomePage */]);
+                            modal.present();
+                        }, 10 * 1000);
                     }
                 });
-            });
-        }
+                _this.storage.get("firstTime").then(function (first) {
+                    _this.storage.get("limit").then(function (limit) {
+                        if (!first && !limit) {
+                            _this.registerPush();
+                            _this.getLocation();
+                            _this.storage.set("firstTime", true);
+                            _this.storage.set("limit", _this.timestamp);
+                            _this.alert("firsttime");
+                        }
+                        else {
+                            var now = new Date().getTime();
+                            var diff = _this.diffDays(now, limit);
+                            if (diff > 0) {
+                                _this.registerPush();
+                                _this.getLocation();
+                                _this.storage.set("limit", now);
+                            }
+                        }
+                    });
+                });
+            }
+        });
     };
     Home.prototype.exitApp = function () {
         this.platform.exitApp();
@@ -293,35 +288,42 @@ var Home = (function () {
         if (!index) {
             index = 1;
         }
+        this.posts = [];
         this.authService.getData('posts/' + index)
             .then(function (res) {
-            _this.storage.set('index', index);
+            _this.index = index;
+            var temp;
             try {
-                var temp = JSON.parse(res._body);
+                temp = JSON.parse(res._body);
             }
             catch (e) {
                 console.log('already obj');
+                temp = res._body;
             }
-            _this.posts = temp || res._body;
-            _this.platformHeight = _this.platform.height();
-            if (_this.platform.is('ios')) {
-                if (_this.platformHeight == 812) {
-                    _this.platformHeight -= 70; //iphone X
-                }
-                else {
-                    _this.platformHeight -= 44;
-                }
-            }
-            _this.posts.forEach(function (element) {
-                element.slideH = _this.platformHeight + "px";
-                element.imageH = Number(((30 / 100) * _this.platformHeight).toFixed(1)) + "px";
-                element.bodyH = Number(((68 / 100) * _this.platformHeight).toFixed(1)) + "px";
-                console.log(element);
-            });
-            _this.storage.set('posts', _this.posts).then(function () {
-                console.log("updated local storage");
-            }, function (error) { return console.error("pro error", error); });
+            _this.posts = temp;
+            var localPosts = [];
+            setTimeout(function () {
+                temp.forEach(function (element) {
+                    element.image = _this.getBase64(document.getElementById(element._id));
+                    localPosts.push(element);
+                });
+                _this.updateStorage(localPosts);
+            }, 3000);
         });
+    };
+    Home.prototype.getPlatformHeight = function () {
+        this.platformHeight = this.platform.height();
+        if (this.platform.is('ios')) {
+            if (this.platformHeight == 812) {
+                this.platformHeight -= 70; //iphone X
+            }
+            else {
+                this.platformHeight -= 44;
+            }
+        }
+        this.heights.slideH = this.platformHeight + "px";
+        this.heights.imageH = Number(((30 / 100) * this.platformHeight).toFixed(1)) + "px";
+        this.heights.bodyH = Number(((68 / 100) * this.platformHeight).toFixed(1)) + "px";
     };
     Home.prototype.updateData = function (data) {
         var headers = {
@@ -330,18 +332,12 @@ var Home = (function () {
         this.authService.postData('user/device', headers, data)
             .then(function (res) {
             console.log("Device data updated");
+        }, function (error) {
+            console.log("device update error", error);
+        })
+            .catch(function (e) {
+            console.log("device update catch", e);
         });
-    };
-    Home.prototype.download = function (url) {
-        if (url) {
-            var name_1 = Math.random().toString(36).substring(10);
-            this.fileTransfer.download(url, this.file.dataDirectory + name_1)
-                .then(function (entry) {
-                console.log("entry", entry.toURL);
-            }, function (error) {
-                console.log("err", error);
-            });
-        }
     };
     Home.prototype.openWithSystemBrowser = function (url) {
         var options = {
@@ -349,28 +345,174 @@ var Home = (function () {
         };
         this.inAppBrowser.create(url, '_blank', options);
     };
+    Home.prototype.getBase64 = function (img) {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");
+        //return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+        return dataURL;
+    };
+    Home.prototype.updateStorage = function (arr) {
+        var _this = this;
+        var oldPosts = []; //existing post available in localstorage
+        var allPosts = []; // new posts to download images
+        console.log("incoming", arr.length);
+        this.storage.get('posts').then(function (posts) {
+            console.log("posts length", posts && posts.length);
+            if (posts && posts.length > 0) {
+                for (var i = 0; i < arr.length; i++) {
+                    var newPosts = [];
+                    var existing = false;
+                    for (var j = 0; j < posts.length; j++) {
+                        if (arr[i] && posts[j]) {
+                            if (arr[i]._id == posts[j]._id) {
+                                oldPosts.push(posts[j]);
+                                existing = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!existing && arr[i]) {
+                        newPosts.push(arr[i]);
+                    }
+                    allPosts.push.apply(allPosts, newPosts);
+                }
+            }
+            else {
+                allPosts = arr.slice(); // if localstorage is empty save current posts
+            }
+            console.log("oldPosts", oldPosts.length);
+            console.log("allPosts", allPosts.length);
+            var finalArr = [];
+            finalArr.push.apply(finalArr, oldPosts);
+            finalArr.push.apply(finalArr, allPosts);
+            console.log("finalArr lrngth", finalArr.length);
+            _this.storage.set('posts', finalArr);
+            _this.storage.get('posts').then(function (posts) {
+                //console.log("final", JSON.stringify(posts));
+            });
+        });
+    };
     return Home;
 }());
 Home = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Jobswala\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>             \n   <ion-slides direction=\'vertical\' sensitivity="2" effect="slide" loop="false">                             \n    <ion-slide class="bg-white" *ngFor="let post of posts" [style.height]="post.slideH">                       \n      <div class="post-image-div" [style.height]="post.imageH">\n          <img src="{{post.image}}" class="post-image" alt="No image">\n      </div>      \n      <div class="post-content-div" [style.height]="post.bodyH">\n        <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>\n        <p class="body-text">{{post.body}}</p>\n        <div class="row buttons-row">\n          <div class="column">            \n            <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="secondary" class="button" outline>Share</button>\n          </div>\n        </div>\n      </div>\n    </ion-slide>\n  </ion-slides>\n <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,\n          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.\n          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the\n          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,\n          including the Drawing Center, New York, NY; \n          \n      -->\n</ion-content>'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      Jobswala\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>    \n   <ion-slides direction=\'vertical\' sensitivity="2" effect="slide" loop="false">                             \n    <ion-slide class="bg-white" *ngFor="let post of posts" [style.height]="heights.slideH">                       \n      <div class="post-image-div" [style.height]="heights.imageH">\n        <img [attr.id]="post._id" [src]="post.image" class="post-image" alt="No image" crossOrigin="Anonymous" />          \n      </div>      \n      <div class="post-content-div" [style.height]="heights.bodyH">\n        <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>\n        <p class="body-text">{{post.body}}</p>\n        <div class="row buttons-row">\n          <div class="column">            \n            <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>\n          </div>\n          <div class="column">            \n              <button ion-button color="secondary" class="button" outline>Share</button>\n          </div>\n        </div>\n      </div>\n    </ion-slide>\n  </ion-slides>\n <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,\n          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.\n          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the\n          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,\n          including the Drawing Center, New York, NY; \n          \n      -->\n</ion-content>'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_9__ionic_native_file_transfer__["a" /* FileTransfer */], __WEBPACK_IMPORTED_MODULE_10__ionic_native_file__["a" /* File */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ToastController */], __WEBPACK_IMPORTED_MODULE_8__ionic_native_network__["a" /* Network */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */],
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_10__providers_file_transfer_file_transfer__["a" /* FileTransferProvider */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ToastController */], __WEBPACK_IMPORTED_MODULE_8__ionic_native_network__["a" /* Network */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */],
-        __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_11__ionic_native_in_app_browser__["a" /* InAppBrowser */]])
+        __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_9__ionic_native_in_app_browser__["a" /* InAppBrowser */]])
 ], Home);
 
 //# sourceMappingURL=home.js.map
 
 /***/ }),
 
-/***/ 209:
+/***/ 208:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FileTransferProvider; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__ = __webpack_require__(159);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_file_transfer__ = __webpack_require__(209);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_file__ = __webpack_require__(210);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_storage__ = __webpack_require__(40);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+
+var FileTransferProvider = (function () {
+    function FileTransferProvider(storage, transfer, file, http) {
+        this.storage = storage;
+        this.transfer = transfer;
+        this.file = file;
+        this.http = http;
+    }
+    FileTransferProvider.prototype.downloadImage = function (image) {
+        var _this = this;
+        this.fileTransfer = this.transfer.create();
+        return new Promise(function (resolve, reject) {
+            var name = Math.random().toString(36).substring(7);
+            _this.fileTransfer.download(image, _this.file.dataDirectory + name)
+                .then(function (entry) {
+                var url = entry.toURL();
+                console.log("Downloaded URL", url);
+                resolve(url);
+            }, function (error) {
+                console.log("err", error);
+                reject(null);
+            })
+                .catch(function (err) {
+                console.log("catch err", err);
+                reject(null);
+            });
+        });
+    };
+    FileTransferProvider.prototype.asyncLoop = function (iterations, func, callback) {
+        var index = 0;
+        var done = false;
+        var loop = {
+            next: function () {
+                if (done) {
+                    return;
+                }
+                if (index < iterations) {
+                    index++;
+                    func(loop);
+                }
+                else {
+                    done = true;
+                    callback();
+                }
+            },
+            iteration: function () {
+                return index - 1;
+            },
+            break: function () {
+                done = true;
+                callback();
+            }
+        };
+        loop.next();
+        return loop;
+    };
+    FileTransferProvider.prototype.getBase64 = function (arr) {
+    };
+    return FileTransferProvider;
+}());
+FileTransferProvider = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_file_transfer__["a" /* FileTransfer */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_file__["a" /* File */], __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Http */]])
+], FileTransferProvider);
+
+//# sourceMappingURL=file-transfer.js.map
+
+/***/ }),
+
+/***/ 211:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(210);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(227);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(212);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(229);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -378,38 +520,40 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 227:
+/***/ 229:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(279);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(280);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(201);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_welcome_welcome__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_status_bar__ = __webpack_require__(198);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_splash_screen__ = __webpack_require__(199);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_geolocation__ = __webpack_require__(201);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_location_accuracy__ = __webpack_require__(202);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_diagnostic__ = __webpack_require__(203);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_firebase__ = __webpack_require__(204);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_storage__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_status_bar__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_splash_screen__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_geolocation__ = __webpack_require__(202);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_location_accuracy__ = __webpack_require__(203);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_diagnostic__ = __webpack_require__(204);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_firebase__ = __webpack_require__(205);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_storage__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_facebook__ = __webpack_require__(81);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_google_plus__ = __webpack_require__(157);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_google_plus__ = __webpack_require__(158);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__providers_auth_service_auth_service__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__angular_http__ = __webpack_require__(158);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_network__ = __webpack_require__(205);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__ionic_native_file_transfer__ = __webpack_require__(206);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__ionic_native_file__ = __webpack_require__(207);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__ionic_native_in_app_browser__ = __webpack_require__(208);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__angular_http__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_network__ = __webpack_require__(206);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__ionic_native_file_transfer__ = __webpack_require__(209);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__ionic_native_file__ = __webpack_require__(210);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__ionic_native_in_app_browser__ = __webpack_require__(207);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__providers_file_transfer_file_transfer__ = __webpack_require__(208);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -476,8 +620,10 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_20__ionic_native_in_app_browser__["a" /* InAppBrowser */],
             { provide: __WEBPACK_IMPORTED_MODULE_0__angular_core__["v" /* ErrorHandler */], useClass: __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["c" /* IonicErrorHandler */] },
             __WEBPACK_IMPORTED_MODULE_15__providers_auth_service_auth_service__["a" /* AuthServiceProvider */],
+            __WEBPACK_IMPORTED_MODULE_21__providers_file_transfer_file_transfer__["a" /* FileTransferProvider */],
             __WEBPACK_IMPORTED_MODULE_18__ionic_native_file_transfer__["a" /* FileTransfer */],
-            __WEBPACK_IMPORTED_MODULE_19__ionic_native_file__["a" /* File */]
+            __WEBPACK_IMPORTED_MODULE_19__ionic_native_file__["a" /* File */],
+            __WEBPACK_IMPORTED_MODULE_21__providers_file_transfer_file_transfer__["a" /* FileTransferProvider */],
         ]
     })
 ], AppModule);
@@ -486,19 +632,19 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 279:
+/***/ 280:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(198);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(199);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_storage__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_storage__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_facebook__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_welcome_welcome__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_home_home__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_home_home__ = __webpack_require__(201);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -565,11 +711,11 @@ MyApp = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return WelcomePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_storage__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_storage__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_facebook__ = __webpack_require__(81);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_google_plus__ = __webpack_require__(157);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_google_plus__ = __webpack_require__(158);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ionic_angular_platform_platform__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__ = __webpack_require__(83);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -750,8 +896,8 @@ WelcomePage = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthServiceProvider; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(158);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__ = __webpack_require__(261);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__ = __webpack_require__(159);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -817,5 +963,5 @@ AuthServiceProvider = __decorate([
 
 /***/ })
 
-},[209]);
+},[211]);
 //# sourceMappingURL=main.js.map
