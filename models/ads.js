@@ -20,7 +20,7 @@ adSchema.statics.getAllAd = function (cb) {
     this.find({}, null, { sort: { modified: -1 } }, cb);
 }
 
-adSchema.statics.getActiveAds = function (skip, limit, cb) {
+adSchema.statics.getActiveAds = function (cb) {
     this.find({ active: true }, null, { sort: { modified: -1 } }, cb);
 }
 

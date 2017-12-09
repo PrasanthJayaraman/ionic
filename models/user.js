@@ -5,6 +5,9 @@ var userSchema = new Schema({
     name: {
         type: String
     },
+    key: {
+        type: String
+    },
     phone: {
         type: String
     },

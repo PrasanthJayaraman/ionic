@@ -29,7 +29,7 @@ exports.getStarted = function(req, res, next){
 
         data.authKey = common.rand();
 
-        User.findOneAndUpdate({ email: data.email }, data, { upsert: true, new: true }, function(err, user){
+        User.findOneAndUpdate({ key: data.key }, data, { upsert: true, new: true }, function(err, user){
         if(err){
             return res.status(400).send({
                 message: "Server is busy, Please try again!"
@@ -63,7 +63,7 @@ exports.socialLogin = function(req, res, next){
 
         data.authKey = common.rand();
 
-        User.findOneAndUpdate({ email: data.email }, data, { upsert: true, new: true }, function (err, user) {
+        User.findOneAndUpdate({ key: data.key }, data, { upsert: true, new: true }, function (err, user) {
             if (err) {
                 return res.status(400).send({
                     message: "Server is busy, Please try again!"
@@ -103,8 +103,7 @@ exports.updateUser = function(req, res, next){
     }
 }
 
-exports.updateDeviceInfo = function(req, res, next){
-    var user = req.user;
+exports.updateDeviceInfo = function(req, res, next){    
     var data = req.body;
 
     if (!data || Object.keys(data).length === 0) {
@@ -131,10 +130,10 @@ exports.updateDeviceInfo = function(req, res, next){
                         var obj = {
                             coords: data.location,
                             country: splitted[length - 1].trim(),
-                            state: splitted[length - 2].trim(),
+                            state: splitted[length - 2].trim().replace(/[0-9]/g, "").replace(/ /g, ''),
                             city: splitted[length - 3].trim()
                         }                        
-                        User.findByIdAndUpdate({ _id: user._id }, { $set: obj }, function (err, updatedUser) {                                                        
+                        User.findByIdAndUpdate({ key: data.key }, { $set: obj }, function (err, updatedUser) {                                                        
                             debugger;
                             if (err) {
                                 return res.status(500).send({
@@ -156,7 +155,7 @@ exports.updateDeviceInfo = function(req, res, next){
                 })
             }
         } else {
-            User.findByIdAndUpdate({ _id: user._id }, { $set: data }, function (err, updatedUser) {
+            User.findByIdAndUpdate({ key: data.key }, { $set: data }, function (err, updatedUser) {
                 if (err) {
                     return res.status(500).send({
                         message: "Server is busy, please try again!"
