@@ -150,7 +150,9 @@
         
         $('input[type=radio][name=choice]').change(function () {
             if(this.value == "platform"){
-                $('#dropdown-list').toggle();
+                if ($('#dropdown-list').css('display') != 'none') {
+                    $('#dropdown-list').toggle();
+                }                
                 $('#platform').removeAttr('disabled');
                 $('.quantity').text(0);
                 $('#option').val("platform");
@@ -158,7 +160,9 @@
                 var numChecked = $('input:checkbox.select-check:checked').length;
                 $('.quantity').text(numChecked || 'Any');
                 $('#platform').attr('disabled', 'disabled');
-                $('#dropdown-list').toggle();
+                if ($('#dropdown-list').css('display') == 'none') {
+                    $('#dropdown-list').toggle();
+                }                
                 $('#option').val("location");
             }
         });

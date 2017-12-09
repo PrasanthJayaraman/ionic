@@ -1,0 +1,226 @@
+<html>
+
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/app.css">
+    <link rel="stylesheet" href="/assets/header.css">    
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="/modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
+    <link rel="stylesheet" href="/modules/froala-editor/css/froala_editor.pkgd.min.css">
+    <link rel="stylesheet" href="/modules/froala-editor/css/froala_style.min.css">    
+</head>
+
+<body>
+    <%- include header.ejs %>
+    <div class="container">
+        <div class="row" id="row-main">
+        <% if(data && data.script) { %>  
+            <div class="col-md-12" id="content">
+                <h2>Update Post</h2>                
+                <form id="updateForm">
+                    <table id="post-table">
+                        <tr>
+                            <td>
+                                <label for="">Active</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="active" id="active" <%=data.active ? 'checked' : '' %>>
+                                <label for="">Make Ad Active</label>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    <br>
+                    <div style="margin-left: 10px;width:100%;margin:0 auto;">
+                        <button type="button" class="btn btn-warning" onclick="collapse()" >Click for Demo</button>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="form-group" style="padding-left:10px;">
+                        <label for="">Ad Script</label>
+                        <div id="edit">
+                        </div>
+                    </div>                                               
+                    <p>
+                        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Update" />
+                        <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
+                    </p>
+                </form>
+                <br>                
+            </div>                                   
+            <% } else { %>   
+                <div class="col-md-12" id="content">
+                    <h2>Create Ad</h2>
+                    <div class="row">
+                        <form id="postForm">
+                            <table id="post-table">
+                                <tr>
+                                    <td>
+                                        <label for="">Active</label>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="active" id="active">
+                                        <label for="">Make Ad Active</label>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br>
+                            <br>
+                            <div style="margin-left: 10px;width:100%;margin:0 auto;">
+                                <button type="button" class="btn btn-warning" onclick="collapse()">Click for Demo</button>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="form-group" style="padding-left:10px;">
+                                <label for="">Ad Content</label>
+                                <div id="edit">
+                                </div>
+                            </div>                    
+                            <p>
+                                <input type="submit" class="btn btn-primary btn-lg btn-block" value="POST" />
+                                <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
+                            </p>
+                        </form>
+                        <br>
+                    </div>
+                </div>                                               
+                <% } %>      
+            <div class="col-md-4 collapsed" id="sidebar">  
+                <div>
+                    <button type="button" class="btn btn-info" onclick="demoCheck()">Refresh</button>
+                    <br><br>
+                    <div id="mobile" class="mobile">
+                        <div id="mob-content" style="padding:8px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="myid" style="display:none"></div> 
+        </div>
+        <br><br><br>
+    </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+<script src="/modules/froala-editor/js/froala_editor.pkgd.min.js"></script>
+<script src="/modules/toastr/build/toastr.min.js"></script>
+<script>
+    $("#cancel").on("click", cancel);
+
+    function cancel() {
+        window.location.href = '/ad/show';
+    }   
+
+    function decode(text){
+        var e = document.getElementById('myid');
+        var decoded = $('#myid').html(text).text();
+        return decoded;
+    }
+
+    function collapse(){
+        $("#sidebar").toggleClass("collapsed");
+        $("#content").toggleClass("col-md-12 col-md-8");
+        demoCheck();
+    }
+
+    function demoCheck(){
+        var temp = $('#edit').froalaEditor('html.get');
+        $('#mob-content').html(temp);
+    }
+
+    $(document).ready(function () {
+        var path = window.location.href;
+
+        if (!window.localStorage.getItem('loggedIn')) {
+            window.location.replace('/login');
+        }
+
+        $('ul.nav li a').each(function () {
+            if (this.href === path) {
+                $(this).parent('li').addClass('active');
+            } else {
+                $('#dashboard').addClass('active');
+            }
+        });
+
+        $('#edit').froalaEditor('html.set', decode('<%=data.script%>'));
+               
+    });    
+     
+    $('div#edit').froalaEditor({
+        heightMin: 200,
+        heightMax: 400,
+        toolbarButtons: ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html'],
+        toolbarButtonsMD : ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
+    })
+
+    $('#postForm').submit(function (e) {
+        showLoader();
+        e.preventDefault();  
+        if ($('#edit').froalaEditor('core.isEmpty')) {
+             hideLoader();
+             toastr.error("Please enter Ad content");
+             return false;
+        }             
+        var active = $('#active').is(":checked");
+        var formData = {};               
+        formData.script = $('#edit').froalaEditor('html.get');
+        formData.active = active;
+        var data = {
+            ad: formData
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/ad/create',
+            data: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
+            success: function (response) {
+                hideLoader();
+                toastr.success("Ad Created Successfully");
+                window.location.replace("/ad/show");
+            },
+            error: function (response) {
+                hideLoader();
+                toastr.error(response.statusText);
+            }
+        })
+    });
+
+    $('#updateForm').submit(function (e) {
+        showLoader();
+        e.preventDefault();
+        if ($('#edit').froalaEditor('core.isEmpty')) {
+            hideLoader();
+            toastr.error("Please enter Ad content");
+            return false;
+        }
+        var active = $('#active').is(":checked");
+        var formData = {};
+        formData.script = $('#edit').froalaEditor('html.get');        
+        formData.active = active;
+        var data = {
+            ad: formData
+        }       
+        $.ajax({
+            type: 'PUT',
+            url: '/ad/update/' + "<%= data._id %>",
+            data: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
+            success: function (response) {
+                hideLoader();
+                toastr.success("Ad Updated Successfully");
+                window.location.replace("/ad/show");
+            },
+            error: function (response) {
+                hideLoader();
+                toastr.error(response.statusText);
+            }
+        })
+    });
+</script>
+
+</html>

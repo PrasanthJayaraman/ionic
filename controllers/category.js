@@ -85,7 +85,7 @@ exports.updateCategory = function(req, res, next){
         } else {
             res.send(200);
         }
-    })
+    });
 }
 
 exports.deleteCategory = function(req, res, next){

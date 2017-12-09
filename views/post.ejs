@@ -4,17 +4,21 @@
     <title>Jobswala</title>
     <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/app.css">
-    <link rel="stylesheet" href="/assets/header.css">
-    <link rel="stylesheet" href="/assets/editor/jquery-te-1.4.0.css">
+    <link rel="stylesheet" href="/assets/header.css">    
     <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="/modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
+    <link rel="stylesheet" href="/modules/froala-editor/css/froala_editor.pkgd.min.css">
+    <link rel="stylesheet" href="/modules/froala-editor/css/froala_style.min.css">
 </head>
 
 <body>
     <%- include header.ejs %>
+    <div class="container">   
+        <div class="row" id="row-main">
     <% if(data.title) { %>
-        <div class="container">
-            <h2>Update Post</h2>
-            <div class="row">
+        <div class="col-md-12" id="content">
+            <h2>Update Post</h2>            
                 <form id="updateForm">
                     <table id="post-table">
                         <tr>
@@ -104,20 +108,27 @@
                             </td>
                         </tr>
                     </table>
+                    <br>
+                    <br>
+                    <div style="margin-left: 10px;width:100%;margin:0 auto;">
+                        <button type="button" class="btn btn-warning" onclick="collapse()">Click for Demo</button>
+                    </div>
+                    <br>
+                    <br>
                     <div class="form-group" style="padding-left:10px;">
                         <label for="">Post Content</label>
-                        <textarea name="textarea" id="content"  class="jqte-test"><%=data.body %></textarea>
+                        <div id="edit">
+                        </div>
                     </div>
                     <p>
                         <input type="submit" class="btn btn-primary btn-lg btn-block" value="Update" />
                         <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
                     </p>                    
                 </form>
-                <br>
-            </div>
+                <br>            
         </div>
     <% } else { %>
-        <div class="container">
+        <div class="col-md-12" id="content">
             <h2>Create Post</h2>
             <div class="row">                
                 <form id="postForm">
@@ -200,32 +211,101 @@
                             </td>
                         </tr>
                     </table>
+                    <br><br>
+                    <div style="margin-left: 10px;width:100%;margin:0 auto;">
+                        <button type="button" class="btn btn-warning" onclick="collapse()">Click for Demo</button>
+                    </div>
+                    <br>
+                    <br>
                     <div class="form-group" style="padding-left:10px;">
                         <label for="">Post Content</label>
-                        <textarea name="textarea" id="content" class="jqte-test"></textarea>
+                        <div id="edit">
+                        </div>
                     </div>
                     <p>
                         <input type="submit" class="btn btn-primary btn-lg btn-block" value="POST" />
                         <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
                     </p>
                 </form>
-                <br>
-            </div>
+                <br>            
         </div>
     <% } %>
+    <div id="myid" style="display:none"></div>
+    <div class="col-md-4 collapsed" id="sidebar">
+        <div>
+            <button type="button" class="btn btn-info" onclick="demoCheck()">Refresh</button>
+            <br>
+            <br>
+            <div id="mobile" class="mobile">
+                <div id="mob-content">
+                    <div class="mob-image">
+                        <img class="post-image" id="mob-image" alt="No image" crossOrigin="Anonymous" />
+                    </div>
+                    <div class="mob-content">
+                        <p class="title-text" id="mob-title" ></p>
+                        <div id="mob-text">
+
+                        </div>
+                        <div class="buttons-row">                            
+                            <div class="column">
+                                <button class="btn btn-info">Apply</button>
+                            </div>
+                            <div class="column">
+                                <button class="btn btn-info">Notify</button>
+                            </div>
+                            <div class="column">
+                                <button class="btn btn-info">Share</button>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>    
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="/assets/editor/jquery-te-1.4.0.min.js"></script>
 <script src="/assets/js/jquery.ui.widget.js"></script>
 <script src="/assets/js/jquery.iframe-transport.js"></script>
 <script src="/assets/js/jquery.fileupload.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+<script src="/modules/froala-editor/js/froala_editor.pkgd.min.js"></script>
 <script src="/modules/toastr/build/toastr.min.js"></script>
 <script>
     $("#cancel").on("click", cancel);
 
     function cancel() {
         window.location.href = '/posts/1';
+    }
+
+    function decode(text) {
+        var e = document.getElementById('myid');
+        var decoded = $('#myid').html(text).text();
+        return decoded;
+    }
+
+    function collapse() {
+        $("#sidebar").toggleClass("collapsed");
+        $("#content").toggleClass("col-md-12 col-md-8");
+        demoCheck();
+    }
+
+    function demoCheck() {
+        var title = $('#title').val();
+        if(title & title.length > 50){
+            title = title.substring(0, 50);
+        }
+        var url = $('#url').val();
+        var body = $('#edit').froalaEditor('html.get');
+        if(!title || !url || !body){
+            toastr.info('Please add all the inputs to check');
+        }
+        $('#mob-image').attr('src', url);
+        $('#mob-title').html(title);
+        $('#mob-text').html(body);
     }
 
     $('#dropdown-list').toggle();
@@ -284,7 +364,14 @@
             } 
         });
 
-        $('.jqte-test').jqte();
+         $('div#edit').froalaEditor({
+            heightMin: 200,
+            heightMax: 400,
+            toolbarButtons: ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html'],
+            toolbarButtonsMD: ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
+        })
+
+        $('#edit').froalaEditor('html.set', decode('<%=data.body%>'));
     });
 
     $('#postForm').submit(function(e) {
@@ -312,18 +399,17 @@
             toastr.error("Please enter a title");
             return false;
         } 
-        var content = $('#content').val();
-        if(!content){
+        if ($('#edit').froalaEditor('core.isEmpty')) {
             hideLoader();
-            toastr.error("Please enter post content");
+            toastr.error("Please enter Ad content");
             return false;
-        } 
+        }   
         var active = $('#active').is(":checked");
         var notify = $('#notify').val(); 
         var apply = $('#apply').val();        
         formData.notifyUrl = notify;
         formData.applyUrl = apply;
-        formData.body = content;
+        formData.body = $('#edit').froalaEditor('html.get');
         formData.categories = checkboxValues;
         formData.image = url;
         formData.title = title;
@@ -373,18 +459,17 @@
             toastr.error("Please enter a title");
             return false;
         }
-        var content = $('#content').val();
-        if (!content) {
+         if ($('#edit').froalaEditor('core.isEmpty')) {
             hideLoader();
-            toastr.error("Please enter post content");
+            toastr.error("Please enter Ad content");
             return false;
-        }
+        }   
         var active = $('#active').is(":checked");
         var notify = $('#notify').val();
         var apply = $('#apply').val();
         formData.notifyUrl = notify;
         formData.applyUrl = apply;
-        formData.body = content;
+        formData.body = $('#edit').froalaEditor('html.get');
         formData.categories = checkboxValues;
         formData.image = url;
         formData.title = title;

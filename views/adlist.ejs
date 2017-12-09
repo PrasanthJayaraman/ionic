@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <title>Jobswala</title>
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="/assets/header.css">
+    <style>
+        .green-bg {
+            background-color: green;
+            border-radius: 20px;
+        }
+
+        .red-bg {
+            background-color: red;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include header.ejs %>
+        <div class="container">
+            <h2>Advertisement</h2>
+            <div class="row" style="float:right">
+                <div class="btn-group">
+                    <a href="/ad/create" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add Advertisement
+                    </a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="row">
+                <% if(ads.length == 0) { %>
+                    <h3>No Ads Available, Add one..</h3>
+                    <% } else { %>
+                        <table class="table table-hover">
+                            <tr>
+                                <th width="10%">#</th>
+                                <th width="30%">Created</th>
+                                <th width="30%">Modified</th>
+                                <th width="15%">Active</th>
+                                <th width="15%">Options</th>
+                            </tr>
+                            <% ads.forEach(function(ad, index){ %>
+                                <tr>
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td>
+                                        <%= ad.created.toDateString() %>
+                                            <%= ad.created.toLocaleTimeString() %>
+                                    </td>
+                                    <td>
+                                        <%= ad.modified.toDateString() %>
+                                            <%= ad.modified.toLocaleTimeString() %>
+                                    </td>
+                                    <% if(ad.active) { %>
+                                        <td>
+                                            <div class="green-bg" style="width: 60px;height: 30px;"></div>
+                                        </td>
+                                        <% } else { %>
+                                            <td>
+                                                <div class="red-bg" style="width: 60px;height: 30px;"></div>
+                                            </td>
+                                        <% } %>
+                                        <td>
+                                            <p>
+                                                <a href="/ad/edit/<%= ad._id %>" class="btn btn-primary">
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                </a>
+                                                <a href="/ad/delete/<%= ad._id %>" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-primary">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </a>
+                                            </p>
+                                        </td>
+                                </tr>
+                                <% }) %>
+                        </table>
+                        <% } %>
+            </div>
+        </div>
+</body>
+<script src="/modules/jquery/dist/jquery.min.js"></script>
+<script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/modules/toastr/build/toastr.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var path = window.location.href;
+
+        if (!window.localStorage.getItem('loggedIn')) {
+            window.location.replace('/login');
+        }
+
+        $('ul.nav li a').each(function () {
+            if (this.href === path) {
+                $(this).parent('li').addClass('active');
+            } else {
+                $('#ad').addClass('active');
+            }
+        })
+    });
+</script>
+
+</html>

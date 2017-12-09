@@ -20,6 +20,7 @@ var postController = require('./controllers/posts.js');
 var pushController = require('./controllers/push.js');
 var categoryController = require('./controllers/category.js');
 var appController = require('./controllers/app.js');
+var adController = require('./controllers/ads.js');
 
 module.exports = function(app){
     // APP API
@@ -54,4 +55,14 @@ module.exports = function(app){
     // Push API
     app.get('/notification/create', pushController.createPush);
     app.post('/notification/send', pushController.sendPush);
+
+    // Ads API
+    app.get('/ad/show', adController.listAd);
+    app.get('/ad/create', adController.adForm);
+    app.get('/ad/edit/:id', adController.editAd);
+    app.put('/ad/update/:id', adController.updateAd);
+    app.get('/ad/delete/:id', adController.deleteAd);
+    app.post('/ad/create', adController.createAd);
+
+
 }

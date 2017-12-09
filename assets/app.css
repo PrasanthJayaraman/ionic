@@ -42,6 +42,13 @@
     float: right;
 }
 
+.title-text {
+    font-weight: 400;
+    text-align: left;
+    font-size: 18px;
+    margin-top: 0px !important;
+}
+
 .dropdown-list {
     float: left;
     width: 100%;
@@ -92,3 +99,95 @@ table tr td:last-child {
     text-align: center;
 }
 
+.mobile {
+    width: 375px;
+    height: 667px;
+    border: 1px solid #ccc;
+}
+
+.mob-image {
+    height: 200px;
+    width: 100%;
+}
+
+.buttons-row {
+    position: absolute;
+    bottom: 0;
+    width: 96%;
+    margin-bottom: 10px;
+}
+
+.post-image {    
+    top: 0px;
+    right: 0px;
+    botoom: 0px;
+    left: 0px;
+    width: 100% !important;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+    height: 40px;
+    padding-top: 5px;
+    text-align: center;
+}
+
+.column .button {
+    margin: 0px !important;
+    height: 25px;
+}
+
+.mob-content {
+    height: 467;
+    width: 100%;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.4;
+    overflow: hidden;
+    margin-top: 0px;
+}
+
+#sidebar {
+    /* for the animation */
+    transition: margin 0.3s ease;
+}
+
+.collapsed {
+    /* hide it for small displays*/
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .collapsed {        
+        /* same width as sidebar */
+        margin-right: -25%;
+    }
+}
+
+#content {
+    -webkit-transition: width 0.3s ease;
+    -moz-transition: width 0.3s ease;
+    -o-transition: width 0.3s ease;
+    transition: width 0.3s ease;
+}
+
+#sidebar {
+    -webkit-transition: margin 0.3s ease;
+    -moz-transition: margin 0.3s ease;
+    -o-transition: margin 0.3s ease;
+    transition: margin 0.3s ease;
+}
+
+#row-main {
+    /* necessary to hide collapsed sidebar */
+    overflow-x: hidden;
+}
+
+#content {
+    /* for the animation */
+    transition: width 0.3s ease;
+}
