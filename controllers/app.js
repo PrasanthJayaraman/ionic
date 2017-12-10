@@ -38,3 +38,15 @@ exports.getPosts = function(req, res, next){
         }
     });
 }
+
+exports.listCategory = function (req, res, next) {
+    Category.find({active: true}, 'name', function (err, categories) {
+        if (err) {
+            return res.status(500).send({
+                message: "Server is Busy, Please try again!"
+            });
+        } else if (categories) {
+            return res.status(200).send(categories);
+        }        
+    })
+}
