@@ -7,9 +7,7 @@
     <link rel="stylesheet" href="/assets/header.css">    
     <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="/modules/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
-    <link rel="stylesheet" href="/modules/froala-editor/css/froala_editor.pkgd.min.css">
-    <link rel="stylesheet" href="/modules/froala-editor/css/froala_style.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css">    
 </head>
 
 <body>
@@ -270,9 +268,7 @@
 <script src="/assets/js/jquery.ui.widget.js"></script>
 <script src="/assets/js/jquery.iframe-transport.js"></script>
 <script src="/assets/js/jquery.fileupload.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
-<script src="/modules/froala-editor/js/froala_editor.pkgd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.min.js"></script>
 <script src="/modules/toastr/build/toastr.min.js"></script>
 <script>
     $("#cancel").on("click", cancel);
@@ -299,7 +295,7 @@
             title = title.substring(0, 50);
         }
         var url = $('#url').val();
-        var body = $('#edit').froalaEditor('html.get');
+        var body = $('#edit').summernote('code');
         if(!title || !url || !body){
             toastr.info('Please add all the inputs to check');
         }
@@ -364,14 +360,11 @@
             } 
         });
 
-         $('div#edit').froalaEditor({
-            heightMin: 200,
-            heightMax: 400,
-            toolbarButtons: ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html'],
-            toolbarButtonsMD: ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
+         $('div#edit').summernote({
+            height: 300
         })
 
-        $('#edit').froalaEditor('html.set', decode('<%=data.body%>'));
+        $('#edit').summernote('code', decode('<%=data.body%>'));
     });
 
     $('#postForm').submit(function(e) {
@@ -399,7 +392,7 @@
             toastr.error("Please enter a title");
             return false;
         } 
-        if ($('#edit').froalaEditor('core.isEmpty')) {
+        if (!$('#edit').summernote('code')) {
             hideLoader();
             toastr.error("Please enter Ad content");
             return false;
@@ -409,7 +402,7 @@
         var apply = $('#apply').val();        
         formData.notifyUrl = notify;
         formData.applyUrl = apply;
-        formData.body = $('#edit').froalaEditor('html.get');
+        formData.body = $('#edit').summernote('code');
         formData.categories = checkboxValues;
         formData.image = url;
         formData.title = title;
@@ -459,7 +452,7 @@
             toastr.error("Please enter a title");
             return false;
         }
-         if ($('#edit').froalaEditor('core.isEmpty')) {
+         if (!$('#edit').summernote('code')) {
             hideLoader();
             toastr.error("Please enter Ad content");
             return false;
@@ -469,7 +462,7 @@
         var apply = $('#apply').val();
         formData.notifyUrl = notify;
         formData.applyUrl = apply;
-        formData.body = $('#edit').froalaEditor('html.get');
+        formData.body = $('#edit').summernote('code');
         formData.categories = checkboxValues;
         formData.image = url;
         formData.title = title;

@@ -1,5 +1,5 @@
-<div id="loader" class="hide overlay">
-    <div class="loader"></div>
+<div id="loader" class="hide loading">   
+     Loading&#8230;
 </div>
 
 <nav class="navbar navbar-default">
@@ -26,6 +26,28 @@
         </ul>
     </div>
 </nav>
+
+<style>
+    .hide {
+        display: none;
+    }
+
+    .show {
+        display: block;
+    }
+
+    .overlay {
+        background: #fff;   
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0.5;
+        cursor: progress;
+        z-index: 1;
+    }
+</style>
 
 <script>
 

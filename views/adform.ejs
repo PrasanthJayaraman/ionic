@@ -6,10 +6,8 @@
     <link rel="stylesheet" href="/assets/app.css">
     <link rel="stylesheet" href="/assets/header.css">    
     <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css">
-    <link rel="stylesheet" href="/modules/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
-    <link rel="stylesheet" href="/modules/froala-editor/css/froala_editor.pkgd.min.css">
-    <link rel="stylesheet" href="/modules/froala-editor/css/froala_style.min.css">    
+    <link rel="stylesheet" href="/modules/font-awesome/css/font-awesome.min.css">    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css">
 </head>
 
 <body>
@@ -104,10 +102,8 @@
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
-<script src="/modules/froala-editor/js/froala_editor.pkgd.min.js"></script>
 <script src="/modules/toastr/build/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.min.js"></script>
 <script>
     $("#cancel").on("click", cancel);
 
@@ -128,7 +124,7 @@
     }
 
     function demoCheck(){
-        var temp = $('#edit').froalaEditor('html.get');
+        var temp = $('#edit').summernote('code');
         $('#mob-content').html(temp);
     }
 
@@ -143,32 +139,29 @@
             if (this.href === path) {
                 $(this).parent('li').addClass('active');
             } else {
-                $('#dashboard').addClass('active');
+                $('#ad').addClass('active');
             }
         });
 
-        $('#edit').froalaEditor('html.set', decode('<%=data.script%>'));
+        $('#edit').summernote('code', decode('<%=data.script%>'));
                
     });    
      
-    $('div#edit').froalaEditor({
-        heightMin: 200,
-        heightMax: 400,
-        toolbarButtons: ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html'],
-        toolbarButtonsMD : ['bold', 'italic', 'underline', 'fontFamily', 'fontSize', '|', 'specialCharacters', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '-', 'quote', 'insertHR', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
-    })
+    $('div#edit').summernote({
+        height: 300
+    });
 
     $('#postForm').submit(function (e) {
         showLoader();
         e.preventDefault();  
-        if ($('#edit').froalaEditor('core.isEmpty')) {
+        if (!$('#edit').summernote('code')) {
              hideLoader();
              toastr.error("Please enter Ad content");
              return false;
         }             
         var active = $('#active').is(":checked");
         var formData = {};               
-        formData.script = $('#edit').froalaEditor('html.get');
+        formData.script = $('#edit').summernote('code');
         formData.active = active;
         var data = {
             ad: formData
@@ -193,14 +186,15 @@
     $('#updateForm').submit(function (e) {
         showLoader();
         e.preventDefault();
-        if ($('#edit').froalaEditor('core.isEmpty')) {
-            hideLoader();
-            toastr.error("Please enter Ad content");
-            return false;
-        }
+        e.preventDefault();  
+        if (!$('#edit').summernote('code')) {
+             hideLoader();
+             toastr.error("Please enter Ad content");
+             return false;
+        }     
         var active = $('#active').is(":checked");
         var formData = {};
-        formData.script = $('#edit').froalaEditor('html.get');        
+        formData.script = $('#edit').summernote('code');
         formData.active = active;
         var data = {
             ad: formData
