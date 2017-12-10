@@ -56,6 +56,9 @@
     },
     "cordova-plugin-inappbrowser": {
       "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-uniquedeviceid": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
     }
   },
   "dependent_plugins": {

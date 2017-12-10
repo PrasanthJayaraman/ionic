@@ -1,4 +1,4 @@
-<ion-menu side="left" [content]="content" [swipeEnabled]="false"> 
+<ion-menu side="left" [content]="content" [swipeEnabled]="false" persistent="true"> 
     <ion-header>
         <ion-toolbar>
             <ion-title>Home</ion-title>
@@ -6,9 +6,15 @@
     </ion-header>
     <ion-content>
         <ion-list>
-            <button ion-item menuClose (click)="openHome('Home')">
+            <button ion-item menuClose (click)="openHome()">
                 Home
-            </button>            
+            </button>  
+            <button ion-item menuClose (click)="openProfile()">
+                My Profile
+            </button>    
+            <button ion-item menuClose *ngFor="let cat of categories" (click)="openCategory(cat)">
+                {{cat.name}}
+            </button>         
             <button ion-item menuClose (click)="logout()">
                 Logout
             </button>
@@ -16,4 +22,4 @@
     </ion-content>
 </ion-menu>
 
-<ion-nav id="nav" #content [root]="rootPage"  swipeBackEnabled="false"></ion-nav>
+<ion-nav id="nav" #content [root]="rootPage" hideBackButton="true" swipeBackEnabled="false"></ion-nav>

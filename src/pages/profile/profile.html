@@ -1,0 +1,45 @@
+<ion-header>
+    <ion-navbar hideBackButton="true">
+      <ion-buttons left>
+        <button ion-button menuToggle>
+          <ion-icon name="menu"></ion-icon>
+        </button>
+      </ion-buttons>
+      <ion-title>
+        My Profile
+      </ion-title>
+    </ion-navbar>
+  </ion-header>
+  
+
+<ion-content padding>
+    <form *ngIf="user" [formGroup]="user" (ngSubmit)="updateUserData()">
+      <ion-item class="inputPadding">
+        <ion-label fixed>Name</ion-label>
+        <ion-input type="text" formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item class="inputPadding">
+        <ion-label fixed>Email</ion-label>
+        <ion-input type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item class="inputPadding">
+        <ion-label fixed>Phone</ion-label>
+        <ion-input type="tel" formControlName="phone"></ion-input>
+      </ion-item>
+      <br><br>
+      <ion-list radio-group formControlName="gender">
+        <ion-list-header>Gender</ion-list-header>
+        <ion-item>
+          <ion-label>Male</ion-label>
+          <ion-radio (click)="changeStatus('male')" value="male"></ion-radio>
+        </ion-item>
+      
+        <ion-item>
+          <ion-label>Female</ion-label>
+          <ion-radio (click)="changeStatus('female')" value="female"></ion-radio>    
+        </ion-item>                 
+      </ion-list>
+      <br>
+      <button ion-button color="secondary" type="submit" class="shadow bottom-space" round style="width:99%" >Save Profile</button>
+    </form>
+</ion-content>

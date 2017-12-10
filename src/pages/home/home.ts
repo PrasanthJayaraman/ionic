@@ -8,6 +8,8 @@ import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { Network } from '@ionic-native/network';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser';
+import { UniqueDeviceID } from '@ionic-native/unique-device-id';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { WelcomePage } from '../welcome/welcome';
 
@@ -28,12 +30,13 @@ export class Home {
   public type: any;
   public current: any;
   public index: any;
-  public heights = <any>{};
-    
-  constructor(public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
+  public heights = <any>{};  
+
+  constructor(private uniqueDeviceID: UniqueDeviceID, public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
     public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy,
-    public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser) {
+    public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser, public sanitizer: DomSanitizer) {
     storage.set('page', 'Home');
+
     platform.ready().then(() => {
       if (platform.is('cordova')) {
         this.disconnectSubscription = network.onDisconnect().subscribe(() => {
@@ -91,8 +94,8 @@ export class Home {
   }
 
   ionViewDidLoad() {
-    //this.getData(1);
-    //this.getPlatformHeight();
+    this.getData(1);
+    this.getPlatformHeight();
     this.platform.ready().then(() => {
       if (this.platform.is('cordova')) {
         this.getPlatformHeight();
@@ -120,22 +123,23 @@ export class Home {
             setTimeout(() => {
               let modal = this.modalCtrl.create(WelcomePage);
               modal.present();
-            }, 10 * 1000);
+            }, 40 * 1000);
           }
         });
 
         this.storage.get("firstTime", ).then((first) => {
           this.storage.get("limit").then((limit) => {
-            if (!first && !limit) {
-              this.registerPush();
-              this.getLocation();
+            if (!first) {              
               this.storage.set("firstTime", true);
               this.storage.set("limit", this.timestamp);
-              this.alert("firsttime");
-            } else {
+              this.getDeviceId();
+              this.registerPush();
+              this.getLocation();
+            } else if(limit){              
               let now = new Date().getTime();
               let diff = this.diffDays(now, limit);
               if (diff > 0) {
+                this.alert("Updating device location and token");
                 this.registerPush();
                 this.getLocation();
                 this.storage.set("limit", now);
@@ -206,8 +210,19 @@ export class Home {
       }, (error) => console.log("Error in checking push permission"))
   }
 
-  collectToken() {
-    console.log("collect called");
+  getDeviceId(){
+    this.uniqueDeviceID.get()
+    .then((uuid: any) => {
+      console.log("Device Id",uuid)
+      this.storage.set("uuid", uuid);      
+    })
+    .catch((error: any) => {
+      console.log(error)
+      this.storage.set("uuid", "");
+    });
+  }
+
+  collectToken() {    
     this.firebase.onTokenRefresh()
       .subscribe((token: string) => {
         let data = {
@@ -221,12 +236,11 @@ export class Home {
   diffDays(timestamp1, timestamp2) {
     var difference = timestamp1 - timestamp2;
     var daysDifference = Math.floor(difference / 1000 / 60 / 60 / 24);
-
     return daysDifference;
   }
 
   getData(index) {
-    if (!index) {
+    if (!index) { 
       index = 1;
     }
     this.posts = [];
@@ -240,10 +254,10 @@ export class Home {
           console.log('already obj');
           temp = res._body;
         }        
-        this.posts = temp;
+        this.posts = temp.post;
         var localPosts = [];
         setTimeout(() => {
-          temp.forEach(element => {                               
+          temp.post.forEach(element => {                               
             element.image = this.getBase64(document.getElementById(element._id));
             localPosts.push(element);
           });
@@ -270,15 +284,23 @@ export class Home {
     let headers = {
       'Content-Type': 'application/json'
     }
-    this.authService.postData('user/device', headers, data)
-      .then((res: any) => {
-        console.log("Device data updated");
-      }, (error) => {
-        console.log("device update error",error);
-      })
-      .catch((e) => {
-        console.log("device update catch",e);
-      })
+    this.storage.get("uuid").then((uuid) => {
+        if(uuid){
+          data.key = uuid;
+          this.alert(`${JSON.stringify(data)}`)
+          this.authService.postData('user/device', headers, data)
+          .then((res: any) => {
+            console.log("Device data updated");
+          }, (error) => {
+            console.log("device update error",error);
+            this.storage.set("firstTime", false);
+          })
+          .catch((e) => {
+            console.log("device update catch",e);
+            this.storage.set("firstTime", false);
+          })
+        }
+    });    
   }
 
   openWithSystemBrowser(url: string) {
@@ -296,7 +318,7 @@ export class Home {
     ctx.drawImage(img, 0, 0);
     var dataURL = canvas.toDataURL("image/png");
     //return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-    return dataURL;
+    return this.sanitizer.bypassSecurityTrustUrl(dataURL);
   }
 
   updateStorage(arr){    

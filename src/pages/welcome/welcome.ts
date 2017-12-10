@@ -8,13 +8,6 @@ import { GooglePlus } from '@ionic-native/google-plus';
 import { Platform } from 'ionic-angular/platform/platform';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
-/**
- * Generated class for the WelcomePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
   selector: 'page-welcome',
@@ -75,29 +68,55 @@ export class WelcomePage {
     loading.present();
     let headers = {
       'Content-Type': 'application/json'
-    };
+    };    
     let body = {
       user: data
     }
-    this.authService.postData(url, headers, body)
-      .then((res: any) => {
-        if (res.status && res.status == 200) {
-          let data = JSON.parse(res._body);
-          this.storage.set('profile', data).then(() => {
-            this.storage.set('isLoggedIn', true).then(() => {
-              loading.dismiss();
-              this.viewCtrl.dismiss();
-            }, error => console.error("islogg error", error))
-          }, error => console.error("pro error", error))
-        } else {
-          loading.dismiss();
-          this.alert("Error", res.data.message);
-        }
-      }, (err) => {
-        loading.dismiss();        
-        this.alert("Error", err.data.message);
-      })
 
+    this.storage.get("uuid").then((uuid) => {
+      if(uuid){
+        body.user.key = uuid;
+        this.authService.postData(url, headers, body)
+        .then((res: any) => {
+          if (res.status && res.status == 200) {
+            let data = JSON.parse(res._body);
+            this.storage.set('profile', data).then(() => {
+              this.storage.set('isLoggedIn', true).then(() => {
+                loading.dismiss();
+                this.alert("Info", JSON.stringify(data));
+                this.viewCtrl.dismiss();
+              }, error => console.error("islogg error", error))
+            }, error => console.error("pro error", error))
+          } else {
+            loading.dismiss();
+            this.alert("Error", res.data.message);
+          }
+        }, (err) => {
+          loading.dismiss();        
+          this.alert("Error", err.data.message);
+        })  
+      } else {
+        this.authService.postData(url, headers, body)
+        .then((res: any) => {
+          if (res.status && res.status == 200) {
+            let data = JSON.parse(res._body);
+            this.storage.set('profile', data).then(() => {
+              this.storage.set('isLoggedIn', true).then(() => {
+                loading.dismiss();
+                this.alert("Info", JSON.stringify(data));
+                this.viewCtrl.dismiss();
+              }, error => console.error("islogg error", error))
+            }, error => console.error("pro error", error))
+          } else {
+            loading.dismiss();
+            this.alert("Error", res.data.message);
+          }
+        }, (err) => {
+          loading.dismiss();        
+          this.alert("Error", err.data.message);
+        })  
+      }
+    });        
   }
 
   cancel(){
@@ -117,8 +136,12 @@ export class WelcomePage {
   }
 
   loginGoogle() {
+    let loading = this.loadingCtrl.create({
+      content: 'Fetching your facebook profile...'
+    });
     this.googlePlus.login(
       {}).then((userData) => {
+        loading.dismiss();        
         let detail = {
           name: userData.displayName,
           email: userData.email

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar hideBackButton="true">
     <ion-buttons left>
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
@@ -20,7 +20,7 @@
       </div>      
       <div class="post-content-div" [style.height]="heights.bodyH">
         <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
-        <p class="body-text">{{post.body}}</p>
+        <p class="body-text" [innerHtml]="post.body"></p>
         <div class="row buttons-row">
           <div class="column">            
             <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>
