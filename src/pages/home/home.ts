@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, Platform, AlertController, ModalController, ToastController } from 'ionic-angular';
+import { NavController, Platform, AlertController, ModalController, ToastController, NavParams } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
@@ -23,7 +23,7 @@ export class Home {
   public timestamp = new Date().getTime();
   public posts: any;
   public platformHeight: any;
-  public data: any;
+  public data = <any>{};
   public disconnectSubscription: any;
   public connectSubscription: any;
   public isOnline: any;
@@ -31,13 +31,24 @@ export class Home {
   public current: any;
   public index: any;
   public heights = <any>{};  
+  public categoryName;
+  public categoryId;
+  public pageHead;
+  
 
-  constructor(private uniqueDeviceID: UniqueDeviceID, public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
+  constructor(private uniqueDeviceID: UniqueDeviceID, public navParams: NavParams, public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
     public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy,
     public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser, public sanitizer: DomSanitizer) {
+    
+    this.pageHead = navParams.get("categoryName") || "Home";
+    storage.set("pageHead", this.pageHead);    
     storage.set('page', 'Home');
+    
+    this.posts = [];       
 
-    platform.ready().then(() => {
+    platform.ready().then(() => {      
+      this.posts = [];
+
       if (platform.is('cordova')) {
         this.disconnectSubscription = network.onDisconnect().subscribe(() => {
           if (this.current) {
@@ -75,7 +86,6 @@ export class Home {
     });
 
     platform.registerBackButtonAction((e) => {
-      storage.get('page').then((page) => {
         let alert = alertCtrl.create({
           title: 'Confirm',
           message: 'Do you want to exit?',
@@ -87,18 +97,15 @@ export class Home {
             role: 'cancel'
           }]
         })
-        alert.present();
-      });
+        alert.present();      
     });
 
   }
 
   ionViewDidLoad() {
-    this.getData(1);
-    this.getPlatformHeight();
+    this.getData(1);    
     this.platform.ready().then(() => {
-      if (this.platform.is('cordova')) {
-        this.getPlatformHeight();
+      if (this.platform.is('cordova')) {        
         this.type = this.network.type;
         this.storage.set('page', 'Home');
         if (this.type == "unknown" || this.type == "none" || this.type == undefined) {
@@ -111,11 +118,8 @@ export class Home {
         console.log("online", this.isOnline)
         if (this.isOnline) {
           this.getData(1);  // download data
-        } else {
-          //show local data when no internet
-          this.storage.get('posts').then((posts) => {
-            this.posts = posts;
-          }, error => console.error("pro error", error))
+        } else {          
+          this.getStorageData();
         }
 
         this.storage.get('isLoggedIn').then((val) => {
@@ -149,6 +153,21 @@ export class Home {
         });
       }
     });
+  }
+
+  getStorageData(){    
+    this.storage.get('pageHead')
+    .then((pageHead) => {
+      if(pageHead && pageHead == "Home"){
+        this.storage.get('posts').then((posts) => {
+          this.posts = posts;
+        }, error => console.error("pro error", error))
+      } else {
+        this.storage.get('categoryposts').then((posts) => {
+          this.posts = posts;
+        }, error => console.error("pro error", error))
+      }
+    })       
   }
 
   exitApp() {
@@ -254,30 +273,37 @@ export class Home {
           console.log('already obj');
           temp = res._body;
         }        
-        this.posts = temp.post;
+        //this.posts = temp.post;
         var localPosts = [];
+        this.platformHeight = this.platform.height();
+        if (this.platform.is('ios')) {
+          if (this.platformHeight == 812) {
+            this.platformHeight -= 70; 
+          } else {
+            this.platformHeight -= 44;
+          }
+        }
+        var heights = <any>Object;
+        heights.slideH = `${this.platformHeight}px`;
+        heights.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
+        heights.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
+        console.log("heights", heights.slideH, heights.imageH, heights.bodyH);
+        var result = temp.post.map(function(o) {
+          o.slideH = heights.slideH,
+          o.imageH = heights.imageH,
+          o.bodyH = heights.bodyH
+          return o;
+        })
+        this.posts = result;
         setTimeout(() => {
           temp.post.forEach(element => {                               
-            element.image = this.getBase64(document.getElementById(element._id));
+            element.image = this.getBase64(document.getElementById(element._id));            
             localPosts.push(element);
-          });
+          });          
+          this.posts = localPosts;
           this.updateStorage(localPosts);
-        }, 3000)                
+        }, 5000)                
       })
-  }
-
-  getPlatformHeight(){
-    this.platformHeight = this.platform.height();
-    if (this.platform.is('ios')) {
-      if (this.platformHeight == 812) {
-        this.platformHeight -= 70; //iphone X
-      } else {
-        this.platformHeight -= 44;
-      }
-    }
-    this.heights.slideH = `${this.platformHeight}px`;
-    this.heights.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
-    this.heights.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
   }
 
   updateData(data) {
@@ -312,21 +338,20 @@ export class Home {
 
   getBase64(img){
     var canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    var dataURL = canvas.toDataURL("image/png");
-    //return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-    return this.sanitizer.bypassSecurityTrustUrl(dataURL);
-  }
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      var dataURL = canvas.toDataURL("image/png");
+      //return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+      return this.sanitizer.bypassSecurityTrustUrl(dataURL);
 
+  }
+  
   updateStorage(arr){    
     var oldPosts = []; //existing post available in localstorage
-    var allPosts = []; // new posts to download images
-    console.log("incoming",arr.length)
-    this.storage.get('posts').then((posts: any) => {      
-      console.log("posts length", posts && posts.length);      
+    var allPosts = []; // new posts to download images    
+    this.storage.get('posts').then((posts: any) => {            
       if(posts && posts.length > 0){  
         for(let i=0; i<arr.length; i++){          
           let newPosts = []; let existing = false;
@@ -346,18 +371,19 @@ export class Home {
         }          
       } else {
         allPosts = [...arr];  // if localstorage is empty save current posts
-      }   
-      console.log("oldPosts", oldPosts.length);      
-      console.log("allPosts", allPosts.length);
+      }         
       var finalArr = [];      
       finalArr.push(...oldPosts);
-      finalArr.push(...allPosts);
-      console.log("finalArr lrngth", finalArr.length);
+      finalArr.push(...allPosts);      
       this.storage.set('posts', finalArr);
       this.storage.get('posts').then((posts) => {
         //console.log("final", JSON.stringify(posts));
       });    
     });
+  }
+
+  doRefresh(e){
+    this.alert("Trying to refresh the page");
   }
 
 }
