@@ -50,3 +50,24 @@ exports.listCategory = function (req, res, next) {
         }        
     })
 }
+
+exports.getCategoryPost = function(req, res, next){
+    var name = req.params.name;
+
+    console.log(name);
+
+    if (!name) {
+        name = "";
+    }    
+
+    Post.getPostByCategory(name, function(err, posts){    
+        if (err) {
+            return res.status(500).send({
+                message: "Server is Busy, Please try again!"
+            });
+        } else {
+            return res.status(200).send(posts);
+        }   
+    })
+
+}

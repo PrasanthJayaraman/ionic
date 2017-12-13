@@ -50,7 +50,9 @@ postSchema.statics.create = function(obj, cb){
     new this(obj).save(cb);
 }
 
-
+postSchema.statics.getPostByCategory = function (name, cb) {    
+    this.find({categories: name, active: true }, null, { sort: { modified: -1 } }, cb);
+}
 
 postSchema.statics.findPostById = function (id, cb) {
     this.findOne({_id: id}, cb);
