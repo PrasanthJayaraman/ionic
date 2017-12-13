@@ -1,17 +1,13 @@
 import { Component } from '@angular/core';
 import { NavController, Platform, AlertController, ModalController, ToastController, NavParams } from 'ionic-angular';
-import { Geolocation } from '@ionic-native/geolocation';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
-import { Diagnostic } from '@ionic-native/diagnostic';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { Network } from '@ionic-native/network';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser';
-import { UniqueDeviceID } from '@ionic-native/unique-device-id';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import { WelcomePage } from '../welcome/welcome';
+import { HelperProvider } from '../../providers/helper/helper';
 
 @Component({
   selector: 'page-home',
@@ -28,7 +24,7 @@ export class Home {
   public connectSubscription: any;
   public isOnline: any;
   public type: any;
-  public current: any;
+  public networkConn: any;
   public index: any;
   public heights = <any>{};  
   public categoryName;
@@ -36,9 +32,11 @@ export class Home {
   public pageHead;
   
 
-  constructor(private uniqueDeviceID: UniqueDeviceID, public navParams: NavParams, public toast: ToastController, private network: Network, public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
-    public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy,
-    public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser, public sanitizer: DomSanitizer) {
+  constructor(public helper: HelperProvider,  
+    public navParams: NavParams, public toast: ToastController, public network: Network, 
+    public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
+    public platform: Platform, public alertCtrl: AlertController, public firebase: Firebase, 
+    public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser) {
     
     this.pageHead = navParams.get("categoryName") || "Home";
     storage.set("pageHead", this.pageHead);    
@@ -46,26 +44,32 @@ export class Home {
     
     this.posts = [];       
 
-    platform.ready().then(() => {      
-      this.posts = [];
+    //if(platform.is('cordova')){
 
-      if (platform.is('cordova')) {
+    platform.ready().then(() => {            
+        // Internet on disconnect watch
         this.disconnectSubscription = network.onDisconnect().subscribe(() => {
-          if (this.current) {
-            this.current = false;
+          if (this.networkConn) {
+            this.networkConn = false;
             this.isOnline = false;
+            this.toast.create({
+              message: `No network connection!`,
+              duration: 3000
+            }).present();
           }
-        });        
+        }); 
 
+        // Internet on connect watch
         this.connectSubscription = network.onConnect().subscribe(() => {
-          if (!this.current) {
-            this.current = true;
+          if (!this.networkConn) {
+            this.networkConn = true;
             setTimeout(() => {
-              this.getData(1);
+              this.getData(this.pageHead, 1);  // Get new posts once connected to internet
             }, 3000);
           }
         });
 
+        // Firebase Notification Open
         firebase.onNotificationOpen()
           .subscribe((notification) => {
             if (notification.tap) {
@@ -73,16 +77,44 @@ export class Home {
             } else {
               this.alert(notification.body);
             }
-          });
-
-        this.disconnectSubscription = this.network.onDisconnect().subscribe(() => {
-          this.toast.create({
-            message: `No network connection!`,
-            duration: 3000
-          }).present();
+          });       
+        
+        // To show the get started popup after 40 secs of home loaded
+        this.storage.get('isLoggedIn').then((val) => {
+          if (!val) {
+            this.storage.get('modal').then((modal) => {
+              if(modal){
+                setTimeout(() => {
+                  let modal = this.modalCtrl.create(WelcomePage);
+                  modal.present();
+                }, 40 * 1000);
+                this.storage.set("modal", false); // show only once then stop showing
+              }
+            });
+          }                    
         });
-      }
 
+        // Update the device token and device location everyday once & only app installs first time
+        this.storage.get("firstTime", ).then((first) => {
+          this.storage.get("limit").then((limit) => {
+            if (!first) {              
+              this.storage.set("firstTime", true);
+              this.storage.set("limit", this.timestamp);
+              this.helper.getDeviceId();  // Device unique UUID
+              this.helper.registerPush(); // Device FCM push token
+              this.helper.getLocation();  // Device GPS Location
+            } else if(limit){              
+              let now = new Date().getTime();
+              let diff = this.helper.diffDays(now, limit);
+              if (diff > 0) {
+                this.alert("Updating device location and token");
+                this.helper.registerPush();
+                this.helper.getLocation();
+                this.storage.set("limit", now);
+              }
+            }
+          })
+        });
     });
 
     platform.registerBackButtonAction((e) => {
@@ -100,70 +132,40 @@ export class Home {
         alert.present();      
     });
 
+  //}
+
   }
 
   ionViewDidLoad() {
-    this.getData(1);    
-    this.platform.ready().then(() => {
-      if (this.platform.is('cordova')) {        
+      //this.getData(this.pageHead, 1);     
+      this.platform.ready().then(() => {        
         this.type = this.network.type;
         this.storage.set('page', 'Home');
         if (this.type == "unknown" || this.type == "none" || this.type == undefined) {
           this.isOnline = false;
-          this.current = false;
+          this.networkConn = false;
         } else {
           this.isOnline = true
-          this.current = true;
+          this.networkConn = true;
         }
         console.log("online", this.isOnline)
         if (this.isOnline) {
-          this.getData(1);  // download data
+          this.getData(this.pageHead, 1);  // download data
         } else {          
           this.getStorageData();
-        }
-
-        this.storage.get('isLoggedIn').then((val) => {
-          if (!val) {
-            setTimeout(() => {
-              let modal = this.modalCtrl.create(WelcomePage);
-              modal.present();
-            }, 40 * 1000);
-          }
-        });
-
-        this.storage.get("firstTime", ).then((first) => {
-          this.storage.get("limit").then((limit) => {
-            if (!first) {              
-              this.storage.set("firstTime", true);
-              this.storage.set("limit", this.timestamp);
-              this.getDeviceId();
-              this.registerPush();
-              this.getLocation();
-            } else if(limit){              
-              let now = new Date().getTime();
-              let diff = this.diffDays(now, limit);
-              if (diff > 0) {
-                this.alert("Updating device location and token");
-                this.registerPush();
-                this.getLocation();
-                this.storage.set("limit", now);
-              }
-            }
-          })
-        });
-      }
-    });
-  }
+        }        
+      })    
+  }  
 
   getStorageData(){    
     this.storage.get('pageHead')
     .then((pageHead) => {
       if(pageHead && pageHead == "Home"){
-        this.storage.get('posts').then((posts) => {
+        this.storage.get('Home').then((posts) => {
           this.posts = posts;
         }, error => console.error("pro error", error))
       } else {
-        this.storage.get('categoryposts').then((posts) => {
+        this.storage.get(pageHead).then((posts) => {
           this.posts = posts;
         }, error => console.error("pro error", error))
       }
@@ -183,87 +185,17 @@ export class Home {
     alert.present();
   }
 
-  getLocation() {
-    this.locationAccuracy.canRequest().then((canRequest: boolean) => {
-      if (canRequest) {
-        this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_BALANCED_POWER_ACCURACY).then(() => {
-          this.fetchLocation();
-        }, (error) => {
-          console.log(error);
-          this.alert(`Cannot read request your location ${error}`);
-        });
-      } else {
-        this.fetchLocation();
-      }
-    });
-  }
-
-  fetchLocation() {
-    let options = {
-      enableHighAccuracy: true
-    };
-
-    this.geolocation.getCurrentPosition(options).then((resp) => {
-      console.log(resp.coords.latitude, resp.coords.longitude);
-      let data = {
-        location: [resp.coords.latitude, resp.coords.longitude]
-      };
-      this.updateData(data);
-    }).catch((error) => {
-      console.log('Error getting location', error);
-      this.alert(`Cannot read your location ${error}`);
-    });
-  }
-
-  registerPush() {
-    this.firebase.hasPermission()
-      .then((data) => {
-        if (data.isEnabled) {
-          this.collectToken();
-        } else {
-          this.firebase.grantPermission()
-            .then((permission) => {
-              this.collectToken();
-            }, (error) => console.log("error in getting permission", error))
-        }
-      }, (error) => console.log("Error in checking push permission"))
-  }
-
-  getDeviceId(){
-    this.uniqueDeviceID.get()
-    .then((uuid: any) => {
-      console.log("Device Id",uuid)
-      this.storage.set("uuid", uuid);      
-    })
-    .catch((error: any) => {
-      console.log(error)
-      this.storage.set("uuid", "");
-    });
-  }
-
-  collectToken() {    
-    this.firebase.onTokenRefresh()
-      .subscribe((token: string) => {
-        let data = {
-          token: token
-        }
-        this.updateData(data);
-        console.log(`Got a new token ${token}`);
-      }, (error) => console.log("error in getting tokens", error));
-  }
-
-  diffDays(timestamp1, timestamp2) {
-    var difference = timestamp1 - timestamp2;
-    var daysDifference = Math.floor(difference / 1000 / 60 / 60 / 24);
-    return daysDifference;
-  }
-
-  getData(index) {
+  getData(page, index) {
     if (!index) { 
       index = 1;
-    }
-    this.posts = [];
-    this.authService.getData('posts/' + index)
+    }   
+    let url;
+    if(page == "Home"){
+      url = `posts/${index}`
+    } else {
+      url = `category/${page}`
+    }     
+    this.authService.getData(url)
       .then((res: any) => {
         this.index = index;
         let temp;
@@ -272,118 +204,38 @@ export class Home {
         } catch (e) {
           console.log('already obj');
           temp = res._body;
-        }        
-        //this.posts = temp.post;
-        var localPosts = [];
-        this.platformHeight = this.platform.height();
-        if (this.platform.is('ios')) {
-          if (this.platformHeight == 812) {
-            this.platformHeight -= 70; 
-          } else {
-            this.platformHeight -= 44;
+        }                
+        if(page == "Home"){
+          this.posts.push(...this.helper.getPlatformHeight(temp.post));          
+        } else {          
+          this.posts.push(...this.helper.getPlatformHeight(temp));
+          if(this.posts.length == 0){
+            this.toast.create({
+              message: `No Post Available!`,
+              duration: 3000
+            }).present();
           }
-        }
-        var heights = <any>Object;
-        heights.slideH = `${this.platformHeight}px`;
-        heights.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
-        heights.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
-        console.log("heights", heights.slideH, heights.imageH, heights.bodyH);
-        var result = temp.post.map(function(o) {
-          o.slideH = heights.slideH,
-          o.imageH = heights.imageH,
-          o.bodyH = heights.bodyH
-          return o;
-        })
-        this.posts = result;
-        setTimeout(() => {
-          temp.post.forEach(element => {                               
-            element.image = this.getBase64(document.getElementById(element._id));            
-            localPosts.push(element);
-          });          
-          this.posts = localPosts;
-          this.updateStorage(localPosts);
-        }, 5000)                
+        }                        
+        this.data = temp;        
+        setTimeout(() => {          
+          this.helper.setOfflineDataReady(this.data);
+        }, 3000);  
       })
-  }
-
-  updateData(data) {
-    let headers = {
-      'Content-Type': 'application/json'
-    }
-    this.storage.get("uuid").then((uuid) => {
-        if(uuid){
-          data.key = uuid;
-          this.alert(`${JSON.stringify(data)}`)
-          this.authService.postData('user/device', headers, data)
-          .then((res: any) => {
-            console.log("Device data updated");
-          }, (error) => {
-            console.log("device update error",error);
-            this.storage.set("firstTime", false);
-          })
-          .catch((e) => {
-            console.log("device update catch",e);
-            this.storage.set("firstTime", false);
-          })
-        }
-    });    
-  }
+  }  
 
   openWithSystemBrowser(url: string) {
     const options: InAppBrowserOptions = {
       clearCache: 'no'
     }
     this.inAppBrowser.create(url, '_blank', options);
-  }
-
-  getBase64(img){
-    var canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      var ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      var dataURL = canvas.toDataURL("image/png");
-      //return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-      return this.sanitizer.bypassSecurityTrustUrl(dataURL);
-
-  }
-  
-  updateStorage(arr){    
-    var oldPosts = []; //existing post available in localstorage
-    var allPosts = []; // new posts to download images    
-    this.storage.get('posts').then((posts: any) => {            
-      if(posts && posts.length > 0){  
-        for(let i=0; i<arr.length; i++){          
-          let newPosts = []; let existing = false;
-          for(let j=0; j<posts.length; j++){
-            if(arr[i] && posts[j]){
-              if(arr[i]._id == posts[j]._id){  // If same post is coming then take add to old posts
-                oldPosts.push(posts[j]);
-                existing = true;
-                break;
-              } 
-            }            
-          }
-          if(!existing && arr[i]){ // if it is a new post then take the new post
-            newPosts.push(arr[i]);
-          }
-          allPosts.push(...newPosts);
-        }          
-      } else {
-        allPosts = [...arr];  // if localstorage is empty save current posts
-      }         
-      var finalArr = [];      
-      finalArr.push(...oldPosts);
-      finalArr.push(...allPosts);      
-      this.storage.set('posts', finalArr);
-      this.storage.get('posts').then((posts) => {
-        //console.log("final", JSON.stringify(posts));
-      });    
-    });
-  }
+  }  
 
   doRefresh(e){
     this.alert("Trying to refresh the page");
+  }
+
+  insertToArray(arr, index, item){    
+      arr.splice(index, 0, item);  
   }
 
 }

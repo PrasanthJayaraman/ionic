@@ -8,7 +8,6 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 
 import { Home } from '../pages/home/home';
 import { ProfilePage } from '../pages/profile/profile';
-import { CategoryPage } from '../pages/category/category';
 
 @Component({
   templateUrl: 'app.html'
@@ -51,8 +50,7 @@ export class MyApp {
   }
 
   openCategory(category){
-    this.nav.push(CategoryPage, {
-      categoryId: category._id,
+    this.nav.push(Home, {      
       categoryName: category.name
     });
   }

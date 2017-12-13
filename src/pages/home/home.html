@@ -12,14 +12,14 @@
 </ion-header>
 
 
-<ion-content padding class="has-header no-scroll">      
+<ion-content padding class="has-header no-scroll">       
   <div *ngIf="posts?.length == 0">
-    <img src="assets/imgs/loader.png" class="loader" alt="">
+    <img src="assets/imgs/loader.jpg" class="loader" alt="">
   </div>     
    <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false" autoHeight="true">                                          
     <ion-slide class="bg-white" *ngFor="let post of posts" [style.height]="post.slideH">                             
         <div class="post-image-div" [style.height]="post.imageH">
-            <img [attr.id]="post._id" [src]="post.image" class="post-image" alt="No image" crossOrigin="Anonymous" />          
+            <img [attr.id]="post._id" [src]="post.image || 'assets/imgs/placeholder.png'" class="post-image" alt="No image" crossOrigin="Anonymous" />          
           </div>      
           <div class="post-content-div" [style.height]="post.bodyH">
             <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>

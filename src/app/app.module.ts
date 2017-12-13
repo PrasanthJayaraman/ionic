@@ -24,6 +24,7 @@ import { Home } from '../pages/home/home';
 import { WelcomePage } from '../pages/welcome/welcome';
 import { ProfilePage } from '../pages/profile/profile';
 import { CategoryPage } from '../pages/category/category';
+import { HelperProvider } from '../providers/helper/helper';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { CategoryPage } from '../pages/category/category';
     AuthServiceProvider,    
     FileTransfer,
     File,
-    UniqueDeviceID
+    UniqueDeviceID,
+    HelperProvider
   ]
 })
 export class AppModule {}
