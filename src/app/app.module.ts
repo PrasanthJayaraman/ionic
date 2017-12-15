@@ -23,7 +23,6 @@ import { UniqueDeviceID } from '@ionic-native/unique-device-id';
 import { Home } from '../pages/home/home';
 import { WelcomePage } from '../pages/welcome/welcome';
 import { ProfilePage } from '../pages/profile/profile';
-import { CategoryPage } from '../pages/category/category';
 import { HelperProvider } from '../providers/helper/helper';
 
 @NgModule({
@@ -31,8 +30,7 @@ import { HelperProvider } from '../providers/helper/helper';
     MyApp,    
     Home,
     WelcomePage,
-    ProfilePage,
-    CategoryPage    
+    ProfilePage    
   ],
   imports: [
     BrowserModule,    
@@ -48,8 +46,7 @@ import { HelperProvider } from '../providers/helper/helper';
     MyApp,
     Home,
     WelcomePage,
-    ProfilePage,
-    CategoryPage
+    ProfilePage    
   ],
   providers: [
     StatusBar,

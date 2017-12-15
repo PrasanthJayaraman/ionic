@@ -93,6 +93,11 @@ export class HelperProvider {
       }
       this.storage.get("uuid").then((uuid) => {
           if(uuid){
+            if(this.platform.is('ios')){
+              data.platform = 'ios';
+            } else if(this.platform.is('android')){
+              data.platform = 'android';
+            }
             data.key = uuid;
             this.alert(`${JSON.stringify(data)}`)
             this.authService.postData('user/device', headers, data)
@@ -129,7 +134,7 @@ export class HelperProvider {
         var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
         var dataURL = canvas.toDataURL("image/png");        
-        return this.sanitizer.bypassSecurityTrustUrl(dataURL);
+        return dataURL;
     }
   
   
@@ -138,8 +143,37 @@ export class HelperProvider {
       var daysDifference = Math.floor(difference / 1000 / 60 / 60 / 24);
       return daysDifference;
     }
+
+    removeDuplicates(arr, posts){
+      var oldPosts = []; //existing post available in localstorage
+      var allPosts = []; 
+      if(posts && posts.length > 0){  
+        for(let i=0; i<arr.length; i++){          
+          let newPosts = []; let existing = false;
+          for(let j=0; j<posts.length; j++){
+            if(arr[i] && posts[j]){
+              if(arr[i]._id == posts[j]._id){  // If same post is coming then take add to old posts
+                oldPosts.push(posts[j]);
+                existing = true;
+                break;
+              } 
+            }            
+          }
+          if(!existing && arr[i]){ // if it is a new post then take the new post
+            newPosts.push(arr[i]);
+          }
+          allPosts.push(...newPosts);
+        }          
+      } else {
+        allPosts = [...arr];  // if localstorage is empty save current posts
+      } 
+      var finalArr = [];      
+      finalArr.push(...oldPosts);
+      finalArr.push(...allPosts); 
+      return finalArr;       
+    }
   
-    updateStorage(arr, pageHead){    
+    mergeAndUpdateStorage(arr, pageHead){    
       var oldPosts = []; //existing post available in localstorage
       var allPosts = []; // new posts to download images    
       this.storage.get(pageHead).then((posts: any) => {            
@@ -164,12 +198,9 @@ export class HelperProvider {
           allPosts = [...arr];  // if localstorage is empty save current posts
         }         
         var finalArr = [];      
-        finalArr.push(...oldPosts);
         finalArr.push(...allPosts);      
-        this.storage.set(pageHead, finalArr);
-        this.storage.get(pageHead).then((posts) => {
-          //console.log("final", JSON.stringify(posts));
-        });    
+        finalArr.push(...oldPosts);
+        this.storage.set(pageHead, finalArr);           
       });
     }
   
@@ -202,13 +233,13 @@ export class HelperProvider {
       if(Object.keys(data).length > 0){
         if(data.post){
           arr = this.deepCopy(data.post);
-          arr.forEach(element => {                               
+          arr.forEach((element, index) => {                                          
             element.image = this.getBase64(document.getElementById(element._id));            
             localdata.push(element);
           });  
           this.storage.get("pageHead")         
           .then((page) => {
-            this.updateStorage(localdata, page);
+            this.mergeAndUpdateStorage(localdata, page);
           })
         }
       }
@@ -225,6 +256,26 @@ export class HelperProvider {
         out.push(obj);
       }
         return out;
+    }
+
+    insertToArray(arr, index, item){    
+      arr.splice(index, 0, item);  
+    }
+
+    concatPostAndAd(posts, ads){  
+      let position = 3;       // count of posts you need to see between each ad
+      let iteration = Math.floor(posts.length / position);      
+      for(let i =1; i<=iteration;i++){ 
+        if(i != 1) {
+          position = (position * i) + 1;
+        }
+        if(posts.length >= position){
+          this.insertToArray(posts, position, ads[i-1])          
+        } else {
+          this.insertToArray(posts, posts.length, ads[i-1])
+        }
+      }
+      return posts;
     }
     
 }

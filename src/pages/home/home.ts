@@ -44,7 +44,7 @@ export class Home {
     
     this.posts = [];       
 
-    //if(platform.is('cordova')){
+    if(platform.is('cordova')){
 
     platform.ready().then(() => {            
         // Internet on disconnect watch
@@ -132,12 +132,13 @@ export class Home {
         alert.present();      
     });
 
-  //}
+  }
 
   }
 
   ionViewDidLoad() {
-      //this.getData(this.pageHead, 1);     
+      //this.getData(this.pageHead, 1);    
+      if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
         this.type = this.network.type;
         this.storage.set('page', 'Home');
@@ -154,7 +155,8 @@ export class Home {
         } else {          
           this.getStorageData();
         }        
-      })    
+      })   
+    } 
   }  
 
   getStorageData(){    
@@ -205,21 +207,21 @@ export class Home {
           console.log('already obj');
           temp = res._body;
         }                
-        if(page == "Home"){
-          this.posts.push(...this.helper.getPlatformHeight(temp.post));          
-        } else {          
-          this.posts.push(...this.helper.getPlatformHeight(temp));
-          if(this.posts.length == 0){
-            this.toast.create({
-              message: `No Post Available!`,
-              duration: 3000
-            }).present();
+        let newPosts = this.helper.getPlatformHeight(temp.post);   
+        this.storage.get(page).then((oldposts) => {
+          let allPosts = [];
+          if(oldposts && oldposts.length > 0){
+            allPosts = this.helper.removeDuplicates(newPosts, oldposts)
+          } else {
+            allPosts = newPosts;
           }
-        }                        
-        this.data = temp;        
-        setTimeout(() => {          
-          this.helper.setOfflineDataReady(this.data);
-        }, 3000);  
+          this.posts.push(...this.helper.concatPostAndAd(allPosts, temp.ad));
+          console.log(this.posts)
+          this.data = temp;        
+          setTimeout(() => {          
+            this.helper.setOfflineDataReady(this.data);
+          }, 3000);  
+        });              
       })
   }  
 
@@ -232,10 +234,6 @@ export class Home {
 
   doRefresh(e){
     this.alert("Trying to refresh the page");
-  }
-
-  insertToArray(arr, index, item){    
-      arr.splice(index, 0, item);  
   }
 
 }
