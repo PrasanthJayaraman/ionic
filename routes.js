@@ -31,7 +31,7 @@ module.exports = function(app){
     app.post("/api/v1/user/device", userController.updateDeviceInfo);
     app.get("/api/v1/posts/:id", appController.getPosts);
     app.get("/api/v1/categories", appController.listCategory);
-    app.get("/api/v1/category/:name", appController.getCategoryPost);
+    app.get("/api/v1/category/:name/:id", appController.getCategoryPost);
 
     // Post API
     app.get('/login', postController.showLogin);

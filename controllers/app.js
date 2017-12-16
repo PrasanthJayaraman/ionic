@@ -51,14 +51,25 @@ exports.listCategory = function (req, res, next) {
 
 exports.getCategoryPost = function(req, res, next){
     var name = req.params.name;
-
-    console.log(name);
+    var index = req.params.id;
+    var limit, skip, numberOfPosts = 10;
+    if (!index) {
+        index = 1;
+    }
+    limit = numberOfPosts;
+    if (index == 1) {
+        skip = 0;
+    } else {
+        skip = (index - 1) * numberOfPosts;
+    }    
 
     if (!name) {
         name = "";
     }    
 
-    Post.getPostByCategory(name, function(err, posts){    
+    
+    console.log(name, index, limit, skip);
+    Post.getPostByCategory(name, skip, limit, function(err, posts){    
         if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
