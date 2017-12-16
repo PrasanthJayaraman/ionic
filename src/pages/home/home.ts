@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NavController, Platform, AlertController, ModalController, ToastController, NavParams } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { NavController, Platform, AlertController, ModalController, LoadingController, ToastController, NavParams, Slides } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
@@ -14,6 +14,8 @@ import { HelperProvider } from '../../providers/helper/helper';
   templateUrl: 'home.html'
 })
 export class Home {
+  @ViewChild(Slides) slides: Slides;
+
   public Error: any;
   public location: any;
   public timestamp = new Date().getTime();
@@ -30,9 +32,9 @@ export class Home {
   public categoryName;
   public categoryId;
   public pageHead;
-  
+  public alreadyCalled: Boolean;  
 
-  constructor(public helper: HelperProvider,  
+  constructor(public helper: HelperProvider, public loadingCtrl: LoadingController,
     public navParams: NavParams, public toast: ToastController, public network: Network, 
     public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
     public platform: Platform, public alertCtrl: AlertController, public firebase: Firebase, 
@@ -188,17 +190,20 @@ export class Home {
   }
 
   getData(page, index) {
+    let loading = this.loadingCtrl.create({});
+    loading.present();
     if (!index) { 
       index = 1;
-    }   
+    }       
     let url;
     if(page == "Home"){
       url = `posts/${index}`
     } else {
-      url = `category/${page}`
+      url = `category/${page}/${index}`
     }     
     this.authService.getData(url)
       .then((res: any) => {
+        this.alreadyCalled = false;
         this.index = index;
         let temp;
         try {
@@ -208,20 +213,38 @@ export class Home {
           temp = res._body;
         }                
         let newPosts = this.helper.getPlatformHeight(temp.post);   
-        this.storage.get(page).then((oldposts) => {
-          let allPosts = [];
-          if(oldposts && oldposts.length > 0){
-            allPosts = this.helper.removeDuplicates(newPosts, oldposts)
+        if(newPosts && newPosts.length == 0){
+          loading.dismiss();
+          this.toast.create({
+            message: `No more Posts`,
+            duration: 3000
+          }).present();
+        } else {
+          loading.dismiss();
+          if(index > 1){
+            this.posts.push(...this.helper.concatPostAndAd(newPosts, temp.ad));
+            console.log(this.posts)
+            this.data = temp;        
+            setTimeout(() => {          
+              this.helper.setOfflineDataReady(this.data);
+            }, 3000);  
           } else {
-            allPosts = newPosts;
-          }
-          this.posts.push(...this.helper.concatPostAndAd(allPosts, temp.ad));
-          console.log(this.posts)
-          this.data = temp;        
-          setTimeout(() => {          
-            this.helper.setOfflineDataReady(this.data);
-          }, 3000);  
-        });              
+            this.storage.get(page).then((oldposts) => {
+              let allPosts = [];
+              if(oldposts && oldposts.length > 0){
+                allPosts = this.helper.removeDuplicates(newPosts, oldposts)
+              } else {
+                allPosts = newPosts;
+              }
+              this.posts.push(...this.helper.concatPostAndAd(allPosts, temp.ad));
+              console.log(this.posts)
+              this.data = temp;        
+              setTimeout(() => {          
+                this.helper.setOfflineDataReady(this.data);
+              }, 3000);  
+            });  
+          }           
+        }                 
       })
   }  
 
@@ -234,6 +257,18 @@ export class Home {
 
   doRefresh(e){
     this.alert("Trying to refresh the page");
+  }
+
+  slideChanged() {
+    let currentIndex = this.slides.getActiveIndex();
+    console.log('Current index is', currentIndex);
+    if(this.slides.isEnd()){
+      if(!this.alreadyCalled){
+        this.alreadyCalled = true;
+        this.index = this.index + 1;
+        this.getData(this.pageHead, this.index);
+      }      
+    }
   }
 
 }

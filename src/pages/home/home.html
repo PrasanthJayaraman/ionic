@@ -16,7 +16,7 @@
   <div *ngIf="posts?.length == 0">
     <img src="assets/imgs/loader.jpg" class="loader" alt="">
   </div>     
-   <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false" autoHeight="true">                                          
+   <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false" autoHeight="true" (ionSlideDidChange)="slideChanged()">                                          
     <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                             
       <div [attr.id]="i" *ngIf="post && post.title">
           <div class="post-image-div" [style.height]="post.imageH">

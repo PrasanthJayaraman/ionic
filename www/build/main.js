@@ -355,7 +355,7 @@ WelcomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
         selector: 'page-welcome',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/'<!--\n  Generated template for the WelcomePage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n\n<ion-content center text-center padding>\n  <br>\n  <br>\n  <button (click)="cancel()" style="right: 0;position: absolute;margin-right: 12px;font-size:20px;">\n    <ion-icon name="close"></ion-icon>\n  </button>\n  <img src="assets/imgs/icon.png" class="logo-medium" alt="logo" >\n  <h5 class="secondary bold">Please sign in to explore more jobs..</h5>\n  <div>\n    <!-- <span class="light">-- Sign in with --</span> -->\n    <br>\n    <br>\n    <div class="button-wrapper">\n      <button ion-button class="whitey-background circle shadow" (click)="loginFB()" style="margin-right:30px;">\n        <img src="assets/imgs/facebook.png" class="logo-small" alt="fb">\n      </button>\n      <br>\n      <button ion-button class="whitey-background circle shadow" (click)="loginGoogle()">\n        <img src="assets/imgs/google.png" class="logo-small" alt="g+">\n      </button>\n    </div>\n    <br>\n    <span class="light">-- Or --</span>\n    <form [formGroup]="user" (ngSubmit)="login()">\n      <ion-item class="inputPadding">\n        <ion-label fixed>Name</ion-label>\n        <ion-input type="text" formControlName="name"></ion-input>\n      </ion-item>\n      <ion-item class="inputPadding">\n        <ion-label fixed>Email</ion-label>\n        <ion-input type="email" formControlName="email"></ion-input>\n      </ion-item>\n      <ion-item class="inputPadding">\n        <ion-label fixed>Phone</ion-label>\n        <ion-input type="tel" formControlName="phone"></ion-input>\n      </ion-item>\n      <br>\n      <button ion-button color="secondary" type="submit" class="shadow bottom-space" round style="width:95%" >Get Started</button>\n    </form>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/welcome/welcome.html"*/,
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */], __WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6_ionic_angular_platform_platform__["a" /* Platform */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_facebook__["a" /* Facebook */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_google_plus__["a" /* GooglePlus */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */]])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["n" /* ViewController */], __WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6_ionic_angular_platform_platform__["a" /* Platform */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_facebook__["a" /* Facebook */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_google_plus__["a" /* GooglePlus */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */]])
 ], WelcomePage);
 
 //# sourceMappingURL=welcome.js.map
@@ -441,9 +441,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var Home = (function () {
-    function Home(helper, navParams, toast, network, modalCtrl, navCtrl, storage, platform, alertCtrl, firebase, authService, inAppBrowser) {
+    function Home(helper, loadingCtrl, navParams, toast, network, modalCtrl, navCtrl, storage, platform, alertCtrl, firebase, authService, inAppBrowser) {
         var _this = this;
         this.helper = helper;
+        this.loadingCtrl = loadingCtrl;
         this.navParams = navParams;
         this.toast = toast;
         this.network = network;
@@ -601,6 +602,8 @@ var Home = (function () {
     };
     Home.prototype.getData = function (page, index) {
         var _this = this;
+        var loading = this.loadingCtrl.create({});
+        loading.present();
         if (!index) {
             index = 1;
         }
@@ -609,10 +612,11 @@ var Home = (function () {
             url = "posts/" + index;
         }
         else {
-            url = "category/" + page;
+            url = "category/" + page + "/" + index;
         }
         this.authService.getData(url)
             .then(function (res) {
+            _this.alreadyCalled = false;
             _this.index = index;
             var temp;
             try {
@@ -623,22 +627,43 @@ var Home = (function () {
                 temp = res._body;
             }
             var newPosts = _this.helper.getPlatformHeight(temp.post);
-            _this.storage.get(page).then(function (oldposts) {
-                var allPosts = [];
-                if (oldposts && oldposts.length > 0) {
-                    allPosts = _this.helper.removeDuplicates(newPosts, oldposts);
+            if (newPosts && newPosts.length == 0) {
+                loading.dismiss();
+                _this.toast.create({
+                    message: "No more Posts",
+                    duration: 3000
+                }).present();
+            }
+            else {
+                loading.dismiss();
+                if (index > 1) {
+                    (_a = _this.posts).push.apply(_a, _this.helper.concatPostAndAd(newPosts, temp.ad));
+                    console.log(_this.posts);
+                    _this.data = temp;
+                    setTimeout(function () {
+                        _this.helper.setOfflineDataReady(_this.data);
+                    }, 3000);
                 }
                 else {
-                    allPosts = newPosts;
+                    _this.storage.get(page).then(function (oldposts) {
+                        var allPosts = [];
+                        if (oldposts && oldposts.length > 0) {
+                            allPosts = _this.helper.removeDuplicates(newPosts, oldposts);
+                        }
+                        else {
+                            allPosts = newPosts;
+                        }
+                        (_a = _this.posts).push.apply(_a, _this.helper.concatPostAndAd(allPosts, temp.ad));
+                        console.log(_this.posts);
+                        _this.data = temp;
+                        setTimeout(function () {
+                            _this.helper.setOfflineDataReady(_this.data);
+                        }, 3000);
+                        var _a;
+                    });
                 }
-                (_a = _this.posts).push.apply(_a, _this.helper.concatPostAndAd(allPosts, temp.ad));
-                console.log(_this.posts);
-                _this.data = temp;
-                setTimeout(function () {
-                    _this.helper.setOfflineDataReady(_this.data);
-                }, 3000);
-                var _a;
-            });
+            }
+            var _a;
         });
     };
     Home.prototype.openWithSystemBrowser = function (url) {
@@ -650,14 +675,29 @@ var Home = (function () {
     Home.prototype.doRefresh = function (e) {
         this.alert("Trying to refresh the page");
     };
+    Home.prototype.slideChanged = function () {
+        var currentIndex = this.slides.getActiveIndex();
+        console.log('Current index is', currentIndex);
+        if (this.slides.isEnd()) {
+            if (!this.alreadyCalled) {
+                this.alreadyCalled = true;
+                this.index = this.index + 1;
+                this.getData(this.pageHead, this.index);
+            }
+        }
+    };
     return Home;
 }());
+__decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* Slides */]),
+    __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* Slides */])
+], Home.prototype, "slides", void 0);
 Home = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar hideBackButton="true">\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      {{pageHead}}\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding class="has-header no-scroll">       \n  <div *ngIf="posts?.length == 0">\n    <img src="assets/imgs/loader.jpg" class="loader" alt="">\n  </div>     \n   <ion-slides direction=\'vertical\' sensitivity="2" effect="slide" loop="false" autoHeight="true">                                          \n    <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                             \n      <div [attr.id]="i" *ngIf="post && post.title">\n          <div class="post-image-div" [style.height]="post.imageH">\n              <img [attr.id]="post._id" [src]="post.image || \'assets/imgs/placeholder.png\'" class="post-image" alt="No image" crossOrigin="Anonymous" />          \n            </div>      \n            <div class="post-content-div" [style.height]="post.bodyH">\n              <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>\n              <p class="body-text" [innerHtml]="post.body"></p>\n              <div class="row buttons-row">\n                <div class="column">            \n                  <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>\n                </div>\n                <div class="column">            \n                    <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>\n                </div>\n                <div class="column">            \n                    <button ion-button color="secondary" class="button" outline>Share</button>\n                </div>\n              </div>\n            </div>      \n      </div>    \n      <div *ngIf="post && post.script">\n          <div [innerHTML]="post.script">\n          </div>\n      </div>    \n    </ion-slide>\n  </ion-slides>\n <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,\n          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.\n          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the\n          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,\n          including the Drawing Center, New York, NY; \n          \n      -->\n</ion-content>'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar hideBackButton="true">\n    <ion-buttons left>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>\n      {{pageHead}}\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding class="has-header no-scroll">       \n  <div *ngIf="posts?.length == 0">\n    <img src="assets/imgs/loader.jpg" class="loader" alt="">\n  </div>     \n   <ion-slides direction=\'vertical\' sensitivity="2" effect="slide" loop="false" autoHeight="true" (ionSlideDidChange)="slideChanged()">                                          \n    <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                             \n      <div [attr.id]="i" *ngIf="post && post.title">\n          <div class="post-image-div" [style.height]="post.imageH">\n              <img [attr.id]="post._id" [src]="post.image || \'assets/imgs/placeholder.png\'" class="post-image" alt="No image" crossOrigin="Anonymous" />          \n            </div>      \n            <div class="post-content-div" [style.height]="post.bodyH">\n              <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>\n              <p class="body-text" [innerHtml]="post.body"></p>\n              <div class="row buttons-row">\n                <div class="column">            \n                  <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>\n                </div>\n                <div class="column">            \n                    <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>\n                </div>\n                <div class="column">            \n                    <button ion-button color="secondary" class="button" outline>Share</button>\n                </div>\n              </div>\n            </div>      \n      </div>    \n      <div *ngIf="post && post.script">\n          <div [innerHTML]="post.script">\n          </div>\n      </div>    \n    </ion-slide>\n  </ion-slides>\n <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,\n          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.\n          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the\n          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,\n          including the Drawing Center, New York, NY; \n          \n      -->\n</ion-content>'/*ion-inline-end:"/Users/apple/Documents/Ionic/ionic/src/pages/home/home.html"*/
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_8__providers_helper_helper__["a" /* HelperProvider */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ToastController */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_network__["a" /* Network */],
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_8__providers_helper_helper__["a" /* HelperProvider */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ToastController */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_network__["a" /* Network */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_firebase__["a" /* Firebase */],
         __WEBPACK_IMPORTED_MODULE_4__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_in_app_browser__["a" /* InAppBrowser */]])
@@ -962,16 +1002,30 @@ var HelperProvider = (function () {
     };
     HelperProvider.prototype.concatPostAndAd = function (posts, ads) {
         var position = 3; // count of posts you need to see between each ad
-        var iteration = Math.floor(posts.length / position);
-        for (var i = 1; i <= iteration; i++) {
-            if (i != 1) {
-                position = (position * i) + 1;
-            }
-            if (posts.length >= position) {
-                this.insertToArray(posts, position, ads[i - 1]);
+        var iteration = Math.floor(posts.length / 3);
+        var adCount = [];
+        var k = 0;
+        for (var j = 0; j <= iteration; j++) {
+            if (j + 0)
+                k++;
+            var temp = ads[k];
+            if (temp) {
+                adCount.push(temp);
             }
             else {
-                this.insertToArray(posts, posts.length, ads[i - 1]);
+                k = 0;
+                adCount.push(ads[k]);
+            }
+        }
+        for (var i = 1; i <= iteration; i++) {
+            if (i != 1) {
+                position = (3 * i) + (i - 1);
+            }
+            if (posts.length >= position) {
+                this.insertToArray(posts, position, adCount[i - 1]);
+            }
+            else {
+                this.insertToArray(posts, posts.length, adCount[i - 1]);
             }
         }
         return posts;
@@ -980,7 +1034,7 @@ var HelperProvider = (function () {
 }());
 HelperProvider = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_8__ionic_native_unique_device_id__["a" /* UniqueDeviceID */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ToastController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */],
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_8__ionic_native_unique_device_id__["a" /* UniqueDeviceID */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ToastController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_location_accuracy__["a" /* LocationAccuracy */],
         __WEBPACK_IMPORTED_MODULE_4__ionic_native_diagnostic__["a" /* Diagnostic */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_firebase__["a" /* Firebase */], __WEBPACK_IMPORTED_MODULE_7__providers_auth_service_auth_service__["a" /* AuthServiceProvider */], __WEBPACK_IMPORTED_MODULE_9__angular_platform_browser__["c" /* DomSanitizer */]])
 ], HelperProvider);
