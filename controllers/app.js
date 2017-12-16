@@ -4,19 +4,17 @@ var Category = mongoose.model('Category');
 var Ad = mongoose.model('Ad');
 
 exports.getPosts = function(req, res, next){    
-    var index = req.params.index;
-    var limit, skip, numberOfPosts = 10;
-
+    var index = req.params.id;
+    var limit, skip, numberOfPosts = 10;    
     if (!index) {
         index = 1;
     }
-    limit = numberOfPosts;
+    limit = numberOfPosts;    
     if (index == 1) {
         skip = 0;
     } else {
         skip = (index - 1) * numberOfPosts;
-    }    
-    console.log("asdsad");
+    }
     
     Post.getActivePosts(skip, limit, function (err, posts) {
         if (err) {
