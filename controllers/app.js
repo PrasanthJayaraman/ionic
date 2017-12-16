@@ -85,7 +85,7 @@ exports.getCategoryPost = function(req, res, next){
                 }
             });           
         } else {
-            return res.status(200).send(posts);
+            return res.status(200).send({ post: posts, ad: [] });
         }
     })
 
