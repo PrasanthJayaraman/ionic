@@ -15,7 +15,7 @@ export class HelperProvider {
   public platformHeight: any;
   
     constructor(private uniqueDeviceID: UniqueDeviceID, public toast: ToastController, public modalCtrl: ModalController, public storage: Storage,
-      public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy,
+      public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, 
       public diagnostic: Diagnostic, public alertCtrl: AlertController, public firebase: Firebase, public authService: AuthServiceProvider, public sanitizer: DomSanitizer) {
       console.log('Hello HelperProvider Provider');
     }
@@ -144,7 +144,7 @@ export class HelperProvider {
       return daysDifference;
     }
 
-    removeDuplicates(arr, posts){
+    removeDuplicates(arr, posts, index){
       var oldPosts = []; //existing post available in localstorage
       var allPosts = []; 
       if(posts && posts.length > 0){  
@@ -167,9 +167,14 @@ export class HelperProvider {
       } else {
         allPosts = [...arr];  // if localstorage is empty save current posts
       } 
-      var finalArr = [];      
-      finalArr.push(...oldPosts);
-      finalArr.push(...allPosts); 
+      var finalArr = [];     
+      if(index == 1) {
+        finalArr.push(...allPosts);
+        finalArr.push(...oldPosts);
+      } else {
+        finalArr.push(...oldPosts);
+        finalArr.push(...allPosts);
+      }       
       return finalArr;       
     }
   
@@ -218,7 +223,8 @@ export class HelperProvider {
       heights.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
       heights.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
       console.log("heights", heights.slideH, heights.imageH, heights.bodyH);
-      var result = posts.map(function(o) {
+      var result = posts.map(function(o) {        
+        o.url = o.image,
         o.slideH = heights.slideH,
         o.imageH = heights.imageH,
         o.bodyH = heights.bodyH
@@ -233,10 +239,10 @@ export class HelperProvider {
       if(Object.keys(data).length > 0){
         if(data.post){
           arr = this.deepCopy(data.post);
-          arr.forEach((element, index) => {                                          
+          arr.forEach((element, index) => {                                            
             element.image = this.getBase64(document.getElementById(element._id));            
             localdata.push(element);
-          });  
+          });
           this.storage.get("pageHead")         
           .then((page) => {
             this.mergeAndUpdateStorage(localdata, page);
@@ -290,6 +296,29 @@ export class HelperProvider {
         }
       }
       return posts;
+    }
+
+    getShareURL(){
+      let url;
+      if(this.platform.is('ios')){
+        url = `share/link/ios`;
+      } else {
+        url = `share/link/android`
+      }       
+      this.authService.getData(url) 
+      .then((res: any) => {
+        let temp;
+        try {
+          temp = JSON.parse(res._body);
+        } catch (e) {
+          console.log('already obj');
+          temp = res._body;
+        }    
+        this.storage.set('share', temp.link);
+      })
+      .catch((err) => {
+        this.storage.set('share', "");
+      })
     }
     
 }

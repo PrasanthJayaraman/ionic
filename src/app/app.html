@@ -1,23 +1,26 @@
 <ion-menu side="left" [content]="content" [swipeEnabled]="false" persistent="true"> 
-    <ion-header>
-        <ion-toolbar>
+    <ion-header no-border>
+        <ion-toolbar color="secondary">
             <ion-title>Home</ion-title>
         </ion-toolbar>
     </ion-header>
     <ion-content>
-        <ion-list>
-            <button ion-item menuClose (click)="openHome()">
+        <ion-list no-lines>
+            <button ion-item detail-none menuClose (click)="openHome()" no-border>
                 Home
             </button>  
-            <button ion-item menuClose (click)="openProfile()">
+            <button ion-item detail-none menuClose (click)="openProfile()">
                 My Profile
             </button>    
-            <button ion-item menuClose *ngFor="let cat of categories" (click)="openCategory(cat)">
+            <button ion-item detail-none menuClose *ngFor="let cat of categories" (click)="openCategory(cat)">
                 {{cat.name}}
             </button>         
-            <button ion-item menuClose (click)="logout()">
+            <button ion-item detail-none menuClose (click)="logout()">
                 Logout
             </button>
+           <!--  <button ion-button menuClose color="secondary" type="submit" class="shadow bottom-space" round style="width:95%" (click)="openModal()" >
+                Get Started
+            </button> -->
         </ion-list>
     </ion-content>
 </ion-menu>

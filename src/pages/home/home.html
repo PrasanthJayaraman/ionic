@@ -1,5 +1,5 @@
-<ion-header>
-  <ion-navbar hideBackButton="true">
+<ion-header no-border>
+  <ion-navbar hideBackButton="true" color="whitey">
     <ion-buttons left>
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
@@ -8,47 +8,53 @@
     <ion-title>
       {{pageHead}}
     </ion-title>
+    <ion-buttons end>
+      <button (click)="doRefresh()" style="background-color: transparent; font-size: 28px;">
+      <ion-icon name="refresh"></ion-icon>
+    </button>
+    </ion-buttons>
   </ion-navbar>
-</ion-header>
+</ion-header> 
 
-
-<ion-content padding class="has-header no-scroll">       
+<ion-content padding class="has-header no-scroll">         
   <div *ngIf="posts?.length == 0">
     <img src="assets/imgs/loader.jpg" class="loader" alt="">
-  </div>     
-   <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false" autoHeight="true" (ionSlideDidChange)="slideChanged()">                                          
-    <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                             
-      <div [attr.id]="i" *ngIf="post && post.title">
-          <div class="post-image-div" [style.height]="post.imageH">
-              <img [attr.id]="post._id" [src]="post.image || 'assets/imgs/placeholder.png'" class="post-image" alt="No image" crossOrigin="Anonymous" />          
-            </div>      
-            <div class="post-content-div" [style.height]="post.bodyH">
-              <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
-              <p class="body-text" [innerHtml]="post.body"></p>
-              <div class="row buttons-row">
-                <div class="column">            
-                  <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>
-                </div>
-                <div class="column">            
-                    <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>
-                </div>
-                <div class="column">            
-                    <button ion-button color="secondary" class="button" outline>Share</button>
-                </div>
+  </div>            
+  <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false" autoHeight="true" (ionSlideDidChange)="slideChanged()">                                                        
+    <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                                                         
+          <div [attr.id]="i" *ngIf="post && post.title">
+              <div class="post-image-div" [style.height]="post.imageH">
+                  <img [attr.id]="post._id" [src]="post.image || 'assets/imgs/placeholder.png'" class="post-image" alt="No image" crossOrigin="Anonymous" />          
+                </div>      
+                <div class="post-content-div" [style.height]="post.bodyH">
+                  <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
+                  <p class="body-text" [innerHtml]="post.body"></p>
+                  <div class="row buttons-row">
+                    <div class="column">            
+                      <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>
+                    </div>
+                    <div class="column">            
+                        <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>
+                    </div>
+                    <div class="column">            
+                        <button ion-button color="secondary" class="button" (click)="showShare(post.title, post.url)" outline>Share</button>
+                    </div>
+                  </div>
+                </div>      
+          </div>    
+          <div *ngIf="post && post.script">
+              <div [innerHTML]="post.script">
               </div>
-            </div>      
-      </div>    
-      <div *ngIf="post && post.script">
-          <div [innerHTML]="post.script">
-          </div>
-      </div>    
-    </ion-slide>
-  </ion-slides>
- <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,
-          FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.
-          She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the
-          Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,
-          including the Drawing Center, New York, NY; 
-          
-      -->
+          </div>    
+        </ion-slide>       
+  </ion-slides>  
 </ion-content>
+
+
+   
+ <!-- Patte Loper is a painter who experiments with sculpture and video. She was born in Colorado and grew up in Tallahassee,
+    FL, a subtropical college town where she first developed an appreciation for the ways nature and culture can overlap.
+    She currently lives and works in Brooklyn, NY, and Boston, MA, where she is on the faculty of the School of the
+    Museum of Fine Arts, Boston, MA. She has shown her work in numerous solo and group exhibitions internationally,
+    including the Drawing Center, New York, NY;       
+-->

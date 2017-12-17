@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, Platform, AlertController, ModalController, LoadingController, ToastController, NavParams, Slides } from 'ionic-angular';
+import { NavController, Platform, AlertController, ModalController, LoadingController, ToastController, NavParams, Slides, ActionSheetController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { Network } from '@ionic-native/network';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 import { WelcomePage } from '../welcome/welcome';
 import { HelperProvider } from '../../providers/helper/helper';
@@ -34,11 +35,11 @@ export class Home {
   public pageHead;
   public alreadyCalled: Boolean;  
 
-  constructor(public helper: HelperProvider, public loadingCtrl: LoadingController,
+  constructor(public helper: HelperProvider, public loadingCtrl: LoadingController, public actionSheet: ActionSheetController,
     public navParams: NavParams, public toast: ToastController, public network: Network, 
     public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
     public platform: Platform, public alertCtrl: AlertController, public firebase: Firebase, 
-    public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser) {
+    public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser,  public socialSharing: SocialSharing) {
     
     this.pageHead = navParams.get("categoryName") || "Home";
     storage.set("pageHead", this.pageHead);    
@@ -75,24 +76,22 @@ export class Home {
         firebase.onNotificationOpen()
           .subscribe((notification) => {
             if (notification.tap) {
-              this.alert(notification.body);
+              console.log("yes", JSON.stringify(notification));
+              //this.alert(JSON.stringify(notification));
             } else {
-              this.alert(notification.body);
+              //this.alert(JSON.stringify(notification));
             }
           });       
         
         // To show the get started popup after 40 secs of home loaded
         this.storage.get('isLoggedIn').then((val) => {
           if (!val) {
-            this.storage.get('modal').then((modal) => {
-              if(modal){
-                setTimeout(() => {
-                  let modal = this.modalCtrl.create(WelcomePage);
-                  modal.present();
-                }, 40 * 1000);
-                this.storage.set("modal", false); // show only once then stop showing
-              }
-            });
+            setTimeout(() => {
+              if(this.pageHead == "Home"){
+                let modal = this.modalCtrl.create(WelcomePage);
+                modal.present();
+              }          
+            }, 10 * 1000);
           }                    
         });
 
@@ -105,6 +104,7 @@ export class Home {
               this.helper.getDeviceId();  // Device unique UUID
               this.helper.registerPush(); // Device FCM push token
               this.helper.getLocation();  // Device GPS Location
+              this.helper.getShareURL();
             } else if(limit){              
               let now = new Date().getTime();
               let diff = this.helper.diffDays(now, limit);
@@ -112,6 +112,7 @@ export class Home {
                 this.alert("Updating device location and token");
                 this.helper.registerPush();
                 this.helper.getLocation();
+                this.helper.getShareURL();
                 this.storage.set("limit", now);
               }
             }
@@ -138,8 +139,10 @@ export class Home {
 
   }
 
-  ionViewDidLoad() {
-      //this.getData(this.pageHead, 1);    
+  ionViewDidLoad() {    
+      //this.isOnline = true;
+      //this.helper.getShareURL();
+      this.getData(this.pageHead, 1); 
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
         this.type = this.network.type;
@@ -170,7 +173,15 @@ export class Home {
         }, error => console.error("pro error", error))
       } else {
         this.storage.get(pageHead).then((posts) => {
-          this.posts = posts;
+          if(posts && posts.length > 0){
+            this.posts = posts;
+          } else {
+            this.posts = [];
+            this.toast.create({
+              message: `No Posts to show, Connect to internet!`,
+              duration: 3000
+            }).present();
+          }
         }, error => console.error("pro error", error))
       }
     })       
@@ -188,9 +199,12 @@ export class Home {
     });
     alert.present();
   }
+  
 
   getData(page, index) {
-    let loading = this.loadingCtrl.create({});
+    let loading = this.loadingCtrl.create({
+      spinner: "crescent"
+    });
     loading.present();
     if (!index) { 
       index = 1;
@@ -215,7 +229,7 @@ export class Home {
         let newPosts = this.helper.getPlatformHeight(temp.post);   
         if(newPosts && newPosts.length == 0){
           loading.dismiss();
-          this.toast.create({
+          this.toast.create({            
             message: `No more Posts`,
             duration: 3000
           }).present();
@@ -223,7 +237,7 @@ export class Home {
           loading.dismiss();
           if(index > 1){
             this.posts.push(...this.helper.concatPostAndAd(newPosts, temp.ad));
-            console.log(this.posts)
+            this.slides.slideNext();
             this.data = temp;        
             setTimeout(() => {          
               this.helper.setOfflineDataReady(this.data);
@@ -232,18 +246,20 @@ export class Home {
             this.storage.get(page).then((oldposts) => {
               let allPosts = [];
               if(oldposts && oldposts.length > 0){
-                allPosts = this.helper.removeDuplicates(newPosts, oldposts)
+                allPosts = this.helper.removeDuplicates(newPosts, oldposts, index)
               } else {
                 allPosts = newPosts;
               }
-              this.posts.push(...this.helper.concatPostAndAd(allPosts, temp.ad));
-              console.log(this.posts)
+              let concated = this.helper.concatPostAndAd(allPosts, temp.ad)
+              this.posts = [];
+              this.posts.push(...concated);            
+              this.slides.slideTo(0);              
               this.data = temp;        
               setTimeout(() => {          
                 this.helper.setOfflineDataReady(this.data);
               }, 3000);  
             });  
-          }           
+          }               
         }                 
       })
   }  
@@ -253,11 +269,7 @@ export class Home {
       clearCache: 'no'
     }
     this.inAppBrowser.create(url, '_blank', options);
-  }  
-
-  doRefresh(e){
-    this.alert("Trying to refresh the page");
-  }
+  }   
 
   slideChanged() {
     let currentIndex = this.slides.getActiveIndex();
@@ -270,5 +282,65 @@ export class Home {
       }      
     }
   }
+
+  doRefresh() {    
+    this.getData(this.pageHead, 1);    
+  }
+
+  showShare(title, imageURL){
+    let appLink;    
+    if(this.isOnline){      
+      this.storage.get('share')
+      .then((link) => {
+        console.log("share", link);
+        if(link){
+          appLink = link;
+        } else {
+          appLink = imageURL;
+        }
+        let actionSheet = this.actionSheet.create({
+          title: 'Share Via',
+          buttons: [
+            {
+              text: 'Facebook',          
+              handler: () => {
+                console.log(title, imageURL)
+                this.socialSharing.shareViaFacebook(title, "", appLink).then(() => {
+                  console.log("shareViaWhatsApp: Success");
+                }).catch((err) => {
+                  console.error("share FB: failed", err);
+                });
+              }
+            },
+            {
+              text: 'Watsapp',
+              handler: () => {
+                this.socialSharing.shareViaWhatsApp(title, "", appLink).then(() => {
+                  console.log("shareViaWhatsApp: Success");
+                }).catch((err) => {
+                  console.error("shareViaWhatsApp: failed", err);
+                });
+              }
+            },
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
+                console.log('Cancel clicked');
+              }
+            }
+          ]
+        });
+     
+        actionSheet.present();
+      });      
+    } else {
+      this.toast.create({
+        message: `Need Internet connection to share!`,
+        duration: 3000
+      }).present();
+    }    
+  }
+
 
 }

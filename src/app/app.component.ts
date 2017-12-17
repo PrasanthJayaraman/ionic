@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Nav } from 'ionic-angular';
+import { Platform, Nav, ModalController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
@@ -8,6 +8,7 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 
 import { Home } from '../pages/home/home';
 import { ProfilePage } from '../pages/profile/profile';
+import { WelcomePage } from '../pages/welcome/welcome';
 
 @Component({
   templateUrl: 'app.html'
@@ -18,7 +19,8 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
   public categories : Array<any>;
 
-  constructor(public authService: AuthServiceProvider, public storage: Storage, public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
+  constructor(public authService: AuthServiceProvider, public storage: Storage, public modalCtrl: ModalController,
+    public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
 
     this.rootPage = Home;    
 
@@ -61,6 +63,11 @@ export class MyApp {
 
   openProfile(){
     this.nav.push(ProfilePage);
+  }
+
+  openModal(){
+    let modal = this.modalCtrl.create(WelcomePage);
+    modal.present();
   }
 
   logout() {    

@@ -19,6 +19,7 @@ import { FileTransfer } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { UniqueDeviceID } from '@ionic-native/unique-device-id';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 import { Home } from '../pages/home/home';
 import { WelcomePage } from '../pages/welcome/welcome';
@@ -65,7 +66,8 @@ import { HelperProvider } from '../providers/helper/helper';
     FileTransfer,
     File,
     UniqueDeviceID,
-    HelperProvider
+    HelperProvider,
+    SocialSharing
   ]
 })
 export class AppModule {}
