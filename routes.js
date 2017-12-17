@@ -32,7 +32,7 @@ module.exports = function(app){
     app.get("/api/v1/posts/:id", appController.getPosts);
     app.get("/api/v1/categories", appController.listCategory);
     app.get("/api/v1/category/:name/:id", appController.getCategoryPost);
-    app.get("/api/share/link/:platform", appController.redirectToShareLink);
+    app.get("/api/v1/share/link/:platform", appController.redirectToShareLink);
 
     // Post API
     app.get('/login', postController.showLogin);

@@ -93,9 +93,11 @@ exports.getCategoryPost = function(req, res, next){
 
 exports.redirectToShareLink = function(req, res, next){
     var platform = req.params.platform;
+    var ios = "https://itunes.apple.com/in/app/youtube-watch-listen-stream/id544007664?mt=8";
+    var android = "https://play.google.com/store/apps/details?id=com.google.android.youtube&hl=en";
     if(platform == 'ios'){
-        res.redirect("https://itunes.apple.com/in/app/youtube-watch-listen-stream/id544007664?mt=8");
+        res.status(200).send({link: ios});
     } else {
-        res.redirect("https://play.google.com/store/apps/details?id=com.google.android.youtube&hl=en");
+        res.status(200).send({ link: android});
     }
 }
