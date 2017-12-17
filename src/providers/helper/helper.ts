@@ -99,7 +99,7 @@ export class HelperProvider {
               data.platform = 'android';
             }
             data.key = uuid;
-            this.alert(`${JSON.stringify(data)}`)
+            //this.alert(`${JSON.stringify(data)}`)
             this.authService.postData('user/device', headers, data)
             .then((res: any) => {
               console.log("Device data updated");
