@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MyApp</string>
+    <string name="launcher_name">@string/app_name</string>
+    <string name="activity_name">@string/launcher_name</string>
+    
+    <string name="google_app_id">1:859717456078:android:764d2cb7da3280eb</string>
+    <string name="google_api_key">AIzaSyBe3PjD6naKCodqYmnNPsz_jD2P4WBrt6g</string>
+</resources>
