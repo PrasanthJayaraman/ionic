@@ -6,6 +6,7 @@ import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { Network } from '@ionic-native/network';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { WelcomePage } from '../welcome/welcome';
 import { HelperProvider } from '../../providers/helper/helper';
@@ -36,7 +37,7 @@ export class Home {
   public alreadyCalled: Boolean;  
 
   constructor(public helper: HelperProvider, public loadingCtrl: LoadingController, public actionSheet: ActionSheetController,
-    public navParams: NavParams, public toast: ToastController, public network: Network, 
+    public navParams: NavParams, public toast: ToastController, public network: Network, public sanitizer: DomSanitizer,
     public modalCtrl: ModalController, public navCtrl: NavController, public storage: Storage,
     public platform: Platform, public alertCtrl: AlertController, public firebase: Firebase, 
     public authService: AuthServiceProvider, public inAppBrowser: InAppBrowser,  public socialSharing: SocialSharing) {
@@ -58,7 +59,7 @@ export class Home {
             this.toast.create({
               message: `No network connection!`,
               duration: 3000
-            }).present();
+            }).present();                        
           }
         }); 
 
@@ -66,6 +67,7 @@ export class Home {
         this.connectSubscription = network.onConnect().subscribe(() => {
           if (!this.networkConn) {
             this.networkConn = true;
+            this.isOnline = true;
             setTimeout(() => {
               this.getData(this.pageHead, 1);  // Get new posts once connected to internet
             }, 3000);
@@ -87,7 +89,7 @@ export class Home {
         this.storage.get('isLoggedIn').then((val) => {
           if (!val) {
             setTimeout(() => {
-              if(this.pageHead == "Home"){
+              if(this.pageHead == "Home" && this.isOnline){
                 let modal = this.modalCtrl.create(WelcomePage);
                 modal.present();
               }          
@@ -95,8 +97,7 @@ export class Home {
           }                    
         });
 
-        // Update the device token and device location everyday once & only app installs first time
-        if(this.isOnline){
+        // Update the device token and device location everyday once & only app installs first time        
         this.storage.get("firstTime", ).then((first) => {
           this.storage.get("limit").then((limit) => {
             if (!first) {              
@@ -118,13 +119,7 @@ export class Home {
               }
             }
           })
-        });
-      } else {
-        this.toast.create({
-          message: `you need working internet!`,
-          duration: 3000
-        }).present();
-      }
+        });      
     });
 
     platform.registerBackButtonAction((e) => {
@@ -147,9 +142,8 @@ export class Home {
   }
 
   ionViewDidLoad() {    
-      //this.isOnline = true;
-      //this.helper.getShareURL();
-      //this.getData(this.pageHead, 1); 
+      //this.isOnline = true;      
+      this.getData(this.pageHead, 1); 
       //this.getStorageData();
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
@@ -217,7 +211,7 @@ export class Home {
   }
   
 
-  getData(page, index) {
+  getData(page, index) {    
     if(this.isOnline){
       let loading = this.loadingCtrl.create({
         spinner: "crescent"
@@ -271,8 +265,8 @@ export class Home {
               }, 3000);  
             }               
           }                 
-        })
-    }
+        })  
+      }
   }  
 
   openWithSystemBrowser(url: string) {
@@ -288,14 +282,23 @@ export class Home {
     if(this.slides.isEnd()){
       if(!this.alreadyCalled){
         this.alreadyCalled = true;
-        this.index = this.index + 1;
-        this.getData(this.pageHead, this.index);
+        if(this.isOnline){
+          this.index = this.index + 1;
+          this.getData(this.pageHead, this.index);
+        }        
       }      
     }
   }
 
-  doRefresh() {    
-    this.getData(this.pageHead, 1);    
+  doRefresh() {  
+    if(this.isOnline)  {
+      this.getData(this.pageHead, 1);    
+    } else {
+      this.toast.create({
+        message: `Please Connect to internet!`,
+        duration: 3000
+      }).present();
+    }
   }
 
   showShare(title, imageURL){

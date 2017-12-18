@@ -125,114 +125,13 @@ export class HelperProvider {
         console.log(error)
         this.storage.set("uuid", "");
       });
-    }
-  
-    getBase64(img){                    
-      try{
-        var canvas = document.createElement("canvas");        
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        var dataURL = canvas.toDataURL("image/png");        
-        return dataURL;
-      } catch (e){
-        return "";
-      }        
-    }
-  
+    }   
   
     diffDays(timestamp1, timestamp2) {
       var difference = timestamp1 - timestamp2;
       var daysDifference = Math.floor(difference / 1000 / 60 / 60 / 24);
       return daysDifference;
-    }
-
-    removeDuplicates(arr, posts, index){
-      var oldPosts = []; //existing post available in localstorage
-      var allPosts = []; 
-      if(posts && posts.length > 0){  
-        for(let i=0; i<arr.length; i++){          
-          let newPosts = []; let existing = false;
-          for(let j=0; j<posts.length; j++){
-            if(arr[i] && posts[j]){
-              if(arr[i]._id == posts[j]._id){  // If same post is coming then take add to old posts
-                oldPosts.push(posts[j]);
-                existing = true;
-                break;
-              } 
-            }            
-          }
-          if(!existing && arr[i]){ // if it is a new post then take the new post
-            newPosts.push(arr[i]);
-          }
-          allPosts.push(...newPosts);
-        }          
-      } else {
-        allPosts = [...arr];  // if localstorage is empty save current posts
-      } 
-      var finalArr = [];     
-      if(index == 1) {
-        finalArr.push(...allPosts);
-        finalArr.push(...oldPosts);
-      } else {
-        finalArr.push(...oldPosts);
-        finalArr.push(...allPosts);
-      }       
-      return finalArr;       
-    }
-  
-    mergeAndUpdateStorage(arr, pageHead){    
-      var oldPosts = []; //existing post available in localstorage
-      var allPosts = []; // new posts to download images    
-      this.storage.get(pageHead).then((posts: any) => {               
-        if(posts && posts.length > 0){  
-          for(let i=0; i< arr.length; i++){          
-            let newPosts = []; let existing = false;
-            for(let j=0; j<posts.length; j++){
-              if(arr[i] && posts[j]){
-                if(arr[i]._id == posts[j]._id){  // If same post is coming then take add to old posts
-                  oldPosts.push(posts[j]);
-                  existing = true;
-                  break;
-                } 
-              }            
-            }
-            if(!existing && arr[i]){ // if it is a new post then take the new post
-              newPosts.push(arr[i]);
-            }
-            allPosts.push(...newPosts);
-          }          
-        } else {
-          allPosts = [...arr];  // if localstorage is empty save current posts
-        }         
-        var finalArr = [];      
-        finalArr.push(...allPosts);      
-        finalArr.push(...oldPosts);
-        this.saveToStorage(pageHead, finalArr);               
-      });
-    }
-
-    saveToStorage(pageHead, data){
-      this.asyncLoop(data.length, (loop) => {
-        let each = data[loop.iteration()];
-        this.storage.get(pageHead)
-        .then((posts) => {
-          if(posts){
-            posts.push(each);
-            this.storage.set(pageHead, posts);  
-            loop.next();        
-          } else {
-            let posts = [];
-            posts.push(each);
-            this.storage.set(pageHead, posts);          
-            loop.next();
-          }                
-        })     
-      }, () => {
-        console.log("updated local storage");
-      })      
-    }
+    }    
   
     getPlatformHeight(posts){
       this.platformHeight = this.platform.height();
@@ -258,6 +157,21 @@ export class HelperProvider {
       return result;
     }
 
+    getBase64(img){                    
+      try{        
+        var canvas = document.createElement("canvas");        
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");        
+        return this.sanitizer.bypassSecurityTrustUrl(dataURL);
+      } catch (e){
+        console.log(e);
+        return "";
+      }        
+    }
+
     setOfflineDataReady(data: any){
       var localdata = []; 
       var arr = [];
@@ -266,9 +180,17 @@ export class HelperProvider {
           arr = data;          
           this.asyncLoop(arr.length, (loop) => {
             let each = arr[loop.iteration()];
-            each.image = this.getBase64(document.getElementById(each._id));            
-            localdata.push(each);
-            loop.next();
+            //each.image = this.getBase64(document.getElementById(each._id));            
+            this.convertToDataURLviaCanvas(each.url, "image/png")
+            .then( base64Img => {
+               each.image = base64Img;
+               localdata.push(each);
+               loop.next();
+            }, (err) => {
+              console.log(err);
+              each.image = "assets/imgs/placeholder.png"
+              loop.next();
+            })            
           }, () => {
             console.log("converted all images to base64");
             this.storage.get("pageHead")         
@@ -304,7 +226,10 @@ export class HelperProvider {
       let position = 3;       // count of posts you need to see between each ad
       let iteration = Math.floor(posts.length / 3);      
       let adCount = [];
-      let k = 0;
+      let k = 0;     
+      for(let item of posts){                
+        item.newImage = `<img data-url="online" src="${item.url}" class="post-image ${item._id}" alt="No image" />`
+      }
       for(let j=0; j<=iteration;j++){
         if(j !+ 0) k++;        
         let temp = ads[k];
@@ -381,6 +306,27 @@ export class HelperProvider {
       };
       loop.next();
       return loop;
+  }
+
+  convertToDataURLviaCanvas(url, outputFormat){
+    return new Promise( (resolve, reject) => {
+      let img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function(){
+        var self : any = this;
+        let canvas = <HTMLCanvasElement> document.createElement('CANVAS'),
+        ctx = canvas.getContext('2d'),
+        dataURL;
+        canvas.height = self.height;
+        canvas.width = self.width;
+        ctx.drawImage(self, 0, 0);
+        dataURL = canvas.toDataURL(outputFormat);
+        //callback(dataURL);
+        canvas = null;
+        resolve(dataURL); 
+      };
+      img.src = url;
+    });
   }
     
 }

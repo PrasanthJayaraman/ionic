@@ -47,6 +47,20 @@ export class MyApp {
         }
         this.categories = temp;
         this.storage.set("categories", temp);
+      }, (err) => {
+          this.storage.get("categories")
+          .then((cats) => {
+            if(cats){
+              this.categories = cats;
+            }
+          })
+      }).catch((err) => {
+        this.storage.get("categories")
+        .then((cats) => {
+          if(cats){
+            this.categories = cats;
+          }
+        })
       })
     });
   }

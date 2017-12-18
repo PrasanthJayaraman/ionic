@@ -36,7 +36,7 @@ import { WelcomePageModule } from '../pages/welcome/welcome.module';
   imports: [
     BrowserModule,    
     HttpModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp),    
     IonicStorageModule.forRoot({
       name: '__jobswala',
       driverOrder: ['indexeddb', 'sqlite', 'websql']

@@ -23,6 +23,8 @@
     "@ionic-native/core": "4.3.3",
     "@ionic-native/diagnostic": "4.3.3",
     "@ionic-native/facebook": "^4.5.2",
+    "@ionic-native/file": "^4.5.2",
+    "@ionic-native/file-transfer": "^4.5.2",
     "@ionic-native/firebase": "^4.5.2",
     "@ionic-native/geolocation": "4.3.3",
     "@ionic-native/google-plus": "^4.4.2",
@@ -93,7 +95,8 @@
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-uniquedeviceid": {},
       "cordova-plugin-x-socialsharing": {},
-      "cordova-plugin-file-transfer": {}
+      "cordova-plugin-file-transfer": {},
+      "cordova-plugin-file": {}
     },
     "platforms": [
       "ios",

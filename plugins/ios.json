@@ -61,13 +61,13 @@
     },
     "cordova-plugin-x-socialsharing": {
       "PACKAGE_NAME": "io.ionicapp.jobswala"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "io.ionicapp.jobswala"
     }
   },
   "dependent_plugins": {
     "cordova-plugin-compat": {
-      "PACKAGE_NAME": "io.ionicapp.jobswala"
-    },
-    "cordova-plugin-file": {
       "PACKAGE_NAME": "io.ionicapp.jobswala"
     },
     "es6-promise-plugin": {

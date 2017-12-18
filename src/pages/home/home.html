@@ -23,10 +23,13 @@
   <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false" autoHeight="true" (ionSlideDidChange)="slideChanged()">                                                        
     <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                                                         
           <div [attr.id]="i" *ngIf="post && post.title">
-              <div class="post-image-div" [style.height]="post.imageH">
-                  <img *ngIf="isOnline" [attr.id]="post._id" [src]="post.url" data-url="online" class="post-image" alt="No image" crossOrigin="Anonymous" />          
-                  <img *ngIf="!isOnline" [attr.id]="post._id"  data-url="not online" [src]="post.image" class="post-image" alt="No image" crossOrigin="Anonymous" />     
-                </div>      
+                <img style="display:none" [attr.id]="post._id"  data-url="default" [src]="post.url" class="post-image" alt="No image" crossOrigin="Anonymous" />                
+                <div class="post-image-div" *ngIf="isOnline" [style.height]="post.imageH" [innerHTML]="post.newImage" >                                  
+                </div>   
+                <div *ngIf="!isOnline" class="post-image-div" [style.height]="post.imageH">                  
+                  <!-- <img [attr.id]="post._id"  data-url="not online" [src]="sanitizer.bypassSecurityTrustUrl(post.image)" class="post-image" alt="No image" crossOrigin="Anonymous" /> -->
+                  <img [attr.id]="post._id"  data-url="not online" [src]="post.image" class="post-image" alt="No image" crossOrigin="Anonymous" />
+                 </div>    
                 <div class="post-content-div" [style.height]="post.bodyH">
                   <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
                   <p class="body-text" [innerHtml]="post.body"></p>
