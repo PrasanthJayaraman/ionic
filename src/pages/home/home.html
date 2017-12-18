@@ -24,7 +24,8 @@
     <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                                                         
           <div [attr.id]="i" *ngIf="post && post.title">
               <div class="post-image-div" [style.height]="post.imageH">
-                  <img [attr.id]="post._id" [src]="post.image || 'assets/imgs/placeholder.png'" class="post-image" alt="No image" crossOrigin="Anonymous" />          
+                  <img *ngIf="isOnline" [attr.id]="post._id" [src]="post.url" data-url="online" class="post-image" alt="No image" crossOrigin="Anonymous" />          
+                  <img *ngIf="!isOnline" [attr.id]="post._id"  data-url="not online" [src]="post.image" class="post-image" alt="No image" crossOrigin="Anonymous" />     
                 </div>      
                 <div class="post-content-div" [style.height]="post.bodyH">
                   <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>

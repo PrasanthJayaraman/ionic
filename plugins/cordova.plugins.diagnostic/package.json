@@ -2,18 +2,18 @@
   "_args": [
     [
       {
-        "raw": "cordova.plugins.diagnostic",
+        "raw": "cordova.plugins.diagnostic@3.7.1",
         "scope": null,
         "escapedName": "cordova.plugins.diagnostic",
         "name": "cordova.plugins.diagnostic",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
+        "rawSpec": "3.7.1",
+        "spec": "3.7.1",
+        "type": "version"
       },
-      "D:\\jobswala"
+      "/Users/apple/Documents/Ionic/ionic"
     ]
   ],
-  "_from": "cordova.plugins.diagnostic@latest",
+  "_from": "cordova.plugins.diagnostic@3.7.1",
   "_id": "cordova.plugins.diagnostic@3.7.1",
   "_inCache": true,
   "_location": "/cordova.plugins.diagnostic",
@@ -29,13 +29,13 @@
   "_npmVersion": "4.2.0",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "cordova.plugins.diagnostic",
+    "raw": "cordova.plugins.diagnostic@3.7.1",
     "scope": null,
     "escapedName": "cordova.plugins.diagnostic",
     "name": "cordova.plugins.diagnostic",
-    "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "rawSpec": "3.7.1",
+    "spec": "3.7.1",
+    "type": "version"
   },
   "_requiredBy": [
     "#USER",
@@ -44,8 +44,8 @@
   "_resolved": "https://registry.npmjs.org/cordova.plugins.diagnostic/-/cordova.plugins.diagnostic-3.7.1.tgz",
   "_shasum": "4f29c0ae6273ed77ad68e980a66979d36adb83a2",
   "_shrinkwrap": null,
-  "_spec": "cordova.plugins.diagnostic",
-  "_where": "D:\\jobswala",
+  "_spec": "cordova.plugins.diagnostic@3.7.1",
+  "_where": "/Users/apple/Documents/Ionic/ionic",
   "author": {
     "name": "Dave Alden"
   },

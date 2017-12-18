@@ -1,9 +1,3 @@
-exports.getVerificationID = function(number, success, error) {
-    if (typeof success === 'function') {
-        success();
-    }
-};
-
 exports.getInstanceId = function(success, error) {
     if (typeof success === 'function') {
         success();
@@ -119,12 +113,6 @@ exports.setConfigSettings = function (settings, success, error) {
 };
 
 exports.setDefaults = function (defaults, namespace, success, error) {
-    if (typeof success === 'function') {
-        success();
-    }
-};
-
-exports.verifyPhoneNumber = function(number, timeOutDuration, success, error) {
     if (typeof success === 'function') {
         success();
     }

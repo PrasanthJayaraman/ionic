@@ -2,18 +2,18 @@
   "_args": [
     [
       {
-        "raw": "cordova-sqlite-storage",
+        "raw": "cordova-sqlite-storage@2.1.1",
         "scope": null,
         "escapedName": "cordova-sqlite-storage",
         "name": "cordova-sqlite-storage",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
+        "rawSpec": "2.1.1",
+        "spec": "2.1.1",
+        "type": "version"
       },
-      "D:\\jobswala"
+      "/Users/apple/Documents/Ionic/ionic"
     ]
   ],
-  "_from": "cordova-sqlite-storage@latest",
+  "_from": "cordova-sqlite-storage@2.1.1",
   "_id": "cordova-sqlite-storage@2.1.1",
   "_inCache": true,
   "_location": "/cordova-sqlite-storage",
@@ -29,13 +29,13 @@
   "_npmVersion": "3.10.10",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "cordova-sqlite-storage",
+    "raw": "cordova-sqlite-storage@2.1.1",
     "scope": null,
     "escapedName": "cordova-sqlite-storage",
     "name": "cordova-sqlite-storage",
-    "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "rawSpec": "2.1.1",
+    "spec": "2.1.1",
+    "type": "version"
   },
   "_requiredBy": [
     "#USER",
@@ -44,8 +44,8 @@
   "_resolved": "https://registry.npmjs.org/cordova-sqlite-storage/-/cordova-sqlite-storage-2.1.1.tgz",
   "_shasum": "5ca5d2e2d1677a954b1f193c7a54cec4e27bddf4",
   "_shrinkwrap": null,
-  "_spec": "cordova-sqlite-storage",
-  "_where": "D:\\jobswala",
+  "_spec": "cordova-sqlite-storage@2.1.1",
+  "_where": "/Users/apple/Documents/Ionic/ionic",
   "author": {
     "name": "various"
   },

@@ -96,6 +96,7 @@ export class Home {
         });
 
         // Update the device token and device location everyday once & only app installs first time
+        if(this.isOnline){
         this.storage.get("firstTime", ).then((first) => {
           this.storage.get("limit").then((limit) => {
             if (!first) {              
@@ -118,6 +119,12 @@ export class Home {
             }
           })
         });
+      } else {
+        this.toast.create({
+          message: `you need working internet!`,
+          duration: 3000
+        }).present();
+      }
     });
 
     platform.registerBackButtonAction((e) => {
@@ -142,7 +149,8 @@ export class Home {
   ionViewDidLoad() {    
       //this.isOnline = true;
       //this.helper.getShareURL();
-      this.getData(this.pageHead, 1); 
+      //this.getData(this.pageHead, 1); 
+      //this.getStorageData();
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
         this.type = this.network.type;
@@ -169,7 +177,15 @@ export class Home {
     .then((pageHead) => {
       if(pageHead && pageHead == "Home"){
         this.storage.get('Home').then((posts) => {
-          this.posts = posts;
+          if(posts && posts.length > 0){
+            this.posts = posts;
+          } else {
+            this.posts = [];
+            this.toast.create({
+              message: `No Posts to show, Connect to internet!`,
+              duration: 3000
+            }).present();
+          }
         }, error => console.error("pro error", error))
       } else {
         this.storage.get(pageHead).then((posts) => {
@@ -202,66 +218,61 @@ export class Home {
   
 
   getData(page, index) {
-    let loading = this.loadingCtrl.create({
-      spinner: "crescent"
-    });
-    loading.present();
-    if (!index) { 
-      index = 1;
-    }       
-    let url;
-    if(page == "Home"){
-      url = `posts/${index}`
-    } else {
-      url = `category/${page}/${index}`
-    }     
-    this.authService.getData(url)
-      .then((res: any) => {
-        this.alreadyCalled = false;
-        this.index = index;
-        let temp;
-        try {
-          temp = JSON.parse(res._body);
-        } catch (e) {
-          console.log('already obj');
-          temp = res._body;
-        }                
-        let newPosts = this.helper.getPlatformHeight(temp.post);   
-        if(newPosts && newPosts.length == 0){
-          loading.dismiss();
-          this.toast.create({            
-            message: `No more Posts`,
-            duration: 3000
-          }).present();
-        } else {
-          loading.dismiss();
-          if(index > 1){
-            this.posts.push(...this.helper.concatPostAndAd(newPosts, temp.ad));
-            this.slides.slideNext();
-            this.data = temp;        
-            setTimeout(() => {          
-              this.helper.setOfflineDataReady(this.data);
-            }, 3000);  
-          } else {
-            this.storage.get(page).then((oldposts) => {
-              let allPosts = [];
-              if(oldposts && oldposts.length > 0){
-                allPosts = this.helper.removeDuplicates(newPosts, oldposts, index)
-              } else {
-                allPosts = newPosts;
-              }
-              let concated = this.helper.concatPostAndAd(allPosts, temp.ad)
+    if(this.isOnline){
+      let loading = this.loadingCtrl.create({
+        spinner: "crescent"
+      });
+      loading.present();
+      if (!index) { 
+        index = 1;
+      }       
+      let url;
+      if(page == "Home"){
+        url = `posts/${index}`
+      } else {
+        url = `category/${page}/${index}`
+      }     
+      this.authService.getData(url)
+        .then((res: any) => {
+          this.alreadyCalled = false;
+          this.index = index;
+          let temp;
+          try {
+            temp = JSON.parse(res._body);
+          } catch (e) {
+            console.log('already obj');
+            temp = res._body;
+          }                
+          let newPosts = this.helper.getPlatformHeight(temp.post);   
+          let dataPack = JSON.parse(JSON.stringify(newPosts));
+          if(newPosts && newPosts.length == 0){            
+            this.toast.create({            
+              message: `No more Posts`,
+              duration: 3000
+            }).present();            
+            loading.dismiss();
+          } else {            
+            loading.dismiss();
+            if(index > 1){
+              let postsWithAd = this.helper.concatPostAndAd(newPosts, temp.ad);
+              this.posts.push(...postsWithAd);                            
+              this.toast.create({            
+                message: `More Posts Below`,
+                duration: 2000
+              }).present();
+            } else {              
+              let concated = this.helper.concatPostAndAd(newPosts, temp.ad);
               this.posts = [];
               this.posts.push(...concated);            
-              this.slides.slideTo(0);              
-              this.data = temp;        
+              this.slides.slideTo(0);  
+              this.data = dataPack;
               setTimeout(() => {          
                 this.helper.setOfflineDataReady(this.data);
               }, 3000);  
-            });  
-          }               
-        }                 
-      })
+            }               
+          }                 
+        })
+    }
   }  
 
   openWithSystemBrowser(url: string) {

@@ -25,13 +25,13 @@ import { Home } from '../pages/home/home';
 import { WelcomePage } from '../pages/welcome/welcome';
 import { ProfilePage } from '../pages/profile/profile';
 import { HelperProvider } from '../providers/helper/helper';
+import { ProfilePageModule } from '../pages/profile/profile.module';
+import { WelcomePageModule } from '../pages/welcome/welcome.module';
 
 @NgModule({
   declarations: [
     MyApp,    
-    Home,
-    WelcomePage,
-    ProfilePage    
+    Home      
   ],
   imports: [
     BrowserModule,    
@@ -40,7 +40,9 @@ import { HelperProvider } from '../providers/helper/helper';
     IonicStorageModule.forRoot({
       name: '__jobswala',
       driverOrder: ['indexeddb', 'sqlite', 'websql']
-    })
+    }),
+    ProfilePageModule,
+    WelcomePageModule    
   ],
   bootstrap: [IonicApp],
   entryComponents: [

@@ -10,7 +10,7 @@
         "spec": ">=1.0.0 <2.0.0",
         "type": "range"
       },
-      "D:\\jobswala"
+      "/Users/apple/Documents/Ionic/ionic"
     ]
   ],
   "_from": "cordova-plugin-compat@>=1.0.0 <2.0.0",
@@ -45,7 +45,7 @@
   "_shasum": "0bc65757276ebd920c012ce920e274177576373e",
   "_shrinkwrap": null,
   "_spec": "cordova-plugin-compat@^1.0.0",
-  "_where": "D:\\jobswala",
+  "_where": "/Users/apple/Documents/Ionic/ionic",
   "author": {
     "name": "Apache Software Foundation"
   },

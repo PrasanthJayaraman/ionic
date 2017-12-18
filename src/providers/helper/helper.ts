@@ -128,6 +128,7 @@ export class HelperProvider {
     }
   
     getBase64(img){                    
+      try{
         var canvas = document.createElement("canvas");        
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
@@ -135,6 +136,9 @@ export class HelperProvider {
         ctx.drawImage(img, 0, 0);
         var dataURL = canvas.toDataURL("image/png");        
         return dataURL;
+      } catch (e){
+        return "";
+      }        
     }
   
   
@@ -181,9 +185,9 @@ export class HelperProvider {
     mergeAndUpdateStorage(arr, pageHead){    
       var oldPosts = []; //existing post available in localstorage
       var allPosts = []; // new posts to download images    
-      this.storage.get(pageHead).then((posts: any) => {            
+      this.storage.get(pageHead).then((posts: any) => {               
         if(posts && posts.length > 0){  
-          for(let i=0; i<arr.length; i++){          
+          for(let i=0; i< arr.length; i++){          
             let newPosts = []; let existing = false;
             for(let j=0; j<posts.length; j++){
               if(arr[i] && posts[j]){
@@ -205,8 +209,29 @@ export class HelperProvider {
         var finalArr = [];      
         finalArr.push(...allPosts);      
         finalArr.push(...oldPosts);
-        this.storage.set(pageHead, finalArr);           
+        this.saveToStorage(pageHead, finalArr);               
       });
+    }
+
+    saveToStorage(pageHead, data){
+      this.asyncLoop(data.length, (loop) => {
+        let each = data[loop.iteration()];
+        this.storage.get(pageHead)
+        .then((posts) => {
+          if(posts){
+            posts.push(each);
+            this.storage.set(pageHead, posts);  
+            loop.next();        
+          } else {
+            let posts = [];
+            posts.push(each);
+            this.storage.set(pageHead, posts);          
+            loop.next();
+          }                
+        })     
+      }, () => {
+        console.log("updated local storage");
+      })      
     }
   
     getPlatformHeight(posts){
@@ -237,16 +262,21 @@ export class HelperProvider {
       var localdata = []; 
       var arr = [];
       if(Object.keys(data).length > 0){
-        if(data.post){
-          arr = this.deepCopy(data.post);
-          arr.forEach((element, index) => {                                            
-            element.image = this.getBase64(document.getElementById(element._id));            
-            localdata.push(element);
-          });
-          this.storage.get("pageHead")         
-          .then((page) => {
-            this.mergeAndUpdateStorage(localdata, page);
-          })
+        if(data){
+          arr = data;          
+          this.asyncLoop(arr.length, (loop) => {
+            let each = arr[loop.iteration()];
+            each.image = this.getBase64(document.getElementById(each._id));            
+            localdata.push(each);
+            loop.next();
+          }, () => {
+            console.log("converted all images to base64");
+            this.storage.get("pageHead")         
+            .then((page) => {
+              this.storage.set(page, localdata);  
+              //this.mergeAndUpdateStorage(localdata, page);
+            })
+          })                        
         }
       }
     }
@@ -319,6 +349,38 @@ export class HelperProvider {
       .catch((err) => {
         this.storage.set('share', "");
       })
-    }
+    }  
+    
+    asyncLoop(iterations, func, callback) {
+      var index = 0;
+      var done = false;
+      var loop = {
+          next: () => {
+              if (done) {
+                  return;
+              }
+  
+              if (index < iterations) {
+                  index++;
+                  func(loop);
+  
+              } else {
+                  done = true;
+                  callback();
+              }
+          },
+  
+          iteration: () => {
+              return index - 1;
+          },
+  
+          break: () => {
+              done = true;
+              callback();
+          }
+      };
+      loop.next();
+      return loop;
+  }
     
 }

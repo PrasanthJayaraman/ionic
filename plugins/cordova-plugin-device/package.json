@@ -10,7 +10,7 @@
         "spec": "1.1.4",
         "type": "version"
       },
-      "D:\\jobswala"
+      "/Users/apple/Documents/Ionic/ionic"
     ]
   ],
   "_from": "cordova-plugin-device@1.1.4",
@@ -45,7 +45,7 @@
   "_shasum": "d5fe74712069d03f6d386ef0bd321b3abd0d38dc",
   "_shrinkwrap": null,
   "_spec": "cordova-plugin-device@1.1.4",
-  "_where": "D:\\jobswala",
+  "_where": "/Users/apple/Documents/Ionic/ionic",
   "author": {
     "name": "Apache Software Foundation"
   },

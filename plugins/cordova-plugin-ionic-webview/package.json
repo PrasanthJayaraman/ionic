@@ -2,18 +2,18 @@
   "_args": [
     [
       {
-        "raw": "cordova-plugin-ionic-webview@^1.1.11",
+        "raw": "cordova-plugin-ionic-webview@1.1.16",
         "scope": null,
         "escapedName": "cordova-plugin-ionic-webview",
         "name": "cordova-plugin-ionic-webview",
-        "rawSpec": "^1.1.11",
-        "spec": ">=1.1.11 <2.0.0",
-        "type": "range"
+        "rawSpec": "1.1.16",
+        "spec": "1.1.16",
+        "type": "version"
       },
-      "D:\\jobswala"
+      "/Users/apple/Documents/Ionic/ionic"
     ]
   ],
-  "_from": "cordova-plugin-ionic-webview@>=1.1.11 <2.0.0",
+  "_from": "cordova-plugin-ionic-webview@1.1.16",
   "_id": "cordova-plugin-ionic-webview@1.1.16",
   "_inCache": true,
   "_location": "/cordova-plugin-ionic-webview",
@@ -29,13 +29,13 @@
   "_npmVersion": "5.4.2",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "cordova-plugin-ionic-webview@^1.1.11",
+    "raw": "cordova-plugin-ionic-webview@1.1.16",
     "scope": null,
     "escapedName": "cordova-plugin-ionic-webview",
     "name": "cordova-plugin-ionic-webview",
-    "rawSpec": "^1.1.11",
-    "spec": ">=1.1.11 <2.0.0",
-    "type": "range"
+    "rawSpec": "1.1.16",
+    "spec": "1.1.16",
+    "type": "version"
   },
   "_requiredBy": [
     "#USER",
@@ -44,8 +44,8 @@
   "_resolved": "https://registry.npmjs.org/cordova-plugin-ionic-webview/-/cordova-plugin-ionic-webview-1.1.16.tgz",
   "_shasum": "92d5f2e4a5a829f91b487b1761848765a31c9f1e",
   "_shrinkwrap": null,
-  "_spec": "cordova-plugin-ionic-webview@^1.1.11",
-  "_where": "D:\\jobswala",
+  "_spec": "cordova-plugin-ionic-webview@1.1.16",
+  "_where": "/Users/apple/Documents/Ionic/ionic",
   "author": {
     "name": "Ionic Team"
   },
