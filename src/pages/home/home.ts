@@ -35,6 +35,8 @@ export class Home {
   public categoryId;
   public pageHead;
   public alreadyCalled: Boolean;  
+  public fetching: any;
+  public calledLocal: any;
 
   constructor(public helper: HelperProvider, public loadingCtrl: LoadingController, public actionSheet: ActionSheetController,
     public navParams: NavParams, public toast: ToastController, public network: Network, public sanitizer: DomSanitizer,
@@ -53,25 +55,23 @@ export class Home {
     platform.ready().then(() => {            
         // Internet on disconnect watch
         this.disconnectSubscription = network.onDisconnect().subscribe(() => {
-          if (this.networkConn) {
-            this.networkConn = false;
-            this.isOnline = false;
+          this.isOnline = false;
+          if(!this.calledLocal){
+            this.getStorageData();
             this.toast.create({
               message: `No network connection!`,
               duration: 3000
-            }).present();                        
-          }
+            }).present();          
+          }               
         }); 
 
         // Internet on connect watch
         this.connectSubscription = network.onConnect().subscribe(() => {
-          if (!this.networkConn) {
-            this.networkConn = true;
-            this.isOnline = true;
-            setTimeout(() => {
-              this.getData(this.pageHead, 1);  // Get new posts once connected to internet
-            }, 3000);
-          }
+          this.isOnline = true;
+          this.calledLocal = false;
+          setTimeout(() => {
+            this.getData(this.pageHead, 1);  // Get new posts once connected to internet
+          }, 3000);
         });
 
         // Firebase Notification Open
@@ -89,11 +89,8 @@ export class Home {
         this.storage.get('isLoggedIn').then((val) => {
           if (!val) {
             setTimeout(() => {
-              if(this.pageHead == "Home" && this.isOnline){
-                let modal = this.modalCtrl.create(WelcomePage);
-                modal.present();
-              }          
-            }, 10 * 1000);
+              this.showModal();
+            }, 40 * 1000);
           }                    
         });
 
@@ -137,24 +134,28 @@ export class Home {
         alert.present();      
     });
 
+    }
   }
 
+  showModal(){
+    if(this.pageHead == "Home" && this.isOnline && !this.fetching){
+      let modal = this.modalCtrl.create(WelcomePage);
+      modal.present();
+    }     
   }
 
-  ionViewDidLoad() {    
+  ionViewDidLoad() {      
       //this.isOnline = true;      
-      this.getData(this.pageHead, 1); 
+      //this.getData(this.pageHead, 1); 
       //this.getStorageData();
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
         this.type = this.network.type;
         this.storage.set('page', 'Home');
         if (this.type == "unknown" || this.type == "none" || this.type == undefined) {
-          this.isOnline = false;
-          this.networkConn = false;
+          this.isOnline = false;          
         } else {
-          this.isOnline = true
-          this.networkConn = true;
+          this.isOnline = true          
         }
         console.log("online", this.isOnline)
         if (this.isOnline) {
@@ -167,6 +168,7 @@ export class Home {
   }  
 
   getStorageData(){    
+    this.calledLocal = true;
     this.storage.get('pageHead')
     .then((pageHead) => {
       if(pageHead && pageHead == "Home"){
@@ -211,8 +213,9 @@ export class Home {
   }
   
 
-  getData(page, index) {    
+  getData(page, index) {        
     if(this.isOnline){
+      this.fetching = true;
       let loading = this.loadingCtrl.create({
         spinner: "crescent"
       });
@@ -228,6 +231,7 @@ export class Home {
       }     
       this.authService.getData(url)
         .then((res: any) => {
+          this.fetching = false;
           this.alreadyCalled = false;
           this.index = index;
           let temp;

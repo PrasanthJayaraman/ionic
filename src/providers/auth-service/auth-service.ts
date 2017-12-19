@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
-let APIURL = "http://35.185.187.53:4000/api/v1/";
+let APIURL = "https://jobswala.co/api/v1/";
 
 /*
   Generated class for the AuthServiceProvider provider.
