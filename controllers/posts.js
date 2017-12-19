@@ -154,7 +154,7 @@ exports.uploadImage = function(req, res, next){
     if(fileName){
         var obj = {
             response: 200,
-            name: "http://35.185.187.53:4000/uploads/" + fileName
+            name: "https://jobswala.co/uploads/" + fileName
         }
     } else {
         var obj = {
