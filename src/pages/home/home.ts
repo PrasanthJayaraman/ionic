@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, Platform, AlertController, ModalController, LoadingController, ToastController, NavParams, Slides, ActionSheetController } from 'ionic-angular';
+import { NavController, Platform, AlertController, ModalController, LoadingController, ToastController, NavParams, Slides, ActionSheetController, Content } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
@@ -17,6 +17,7 @@ import { HelperProvider } from '../../providers/helper/helper';
 })
 export class Home {
   @ViewChild(Slides) slides: Slides;
+  @ViewChild(Content) content: Content;
 
   public Error: any;
   public location: any;
@@ -58,11 +59,11 @@ export class Home {
           this.isOnline = false;
           if(!this.calledLocal){
             this.getStorageData();
-            this.toast.create({
+            /* this.toast.create({
               message: `No network connection!`,
               duration: 3000
-            }).present();          
-          }               
+            }).present();           */
+          }   
         }); 
 
         // Internet on connect watch
@@ -109,6 +110,7 @@ export class Home {
               let diff = this.helper.diffDays(now, limit);
               if (diff > 0) {
                 this.alert("Updating device location and token");
+                this.helper.getDeviceId();
                 this.helper.registerPush();
                 this.helper.getLocation();
                 this.helper.getShareURL();
@@ -145,8 +147,7 @@ export class Home {
   }
 
   ionViewDidLoad() {      
-      //this.isOnline = true;      
-      //this.getData(this.pageHead, 1); 
+      //this.isOnline = true; this.getData(this.pageHead, 1); 
       //this.getStorageData();
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
@@ -169,6 +170,10 @@ export class Home {
 
   getStorageData(){    
     this.calledLocal = true;
+    this.toast.create({
+      message: `No internet connection`,
+      duration: 3000
+    }).present();
     this.storage.get('pageHead')
     .then((pageHead) => {
       if(pageHead && pageHead == "Home"){
@@ -241,7 +246,7 @@ export class Home {
             console.log('already obj');
             temp = res._body;
           }                
-          let newPosts = this.helper.getPlatformHeight(temp.post);   
+          let newPosts = this.helper.getPlatformHeight(temp.post, this.content.contentHeight);   
           let dataPack = JSON.parse(JSON.stringify(newPosts));
           if(newPosts && newPosts.length == 0){            
             this.toast.create({            
@@ -249,11 +254,13 @@ export class Home {
               duration: 3000
             }).present();            
             loading.dismiss();
+            this.content.resize();
           } else {            
             loading.dismiss();
             if(index > 1){
               let postsWithAd = this.helper.concatPostAndAd(newPosts, temp.ad);
-              this.posts.push(...postsWithAd);                            
+              this.posts.push(...postsWithAd);             
+              this.content.resize();               
               this.toast.create({            
                 message: `More Posts Below`,
                 duration: 2000
@@ -264,9 +271,9 @@ export class Home {
               this.posts.push(...concated);            
               this.slides.slideTo(0);  
               this.data = dataPack;
-              setTimeout(() => {          
-                this.helper.setOfflineDataReady(this.data);
-              }, 3000);  
+              this.content.resize();
+              //this.alert(this.content.contentHeight);
+              this.helper.setOfflineDataReady(this.data);              
             }               
           }                 
         })  

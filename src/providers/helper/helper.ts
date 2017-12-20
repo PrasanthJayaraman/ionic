@@ -55,7 +55,9 @@ export class HelperProvider {
         let data = {
           location: [resp.coords.latitude, resp.coords.longitude]
         };
-        this.updateData(data);
+        setTimeout(() => {
+          this.updateData(data);
+        }, 3000);
       }).catch((error) => {
         console.log('Error getting location', error);
         this.alert(`Cannot read your location ${error}`);
@@ -82,7 +84,9 @@ export class HelperProvider {
           let data = {
             token: token
           }
-          this.updateData(data);
+          setTimeout(() => {
+            this.updateData(data);
+          }, 3000);
           console.log(`Got a new token ${token}`);
         }, (error) => console.log("error in getting tokens", error));
     }
@@ -133,20 +137,27 @@ export class HelperProvider {
       return daysDifference;
     }    
   
-    getPlatformHeight(posts){
-      this.platformHeight = this.platform.height();
-      if (this.platform.is('ios')) {
-        if (this.platformHeight == 812) {
-          this.platformHeight -= 70; 
-        } else {
-          this.platformHeight -= 44;
+    getPlatformHeight(posts, totalHeight){
+      if(totalHeight && totalHeight != "0"){
+        this.platformHeight = totalHeight;
+      } else {
+        this.platformHeight = this.platform.height();
+        if (this.platform.is('ios')) {
+          if (this.platformHeight == 812) {
+            this.platformHeight -= 70; 
+          } else {
+            this.platformHeight -= 44;
+          }
+        } else if(this.platform.is('android')){
+          this.platformHeight -= 56;
         }
-      }
+      }      
       var heights = <any>Object;
       heights.slideH = `${this.platformHeight}px`;
       heights.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
-      heights.bodyH = `${Number(((68 / 100) * this.platformHeight).toFixed(1))}px`;
-      console.log("heights", heights.slideH, heights.imageH, heights.bodyH);
+      heights.bodyH = `${Number(((61 / 100) * this.platformHeight).toFixed(1))}px`;
+      heights.footerH = `${Number(((7 / 100) * this.platformHeight).toFixed(1))}px`;
+      console.log("heights", heights.slideH, heights.imageH, heights.bodyH, heights.footerH);
       var result = posts.map(function(o) {        
         o.url = o.image,
         o.slideH = heights.slideH,

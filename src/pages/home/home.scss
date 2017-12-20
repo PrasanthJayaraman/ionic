@@ -27,10 +27,11 @@ ion-slide.swiper-slide {
 }
 
 .title-text {
-    font-weight: 400;
+    font-weight: 500;
     text-align: left;
-    font-size: 18px;
+    font-size: 20px;
     margin-top: 0px !important;
+    margin-bottom: 3px;
 }
 
 .bg-white {
@@ -54,6 +55,7 @@ ion-slide.swiper-slide {
 }
 
 .post-content-div {
+    overflow: hidden;
     padding: 5px;
     text-align: justify;    
     position: relative;    
@@ -61,7 +63,7 @@ ion-slide.swiper-slide {
 
 .buttons-row {
     position: absolute;
-    bottom: 0;
+    //bottom: 0;
     width: 100%;
     margin-bottom: 10px;
 }
@@ -98,6 +100,17 @@ ion-slide.swiper-slide {
   
 }
 
+
+
+.scroll-refresher {
+    width: 100%;
+}
+
+/*
+ion-slides {
+    height: auto;
+} 
+
 @media (max-height: 570px) {    
     .post-content-div {
         padding: 5px;
@@ -117,15 +130,6 @@ ion-slide.swiper-slide {
         border: 1px solid #000
     }
 }
-
-.scroll-refresher {
-    width: 100%;
-}
-
-/*
-ion-slides {
-    height: auto;
-} 
 */
 
 .no-scroll .scroll-content{

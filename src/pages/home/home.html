@@ -30,19 +30,19 @@
                  </div>    
                 <div class="post-content-div" [style.height]="post.bodyH">
                   <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
-                  <p class="body-text" [innerHtml]="post.body"></p>
-                  <div class="row buttons-row">
-                    <div class="column">            
-                      <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>
-                    </div>
-                    <div class="column">            
-                        <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>
-                    </div>
-                    <div class="column">            
-                        <button ion-button color="secondary" class="button" (click)="showShare(post.title, post.url)" outline>Share</button>
-                    </div>
-                  </div>
+                  <p class="body-text" [innerHtml]="post.body"></p>                  
                 </div>      
+                <div class="row buttons-row" [style.height]="post.footerH">
+                  <div class="column">            
+                    <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>
+                  </div>
+                  <div class="column">            
+                      <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>
+                  </div>
+                  <div class="column">            
+                      <button ion-button color="secondary" class="button" (click)="showShare(post.title, post.url)" outline>Share</button>
+                  </div>
+                </div>
           </div>    
           <div *ngIf="post && post.script">
               <div [innerHTML]="post.script">
