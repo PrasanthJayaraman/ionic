@@ -37,7 +37,7 @@ export class HelperProvider {
             this.fetchLocation();
           }, (error) => {
             console.log(error);
-            this.alert(`Cannot read request your location ${error}`);
+            //this.alert(`Cannot read request your location ${error}`);
           });
         } else {
           this.fetchLocation();
@@ -60,7 +60,7 @@ export class HelperProvider {
         }, 3000);
       }).catch((error) => {
         console.log('Error getting location', error);
-        this.alert(`Cannot read your location ${error}`);
+        //this.alert(`Cannot read your location ${error}`);
       });
     }
   

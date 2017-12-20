@@ -38,6 +38,7 @@ export class Home {
   public alreadyCalled: Boolean;  
   public fetching: any;
   public calledLocal: any;
+  public alertAlreadyPresent: any;
 
   constructor(public helper: HelperProvider, public loadingCtrl: LoadingController, public actionSheet: ActionSheetController,
     public navParams: NavParams, public toast: ToastController, public network: Network, public sanitizer: DomSanitizer,
@@ -121,19 +122,23 @@ export class Home {
         });      
     });
 
-    platform.registerBackButtonAction((e) => {
+    platform.registerBackButtonAction((e) => {  
+      if(!this.alertAlreadyPresent){
+        this.alertAlreadyPresent = true;
         let alert = alertCtrl.create({
           title: 'Confirm',
           message: 'Do you want to exit?',
           buttons: [{
             text: "exit?",
             handler: () => { this.exitApp() }
-          }, {
+          }, {            
             text: "Cancel",
-            role: 'cancel'
+            role: 'cancel',
+            handler: () => { this.alertAlreadyPresent = false }
           }]
         })
         alert.present();      
+      }
     });
 
     }
@@ -235,7 +240,7 @@ export class Home {
         url = `category/${page}/${index}`
       }     
       this.authService.getData(url)
-        .then((res: any) => {
+        .then((res: any) => {          
           this.fetching = false;
           this.alreadyCalled = false;
           this.index = index;
@@ -276,7 +281,12 @@ export class Home {
               this.helper.setOfflineDataReady(this.data);              
             }               
           }                 
-        })  
+        }, (err) => {
+          //this.alert(`THis is error one${JSON.stringify(err)}`)
+        })
+        .catch((err) => {
+          //this.alert(`THis is catch one${JSON.stringify(err)}`)
+        })
       }
   }  
 

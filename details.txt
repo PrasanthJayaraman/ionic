@@ -9,3 +9,5 @@ base64 : JR7ITVq11lFPuFYiqWyc9lgnoX8=
 ionic cordova plugin add cordova-plugin-facebook4 --variable APP_ID="2191509621076046" --variable APP_NAME="Jobswala"
 
 cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.361099237251-c7iln2cpankf3j3ume8hugl5ejlvaga5
+
+debug.keystore -alias androiddebugkey -storepass android -keypass android

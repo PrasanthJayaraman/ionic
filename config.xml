@@ -21,6 +21,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
+    <preference name="loadUrlTimeoutValue" value="700000" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
@@ -81,6 +82,7 @@
     <allow-navigation href="http://192.168.43.16:8100" />
     <allow-navigation href="http://172.20.10.5:8100" />
     <allow-navigation href="http://172.20.10.11:8100" />
+    <allow-navigation href="http://169.254.238.51:8100" />
     <engine name="ios" spec="~4.5.3" />
     <engine name="browser" spec="~5.0.1" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
