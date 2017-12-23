@@ -101,6 +101,7 @@ exports.updatePost = function (req, res, next) {
     }    
 
     updateData.modified = common.getISTTime();
+    console.log(updateData);
 
     Post.findById({ _id: id }, function (err, post) {
         if (err) {
