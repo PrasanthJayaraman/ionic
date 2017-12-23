@@ -5,6 +5,7 @@ var entities = new Entities();
 var common = require("../common");
 
 exports.listAd = function(req, res, next){
+    console.log("inside");
     Ad.getAllAd(function(err, ads){
         if(err){
             return res.status(500).send({
