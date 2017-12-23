@@ -30,9 +30,9 @@ exports.getStarted = function(req, res, next){
 
         data.authKey = common.rand();
 
-        if(data.email){            
+        if(data.key){            
             User.findOneAndUpdate({
-                email: data.email
+                key: data.key
             }, data, {
                 upsert: true,
                 new: true
@@ -46,9 +46,9 @@ exports.getStarted = function(req, res, next){
                     return res.status(200).send(user);
                 }
             });
-        } else if(data.key) {
+        } else if(data.email) {
             User.findOneAndUpdate({
-                key: data.key
+                email: data.email
             }, data, {
                 upsert: true,
                 new: true
@@ -87,16 +87,29 @@ exports.socialLogin = function(req, res, next){
 
         data.authKey = common.rand();
 
-        User.findOneAndUpdate({ email: data.email }, data, { upsert: true, new: true }, function (err, user) {
-            console.error(err);
-            if (err) {
-                return res.status(400).send({
-                    message: "Server is busy, Please try again!"
-                });
-            } else {
-                return res.status(200).send(user);
-            }
-        });
+       if(data.key){
+           User.findOneAndUpdate({ key: data.key }, data, { upsert: true, new: true }, function (err, user) {
+               console.error(err);
+               if (err) {
+                   return res.status(400).send({
+                       message: "Server is busy, Please try again!"
+                   });
+               } else {
+                   return res.status(200).send(user);
+               }
+           });
+       } else if(data.email) {
+           User.findOneAndUpdate({ email: data.email }, data, { upsert: true, new: true }, function (err, user) {
+               console.error(err);
+               if (err) {
+                   return res.status(400).send({
+                       message: "Server is busy, Please try again!"
+                   });
+               } else {
+                   return res.status(200).send(user);
+               }
+           });
+       }
 
     }
 }

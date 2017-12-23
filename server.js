@@ -31,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }))
 app.use(bodyParser.json({ limit: '50mb'}))
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(favicon(path.join(__dirname, favicon.ico)));
+app.use(favicon(path.join(__dirname, 'favicon.ico')));
 app.use('/modules', express.static(__dirname + '/node_modules/'));
 app.use('/assets', express.static(__dirname + '/assets/'));
 app.use('/uploads', express.static(__dirname + '/uploads/'));
