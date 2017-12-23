@@ -16,7 +16,7 @@
         <div class="row" id="row-main">
         <% if(data && data.script) { %>  
             <div class="col-md-12" id="content">
-                <h2>Update Post</h2>                
+                <h2>Update Ad</h2>                
                 <form id="updateForm">
                     <table id="post-table">
                         <tr>
@@ -26,6 +26,16 @@
                             <td>
                                 <input type="checkbox" name="active" id="active" <%=data.active ? 'checked' : '' %>>
                                 <label for="">Make Ad Active</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="">Ad Name</label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" id="name" class="form-control" value="<%=data.name %>" placeholder="My Advertisment">
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -41,7 +51,7 @@
                         <div id="edit">
                         </div>
                     </div>                                               
-                    <p>
+                    <p style="width:20%">
                         <input type="submit" class="btn btn-primary btn-lg btn-block" value="Update" />
                         <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
                     </p>
@@ -63,6 +73,16 @@
                                         <label for="">Make Ad Active</label>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <label for="">Ad Name</label>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" id="name" class="form-control" placeholder="My Advertisment">
+                                        </div>
+                                    </td>
+                                </tr>
                             </table>
                             <br>
                             <br>
@@ -76,9 +96,9 @@
                                 <div id="edit">
                                 </div>
                             </div>                    
-                            <p>
+                            <p style="width:20%">
                                 <input type="submit" class="btn btn-primary btn-lg btn-block" value="POST" />
-                                <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
+                                <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel" onclick="cancel()">
                             </p>
                         </form>
                         <br>
@@ -87,15 +107,17 @@
                 <% } %>      
             <div class="col-md-4 collapsed" id="sidebar">  
                 <div>
-                    <button type="button" class="btn btn-info" onclick="demoCheck()">Refresh</button>
-                    <br><br>
                     <div id="mobile" class="mobile">
                         <div id="mob-content" style="padding:8px;">
                         </div>
                     </div>
+                    <br><br>
+                    <button type="button" class="btn btn-info" onclick="demoCheck()">Refresh</button>
                 </div>
             </div>
-            <div id="myid" style="display:none"></div> 
+            <div id="myid" style="display:none">
+                <%= data.script %>
+            </div> 
         </div>
         <br><br><br>
     </div>
@@ -111,11 +133,12 @@
         window.location.href = '/ad/show';
     }   
 
-    function decode(text){
+    function decode() {
+        var decoded = $('#myid').html();
         var e = document.getElementById('myid');
-        var decoded = $('#myid').html(text).text();
+        var decoded = $('#myid').html(decoded).text();
         return decoded;
-    }
+    }   
 
     function collapse(){
         $("#sidebar").toggleClass("collapsed");
@@ -141,9 +164,9 @@
             } else {
                 $('#ad').addClass('active');
             }
-        });
+        });       
 
-        $('#edit').summernote('code', decode('<%=data.script%>'));
+        $('#edit').summernote('code', decode());
                
     });    
      
@@ -154,6 +177,12 @@
     $('#postForm').submit(function (e) {
         showLoader();
         e.preventDefault();  
+        var name = $('#name').val(); 
+        if(!name){
+            hideLoader();
+            toastr.error("Please enter Ad name");
+            return false;
+        }
         if (!$('#edit').summernote('code')) {
              hideLoader();
              toastr.error("Please enter Ad content");
@@ -163,6 +192,7 @@
         var formData = {};               
         formData.script = $('#edit').summernote('code');
         formData.active = active;
+        formData.name = name;
         var data = {
             ad: formData
         }
@@ -186,7 +216,12 @@
     $('#updateForm').submit(function (e) {
         showLoader();
         e.preventDefault();
-        e.preventDefault();  
+        var name = $('#name').val();
+        if (!name) {
+            hideLoader();
+            toastr.error("Please enter Ad name");
+            return false;
+        }
         if (!$('#edit').summernote('code')) {
              hideLoader();
              toastr.error("Please enter Ad content");
@@ -196,6 +231,7 @@
         var formData = {};
         formData.script = $('#edit').summernote('code');
         formData.active = active;
+        formData.name = name;
         var data = {
             ad: formData
         }       

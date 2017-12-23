@@ -101,7 +101,7 @@ table tr td:last-child {
 
 .mobile {
     width: 375px;
-    height: 667px;
+    height: 623px;
     border: 1px solid #ccc;
 }
 
@@ -110,8 +110,7 @@ table tr td:last-child {
     width: 100%;
 }
 
-.buttons-row {
-    position: absolute;
+.buttons-row {    
     bottom: 0;
     width: 96%;
     margin-bottom: 10px;
@@ -142,7 +141,7 @@ table tr td:last-child {
 }
 
 .mob-content {
-    height: 467;
+    height: 423;
     width: 100%;
     font-weight: 300;
     font-size: 16px;

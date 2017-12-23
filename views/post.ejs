@@ -12,9 +12,9 @@
 
 <body>
     <%- include header.ejs %>
-    <div class="container">   
-        <div class="row" id="row-main">
-    <% if(data.title) { %>
+    <div class="container">
+    <div class="row" id="row-main">
+    <% if(data.title) { %>    
         <div class="col-md-12" id="content">
             <h2>Update Post</h2>            
                 <form id="updateForm">
@@ -105,6 +105,15 @@
                                 <label for="">Make Post Active</label>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label for="">Push Notification</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="push" id="push">
+                                <label for="">Send</label>
+                            </td>
+                        </tr>
                     </table>
                     <br>
                     <br>
@@ -118,17 +127,47 @@
                         <div id="edit">
                         </div>
                     </div>
-                    <p>
+                    <p style="width:20%">
                         <input type="submit" class="btn btn-primary btn-lg btn-block" value="Update" />
                         <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
                     </p>                    
                 </form>
-                <br>            
-        </div>
-    <% } else { %>
+                <br>  
+            </div>   
+            <div class="col-md-4 collapsed" id="sidebar">
+                <div>
+                    <div id="mobile" class="mobile">
+                        <div id="mob-content">
+                            <div class="mob-image">
+                                <img class="post-image" id="mob-image" alt="No image" crossOrigin="Anonymous" />
+                            </div>
+                            <div class="mob-content">
+                                <p class="title-text" id="mob-title"></p>
+                                <div id="mob-text" style="height: 80%;">
+            
+                                </div>
+                                <div class="buttons-row">
+                                    <div class="column">
+                                        <button class="btn btn-info">Apply</button>
+                                    </div>
+                                    <div class="column">
+                                        <button class="btn btn-info">Notify</button>
+                                    </div>
+                                    <div class="column">
+                                        <button class="btn btn-info">Share</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <button type="button" class="btn btn-info" onclick="demoCheck()">Refresh</button>
+                </div>
+            </div>
+    <% } else { %>    
         <div class="col-md-12" id="content">
-            <h2>Create Post</h2>
-            <div class="row">                
+            <h2>Create Post</h2>                          
                 <form id="postForm">
                     <table id="post-table">
                         <tr>
@@ -208,6 +247,15 @@
                                 <label for="">Make Post Active</label>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label for="">Push Notification</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="push" id="push">
+                                <label for="">Send</label>
+                            </td>
+                        </tr>
                     </table>
                     <br><br>
                     <div style="margin-left: 10px;width:100%;margin:0 auto;">
@@ -219,49 +267,49 @@
                         <label for="">Post Content</label>
                         <div id="edit">
                         </div>
-                    </div>
-                    <p>
+                    </div>                    
+                    <p style="width:20%">
                         <input type="submit" class="btn btn-primary btn-lg btn-block" value="POST" />
                         <input type="button" class="btn btn-default btn-lg btn-block" id="cancel" value="Cancel">
                     </p>
                 </form>
-                <br>            
-        </div>
-    <% } %>
-    </div>
-    <div id="myid" style="display:none"></div>
-    <div class="col-md-4 collapsed" id="sidebar">
-        <div>
-            <button type="button" class="btn btn-info" onclick="demoCheck()">Refresh</button>
-            <br>
-            <br>
-            <div id="mobile" class="mobile">
-                <div id="mob-content">
-                    <div class="mob-image">
-                        <img class="post-image" id="mob-image" alt="No image" crossOrigin="Anonymous" />
+                <br>              
+        </div>    
+        <div class="col-md-4 collapsed" id="sidebar">
+            <div>
+                <div id="mobile" class="mobile">
+                    <div id="mob-content">
+                        <div class="mob-image">
+                            <img class="post-image" id="mob-image" alt="No image" crossOrigin="Anonymous" />
+                        </div>
+                        <div class="mob-content">
+                            <p class="title-text" id="mob-title"></p>
+                            <div id="mob-text" style="height: 80%;">
+        
+                            </div>
+                            <div class="buttons-row">
+                                <div class="column">
+                                    <button class="btn btn-info">Apply</button>
+                                </div>
+                                <div class="column">
+                                    <button class="btn btn-info">Notify</button>
+                                </div>
+                                <div class="column">
+                                    <button class="btn btn-info">Share</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mob-content">
-                        <p class="title-text" id="mob-title" ></p>
-                        <div id="mob-text">
-
-                        </div>
-                        <div class="buttons-row">                            
-                            <div class="column">
-                                <button class="btn btn-info">Apply</button>
-                            </div>
-                            <div class="column">
-                                <button class="btn btn-info">Notify</button>
-                            </div>
-                            <div class="column">
-                                <button class="btn btn-info">Share</button>
-                            </div>
-                        </div>
-                    </div>                    
                 </div>
+                <br>
+                <br>
+                <button type="button" class="btn btn-info" onclick="demoCheck()">Refresh</button>
             </div>
         </div>
+    <% } %>    
+    </div>
     </div>    
-    </div>    
+    <div id="myid" style="display:none"></div>    
 </body>
 <script src="/modules/jquery/dist/jquery.min.js"></script>
 <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -368,6 +416,9 @@
     });
 
     $('#postForm').submit(function(e) {
+        if(confirm('Are you sure you want to post?') != true){
+            return false;
+        }
         showLoader();
         e.preventDefault();
         var checkboxValues = [];
@@ -398,6 +449,7 @@
             return false;
         }   
         var active = $('#active').is(":checked");
+        var push = $('#push').is(":checked");
         var notify = $('#notify').val(); 
         var apply = $('#apply').val();        
         formData.notifyUrl = notify;
@@ -407,6 +459,7 @@
         formData.image = url;
         formData.title = title;
         formData.active = active;
+        formData.push = push;
         var data = {
             post: formData
         }             
@@ -428,6 +481,9 @@
     });
 
     $('#updateForm').submit(function(e){
+        if (confirm('Are you sure you want to post?') != true) {
+            return false;
+        }
         showLoader();
         e.preventDefault();
         var checkboxValues = [];
@@ -458,6 +514,7 @@
             return false;
         }   
         var active = $('#active').is(":checked");
+        var push = $('#push').is(":checked");
         var notify = $('#notify').val();
         var apply = $('#apply').val();
         formData.notifyUrl = notify;
@@ -467,6 +524,7 @@
         formData.image = url;
         formData.title = title;
         formData.active = active;
+        formData.push = push;
         var data = {
             post: formData
         }
@@ -485,7 +543,7 @@
                 toastr.error(response.responseJSON.message);
             }
         })
-    });
+    });           
 </script>
 
 </html>

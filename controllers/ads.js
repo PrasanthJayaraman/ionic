@@ -1,5 +1,8 @@
 var mongoose = require('mongoose');
 var Ad = mongoose.model("Ad");
+var Entities = require('html-entities').AllHtmlEntities;
+var entities = new Entities();
+
 exports.listAd = function(req, res, next){
     Ad.getAllAd(function(err, ads){
         if(err){
@@ -34,6 +37,9 @@ exports.editAd = function (req, res, next) {
                 message: "Server is Busy, Please try again!"
             });
         } else {
+            var script = entities.decode(ad.script);
+            ad.script = script;
+            console.log(ad);
             res.render('adform', { data: ad })
         }
     })
@@ -73,7 +79,7 @@ exports.updateAd = function (req, res, next) {
         })
     }   
 
-    Ad.findByIdAndUpdate({ _id: id }, { $set: { script: data.script, active: data.active, modified: new Date() } }, function (err, ad) {
+    Ad.findByIdAndUpdate({ _id: id }, { $set: { script: data.script, active: data.active, name: data.name, modified: new Date() } }, function (err, ad) {
         if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
@@ -88,7 +94,7 @@ exports.updateAd = function (req, res, next) {
 exports.createAd = function (req, res, next) {
     var ad = req.body.ad;    
 
-    if (!ad || !ad.script) {
+    if (!ad || !ad.script || !ad.name) {
         return res.status(400).send({
             message: "Invalid Ad data"
         })
@@ -98,7 +104,8 @@ exports.createAd = function (req, res, next) {
         script: ad.script,
         created: new Date(),
         modified: new Date(),
-        active: ad.active
+        active: ad.active,
+        name: ad.name
     });
 
     newObj.save(function (err) {

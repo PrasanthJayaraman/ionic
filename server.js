@@ -24,7 +24,7 @@ app.use(function (req, res, next) {
     } else {
         return res.redirect('https://' + req.get('host') + req.url);
     }
-});
+}); 
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }))

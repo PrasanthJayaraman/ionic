@@ -5,6 +5,9 @@ var adSchema = new Schema({
     active: {
         type: Boolean
     },
+    name: {
+        type: String
+    },
     script: {
         type: String
     },

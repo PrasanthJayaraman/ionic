@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Category = mongoose.model('Category');
+var Post = mongoose.model('Post');
+var _ = require('lodash');
 
 exports.createCategory = function(req, res, next){
     var category = req.body.category;
@@ -33,7 +35,7 @@ exports.categoryForm = function(req, res, next){
 }
 
 exports.listCategory = function(req, res, next){
-    Category.find({}, 'name modified active', { sort: { active: -1}},  function (err, categories) {
+    Category.find({}, 'name modified active', { sort: { name: 1}},  function (err, categories) {
         if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
@@ -76,16 +78,44 @@ exports.updateCategory = function(req, res, next){
         })
     }
 
+    var oldName;
+    var newName = data.name;    
 
-    Category.findByIdAndUpdate({_id: id}, {$set: {name: data.name, active: data.active, modified: new Date()}}, function(err, category){
-        if (err) {
+    Category.findById({_id: id}, function(err, category){
+        if(err){
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
             });
-        } else {
-            res.send(200);
+        } else if(category && category.name){
+            oldName = category.name;            
+            Category.findByIdAndUpdate({ _id: id }, { $set: { name: newName, active: data.active, modified: new Date() } }, function (err, category) {
+                if (err) {
+                    return res.status(500).send({
+                        message: "Server is Busy, Please try again!"
+                    });
+                } else {
+                    Post.update({ categories: oldName }, { $push: { categories: newName } }, {multi: true}, function (err, posts) {
+                        if (err) {
+                            return res.status(500).send({
+                                message: "Server is Busy, Please try again!"
+                            });
+                        } else {
+                            console.log(posts);
+                            Post.update({ categories: oldName }, { $pull: { categories: oldName } }, { multi: true }, function (err, posts) {
+                                if (err) {
+                                    return res.status(500).send({
+                                        message: "Server is Busy, Please try again!"
+                                    });
+                                } else {
+                                    res.send(200);
+                                }
+                            })
+                        }
+                    })
+                }
+            });
         }
-    });
+    })   
 }
 
 exports.deleteCategory = function(req, res, next){

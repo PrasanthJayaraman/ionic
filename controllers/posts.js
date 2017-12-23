@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Post = mongoose.model('Post');
 var Category = mongoose.model('Category');
+var pushController = require('./push');;
 
 exports.showLogin = function(req, res, next){
     return res.render('login');
@@ -50,16 +51,15 @@ exports.showPost = function(req, res, next){
     });
 }
 
-exports.createPost = function(req, res, next){
-    var data = req.body.post;
-    console.log(data);
-    if(!data){
+exports.createPost = function (req, res, next) {
+    var data = req.body.post;    
+    if (!data) {
         return res.status(400).send({
             message: "Invalid Post data"
         })
     }
 
-    if(!data.title || !data.body || !data.categories){
+    if (!data.title || !data.body || !data.categories) {
         return res.status(400).send({
             message: "Some data is missing please fill all.."
         })
@@ -68,28 +68,77 @@ exports.createPost = function(req, res, next){
     data.created = new Date();
     data.modified = new Date();
 
-    Post.create(data, function(err, post){
-        if(err){
+    Post.create(data, function (err, post) {
+        if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
             });
         } else {
-            return res.send(200);
+            res.send(200);
+            if (data.push) {
+                var query = {
+                    token: {
+                        $ne: null
+                    }
+                };
+                pushController.collectAndPush(query, "", post.title);
+            } else {
+                return;
+            }
         }
-    })    
+    });
 }
 
-exports.postForm = function(req, res, next){
-    Category.find({}, 'name value', function(err, categories){
-        if(err){
+exports.updatePost = function (req, res, next) {
+    var id = req.params.id;
+    var updateData = req.body.post;
+
+    if (!id) {
+        return res.status(400).send({
+            message: "Cannot edit the selected post"
+        })
+    }    
+
+    Post.findById({ _id: id }, function (err, post) {
+        if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
             });
-        } else if(categories){
-            console.log(categories);            
-            return res.render('post', { data: { title: false }, categories: categories});
         } else {
-            return res.render('post', { data: { title: false }, categories: {name : "NoCategories"} });
+            post.update(updateData, function (err, updated) {
+                if (err) {
+                    return res.status(500).send({
+                        message: "Server is Busy, Please try again!"
+                    });
+                } else {
+                    res.status(200).send();
+                    if (updateData.push) {
+                        var query = {
+                            token: {
+                                $ne: null
+                            }
+                        };
+                        pushController.collectAndPush(query, "", post.title);
+                    } else {
+                        return;
+                    }
+                }
+            })
+        }
+    })
+
+}
+
+exports.postForm = function (req, res, next) {
+    Category.find({}, 'name value', function (err, categories) {
+        if (err) {
+            return res.status(500).send({
+                message: "Server is Busy, Please try again!"
+            });
+        } else if (categories) {
+            return res.render('post', { data: { title: false }, categories: categories });
+        } else {
+            return res.render('post', { data: { title: false }, categories: { name: "NoCategories" } });
         }
     })
 }
@@ -165,42 +214,8 @@ exports.uploadImage = function(req, res, next){
     res.send(obj);
 }
 
-exports.updatePost = function(req, res, next){
-    var id = req.params.id;
-    var updateData = req.body.post;
-
-    if (!id) {
-        return res.status(400).send({
-            message: "Cannot edit the selected post"
-        })
-    }
-
-    console.log(updateData);
-
-    Post.findById({_id: id}, function(err, post){
-        if (err) {
-            return res.status(500).send({
-                message: "Server is Busy, Please try again!"
-            });
-        } else {
-            post.update(updateData, function(err, updated){
-                if (err) {
-                    return res.status(500).send({
-                        message: "Server is Busy, Please try again!"
-                    });
-                } else {
-                    return res.status(200).send();
-                }
-            })
-        }
-    })
-        
-}
-
 exports.searchPost = function(req, res, next){
-    var data = req.body;
-
-    console.log(data)
+    var data = req.body;    
 
     if(Object.keys(data).length === 0){
         return res.status(400).send({
