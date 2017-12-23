@@ -63,7 +63,7 @@ postSchema.methods.update = function (updates, options, cb) {
     if (typeof options !== 'object' && typeof options === 'function') {
         cb = options;
     }
-    var editableFields = ['image', 'body', 'title', 'notifyUrl', 'applyUrl', 'active', 'categories'];
+    var editableFields = ['image', 'body', 'title', 'notifyUrl', 'applyUrl', 'active', 'categories', 'modified'];
     editableFields.forEach(function (field) {
         if (updates[field] || updates[field] == false) {
             userToUpdate[field] = updates[field];
