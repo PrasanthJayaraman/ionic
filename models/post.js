@@ -68,8 +68,7 @@ postSchema.methods.update = function (updates, options, cb) {
         if (updates[field] || updates[field] == false) {
             userToUpdate[field] = updates[field];
         }
-    });
-    userToUpdate.modified = new Date();
+    });    
     userToUpdate.save(cb);
 };
 
