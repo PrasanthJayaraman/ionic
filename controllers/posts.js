@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var Post = mongoose.model('Post');
 var Category = mongoose.model('Category');
-var pushController = require('./push');;
+var pushController = require('./push');
+var common = require("../common");
 
 exports.showLogin = function(req, res, next){
     return res.render('login');
@@ -63,12 +64,10 @@ exports.createPost = function (req, res, next) {
         return res.status(400).send({
             message: "Some data is missing please fill all.."
         })
-    }
+    }    
 
-    var now = new Date();
-
-    data.created = new Date(now.setTime(now.getTime() - (-330 * 60000))),
-    data.modified = new Date();
+    data.created = common.getISTTime();
+    data.modified = common.getISTTime();
 
     Post.create(data, function (err, post) {
         if (err) {
@@ -166,8 +165,7 @@ exports.editPost = function(req, res, next){
                     return res.status(500).send({
                         message: "Server is Busy, Please try again!"
                     });
-                } else {     
-                    console.log(post);
+                } else {                         
                     return res.render('post', {data: post, categories: categories });
                 }
             })

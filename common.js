@@ -18,3 +18,8 @@ function rand(length) {
     return sha512(crypto.randomBytes(length).toString());
 };
 exports.rand = rand;
+
+exports.getISTTime = function(){
+    var now = new Daate();
+    return new Date(now.setTime(now.getTime() - (-330 * 60000)));
+}

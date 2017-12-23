@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Category = mongoose.model('Category');
 var Post = mongoose.model('Post');
 var _ = require('lodash');
+var common = require("../common");
 
 exports.createCategory = function(req, res, next){
     var category = req.body.category;
@@ -10,14 +11,12 @@ exports.createCategory = function(req, res, next){
         return res.status(400).send({
             message: "Invalid Category data"
         })
-    }
-
-    var now = new Date();
+    }    
 
     var newObj = new Category({
         name : category.name,        
-        created: new Date(now.setTime(now.getTime() - (-330 * 60000))),
-        modified : new Date(),
+        created: common.getISTTime(),
+        modified: common.getISTTime(),
         active: category.active
     });
 
@@ -90,7 +89,7 @@ exports.updateCategory = function(req, res, next){
             });
         } else if(category && category.name){
             oldName = category.name;            
-            Category.findByIdAndUpdate({ _id: id }, { $set: { name: newName, active: data.active, modified: new Date() } }, function (err, category) {
+            Category.findByIdAndUpdate({ _id: id }, { $set: { name: newName, active: data.active, modified: common.getISTTime() } }, function (err, category) {
                 if (err) {
                     return res.status(500).send({
                         message: "Server is Busy, Please try again!"
@@ -101,8 +100,7 @@ exports.updateCategory = function(req, res, next){
                             return res.status(500).send({
                                 message: "Server is Busy, Please try again!"
                             });
-                        } else {
-                            console.log(posts);
+                        } else {                            
                             Post.update({ categories: oldName }, { $pull: { categories: oldName } }, { multi: true }, function (err, posts) {
                                 if (err) {
                                     return res.status(500).send({

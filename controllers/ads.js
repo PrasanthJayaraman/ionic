@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Ad = mongoose.model("Ad");
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
+var common = require("../common");
 
 exports.listAd = function(req, res, next){
     Ad.getAllAd(function(err, ads){
@@ -79,7 +80,7 @@ exports.updateAd = function (req, res, next) {
         })
     }   
 
-    Ad.findByIdAndUpdate({ _id: id }, { $set: { script: data.script, active: data.active, name: data.name, modified: new Date() } }, function (err, ad) {
+    Ad.findByIdAndUpdate({ _id: id }, { $set: { script: data.script, active: data.active, name: data.name, modified: common.getISTTime() } }, function (err, ad) {
         if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
@@ -98,14 +99,12 @@ exports.createAd = function (req, res, next) {
         return res.status(400).send({
             message: "Invalid Ad data"
         })
-    }
-
-    var now = new Date();
+    }    
 
     var newObj = new Ad({
         script: ad.script,
-        created: new Date(now.setTime(now.getTime() - (-330 * 60000))),
-        modified: new Date(),
+        created: common.getISTTime(),
+        modified: common.getISTTime(),
         active: ad.active,
         name: ad.name
     });
