@@ -20,6 +20,6 @@ function rand(length) {
 exports.rand = rand;
 
 exports.getISTTime = function(){
-    var now = new Daate();
+    var now = new Date();
     return new Date(now.setTime(now.getTime() - (-330 * 60000)));
 }

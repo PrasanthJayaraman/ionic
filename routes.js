@@ -30,8 +30,9 @@ module.exports = function(app){
     app.post("/api/v1/user/profile", userController.updateUser);
     app.post("/api/v1/user/device", userController.updateDeviceInfo);
     app.get("/api/v1/posts/:id", appController.getPosts);
-    app.get("/api/v1/categories", appController.listCategory);
+    app.get("/api/v1/categories", appController.listCategory);    
     app.get("/api/v1/category/:name/:id", appController.getCategoryPost);
+    app.get("/api/v1/ads", adController.listAd);
     app.get("/api/v1/share/link/:platform", appController.redirectToShareLink);
 
     // Post API
