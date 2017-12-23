@@ -93,12 +93,14 @@ exports.createPost = function (req, res, next) {
 exports.updatePost = function (req, res, next) {
     var id = req.params.id;
     var updateData = req.body.post;
-
+    
     if (!id) {
         return res.status(400).send({
             message: "Cannot edit the selected post"
         })
     }    
+
+    updateData.modified = common.getISTTime();
 
     Post.findById({ _id: id }, function (err, post) {
         if (err) {
