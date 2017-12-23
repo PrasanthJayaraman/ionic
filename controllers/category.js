@@ -12,9 +12,11 @@ exports.createCategory = function(req, res, next){
         })
     }
 
+    var now = new Date();
+
     var newObj = new Category({
         name : category.name,        
-        created : new Date(),
+        created: new Date(now.setTime(now.getTime() - (-330 * 60000))),
         modified : new Date(),
         active: category.active
     });

@@ -65,7 +65,9 @@ exports.createPost = function (req, res, next) {
         })
     }
 
-    data.created = new Date();
+    var now = new Date();
+
+    data.created = new Date(now.setTime(now.getTime() - (-330 * 60000))),
     data.modified = new Date();
 
     Post.create(data, function (err, post) {

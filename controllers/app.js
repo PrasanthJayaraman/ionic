@@ -21,18 +21,20 @@ exports.getPosts = function(req, res, next){
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"
             });
-        } else if (posts && posts.length > 0) {           
-            Ad.getActiveAds(function (err, ads) {
-                if (err) {
-                    return res.status(500).send({
-                        message: "Server is Busy, Please try again!"
-                    });
-                } else {
-                    return res.status(200).send({ post: posts, ad: ads});                            
-                }
+        } else {
+            return res.status(200).send({post: posts});                    
+        }
+    });
+}
+
+exports.getAds = function(req, res, next){
+    Ad.getActiveAds(function (err, ads) {
+        if (err) {
+            return res.status(500).send({
+                message: "Server is Busy, Please try again!"
             });
         } else {
-            return res.status(200).send({post: posts, ads: []});                    
+            return res.status(200).send({ ad: ads });
         }
     });
 }

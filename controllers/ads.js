@@ -100,9 +100,11 @@ exports.createAd = function (req, res, next) {
         })
     }
 
+    var now = new Date();
+
     var newObj = new Ad({
         script: ad.script,
-        created: new Date(),
+        created: new Date(now.setTime(now.getTime() - (-330 * 60000))),
         modified: new Date(),
         active: ad.active,
         name: ad.name
