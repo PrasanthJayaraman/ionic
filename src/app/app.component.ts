@@ -18,20 +18,43 @@ export class MyApp {
   public rootPage: any;  
   @ViewChild(Nav) nav: Nav;
   public categories : Array<any>;
-
+  public ads : Array<any>;
+  
   constructor(public authService: AuthServiceProvider, public storage: Storage, public modalCtrl: ModalController,
     public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
-
-    this.rootPage = Home;    
 
     platform.ready().then(() => {      
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
-      splashScreen.hide();
       this.getCategories();
+      this.getAds();
+      splashScreen.hide();
+      this.rootPage = Home;    
     });
   }  
+
+  getAds(){
+    this.storage.get("ads")
+    .then((oldAds) => {
+      this.ads = oldAds || [];
+      this.authService.getData("ads")
+      .then((ads: any) => {
+        var temp;
+        try {
+          temp = JSON.parse(ads._body);
+        } catch(e){
+          temp = ads._body;
+        }
+        this.ads = temp.ad;
+        this.storage.set("ads", temp.ad);
+      }, (err) => {
+          this.ads = oldAds;
+      }).catch((err) => {
+        this.ads = oldAds;
+      })
+    });
+  }
 
   getCategories(){
     this.storage.get("categories")

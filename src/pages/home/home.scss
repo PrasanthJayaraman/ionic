@@ -58,14 +58,24 @@ ion-slide.swiper-slide {
     overflow: hidden;
     padding: 5px;
     text-align: justify;    
-    position: relative;    
+    position: relative;   
+    text-overflow: ellipsis; 
 }
 
 .buttons-row {
     position: absolute;
     //bottom: 0;
     width: 100%;
-    margin-bottom: 10px;
+    //margin-bottom: 10px;
+    //background-color: #f2f2f2;
+}
+
+.footer-text {
+    font-size: 10px;
+    color: red;
+    letter-spacing: 1px;
+    margin: 0 auto;
+    padding-top:2px;
 }
 
 .column {
@@ -131,6 +141,27 @@ ion-slides {
     }
 }
 */
+
+.toolbar-ios-secondary,
+.toolbar-background-ios {
+    background-image: url('../../assets/imgs/icon.png');
+}
+
+.profile .toolbar-background {
+    background: map-get($colors, secondary);
+}
+
+.toolbar-title, 
+.toolbar-title-ios {
+    color: #fff;
+}
+
+.toolbar-content, 
+.toolbar-content-ios {
+    margin-left: -10px;
+    display: flex;
+}
+
 
 .no-scroll .scroll-content{
    overflow: hidden;

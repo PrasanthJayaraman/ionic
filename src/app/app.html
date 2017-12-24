@@ -1,12 +1,12 @@
 <ion-menu side="left" [content]="content" [swipeEnabled]="false" persistent="true"> 
     <ion-header no-border>
-        <ion-toolbar color="secondary">
-            <ion-title>Home</ion-title>
+        <ion-toolbar style="text-align:center">
+            <img src="assets/imgs/icon.png"  width="120px;" height='40px' alt="" style="margin:auto">            
         </ion-toolbar>
     </ion-header>
     <ion-content>
-        <ion-list no-lines>
-            <button ion-item detail-none menuClose (click)="openHome()" no-border>
+        <ion-list >
+            <button ion-item detail-none menuClose (click)="openHome()">
                 Home
             </button>  
             <button ion-item detail-none menuClose (click)="openProfile()">

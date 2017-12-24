@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, Platform, AlertController, ModalController, LoadingController, ToastController, NavParams, Slides, ActionSheetController, Content } from 'ionic-angular';
+import { NavController, Nav, Platform, AlertController, ModalController, LoadingController, ToastController, NavParams, Slides, ActionSheetController, Content } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
@@ -18,6 +18,7 @@ import { HelperProvider } from '../../providers/helper/helper';
 export class Home {
   @ViewChild(Slides) slides: Slides;
   @ViewChild(Content) content: Content;
+  @ViewChild(Nav) nav: Nav;
 
   public Error: any;
   public location: any;
@@ -124,20 +125,24 @@ export class Home {
 
     platform.registerBackButtonAction((e) => {  
       if(!this.alertAlreadyPresent){
-        this.alertAlreadyPresent = true;
-        let alert = alertCtrl.create({
-          title: 'Confirm',
-          message: 'Do you want to exit?',
-          buttons: [{
-            text: "exit?",
-            handler: () => { this.exitApp() }
-          }, {            
-            text: "Cancel",
-            role: 'cancel',
-            handler: () => { this.alertAlreadyPresent = false }
-          }]
-        })
-        alert.present();      
+        if(this.pageHead == 'Home') {
+          this.alertAlreadyPresent = true;
+          let alert = alertCtrl.create({
+            title: 'Confirm',
+            message: 'Do you want to exit?',
+            buttons: [{
+              text: "exit?",
+              handler: () => { this.exitApp() }
+            }, {            
+              text: "Cancel",
+              role: 'cancel',
+              handler: () => { this.alertAlreadyPresent = false }
+            }]
+          })
+          alert.present();     
+        } else {
+          this.nav.push(Home);  
+        }
       }
     });
 
@@ -227,7 +232,8 @@ export class Home {
     if(this.isOnline){
       this.fetching = true;
       let loading = this.loadingCtrl.create({
-        spinner: "crescent"
+        spinner: "crescent",
+        cssClass: 'transparent'
       });
       loading.present();
       if (!index) { 
@@ -261,25 +267,28 @@ export class Home {
             loading.dismiss();
             this.content.resize();
           } else {            
-            loading.dismiss();
-            if(index > 1){
-              let postsWithAd = this.helper.concatPostAndAd(newPosts, temp.ad);
-              this.posts.push(...postsWithAd);             
-              this.content.resize();               
-              this.toast.create({            
-                message: `More Posts Below`,
-                duration: 2000
-              }).present();
-            } else {              
-              let concated = this.helper.concatPostAndAd(newPosts, temp.ad);
-              this.posts = [];
-              this.posts.push(...concated);            
-              this.slides.slideTo(0);  
-              this.data = dataPack;
-              this.content.resize();
-              //this.alert(this.content.contentHeight);
-              this.helper.setOfflineDataReady(this.data);              
-            }               
+            this.storage.get("ads")
+            .then(ads => {
+              loading.dismiss();
+              if(index > 1){
+                let postsWithAd = this.helper.concatPostAndAd(newPosts, ads);
+                this.posts.push(...postsWithAd);             
+                this.content.resize();               
+                this.toast.create({            
+                  message: `More Posts Below`,
+                  duration: 2000
+                }).present();
+              } else {              
+                let concated = this.helper.concatPostAndAd(newPosts, ads);
+                this.posts = [];
+                this.posts.push(...concated);            
+                this.slides.slideTo(0);  
+                this.data = dataPack;
+                this.content.resize();
+                //this.alert(this.content.contentHeight);
+                this.helper.setOfflineDataReady(this.data);              
+              }               
+            })            
           }                 
         }, (err) => {
           //this.alert(`THis is error one${JSON.stringify(err)}`)
@@ -292,7 +301,12 @@ export class Home {
 
   openWithSystemBrowser(url: string) {
     const options: InAppBrowserOptions = {
-      clearCache: 'no'
+      clearCache: 'no',
+      hardwareback: 'no',
+      closebuttoncaption: 'Close',
+      toolbar: 'yes',
+      zoom: 'yes',
+      enableViewportScale: 'yes'
     }
     this.inAppBrowser.create(url, '_blank', options);
   }   

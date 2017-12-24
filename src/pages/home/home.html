@@ -1,15 +1,16 @@
 <ion-header no-border>
-  <ion-navbar hideBackButton="true" color="whitey">
+  <ion-navbar hideBackButton="true" color="secondary">
     <ion-buttons left>
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
     </ion-buttons>
-    <ion-title>
+    <img src="assets/imgs/logo_white.png"  style="padding-top:5px;width:110px;height:40px" alt="">  
+    <ion-title left style="margin-top:6px;margin-left:75px;">
       {{pageHead}}
     </ion-title>
     <ion-buttons end>
-      <button (click)="doRefresh()" style="background-color: transparent; font-size: 28px;">
+      <button (click)="doRefresh()" style="background-color: transparent; font-size: 28px;color:#fff">
       <ion-icon name="refresh"></ion-icon>
     </button>
     </ion-buttons>
@@ -20,7 +21,7 @@
   <div *ngIf="posts?.length == 0">
     <img src="assets/imgs/loader.jpg" class="loader" alt="">
   </div>            
-  <ion-slides direction='vertical' sensitivity="2" effect="slide" loop="false" autoHeight="true" (ionSlideDidChange)="slideChanged()">                                                        
+  <ion-slides direction='vertical' sensitivity="5" speed="200" effect="slide" loop="false" autoHeight="true" (ionSlideDidChange)="slideChanged()">                                                        
     <ion-slide class="bg-white" *ngFor="let post of posts; let i = index" [style.height]="post.slideH">                                                         
           <div [attr.id]="i" *ngIf="post && post.title">                
                 <div class="post-image-div" *ngIf="isOnline" [style.height]="post.imageH" [innerHTML]="post.newImage" >                                  
@@ -29,7 +30,7 @@
                   <img [attr.id]="post._id"  data-url="not online" [src]="post.image" class="post-image" alt="No image" crossOrigin="Anonymous" />
                  </div>    
                 <div class="post-content-div" [style.height]="post.bodyH">
-                  <p class="title-text">{{post.title.length > 50 ? post.title.substring(0, 50) + "..." : post.title }}</p>
+                  <p class="title-text">{{post.title.length > 70 ? post.title.substring(0, 70) + "..." : post.title }}</p>
                   <p class="body-text" [innerHtml]="post.body"></p>                  
                 </div>      
                 <div class="row buttons-row" [style.height]="post.footerH">
@@ -41,6 +42,10 @@
                   </div>
                   <div class="column">            
                       <button ion-button color="secondary" class="button" (click)="showShare(post.title, post.url)" outline>Share</button>
+                  </div>
+                  <div class="footer-text">
+                    <ion-icon name="arrow-up"></ion-icon>
+                    <span>FLIP UP FOR NEXT JOB</span>
                   </div>
                 </div>
           </div>    

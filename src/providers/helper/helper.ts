@@ -233,35 +233,49 @@ export class HelperProvider {
 
     
 
-    concatPostAndAd(posts, ads){  
-      let position = 3;       // count of posts you need to see between each ad
-      let iteration = Math.floor(posts.length / 3);      
-      let adCount = [];
-      let k = 0;     
-      for(let item of posts){                
-        item.newImage = `<img data-url="online" src="${item.url}" class="post-image ${item._id}" alt="No image" />`
-      }
-      for(let j=0; j<=iteration;j++){
-        if(j !+ 0) k++;        
-        let temp = ads[k];
-        if(temp){
-          adCount.push(temp);
+    concatPostAndAd(posts, ads) {   
+      try {     
+        if(ads && ads.length > 0){
+          let position = 3;       // count of posts you need to see between each ad
+          let iteration = Math.floor(posts.length / 3);      
+          let adCount = [];
+          let k = 0;     
+          for(let item of posts){                
+            item.newImage = `<img data-url="online" src="${item.url}" class="post-image ${item._id}" alt="No image" />`
+          }
+          for(let j=0; j<=iteration;j++){
+            if(j !+ 0) k++;        
+            let temp = ads[k];
+            if(temp){
+              adCount.push(temp);
+            } else {
+              k = 0;
+              adCount.push(ads[k]);
+            }
+          }
+          for(let i =1; i<=iteration;i++){         
+            if(i != 1) {
+              position = (3 * i) + (i-1);
+            }
+            if(posts.length >= position){          
+              this.insertToArray(posts, position, adCount[i-1])          
+            } else {
+              this.insertToArray(posts, posts.length, adCount[i-1])
+            }
+          }
+          return posts;
         } else {
-          k = 0;
-          adCount.push(ads[k]);
+          for(let item of posts){                
+            item.newImage = `<img data-url="online" src="${item.url}" class="post-image ${item._id}" alt="No image" />`
+          }
+          return posts;
+        }   
+      } catch (e) {
+        for(let item of posts){                
+          item.newImage = `<img data-url="online" src="${item.url}" class="post-image ${item._id}" alt="No image" />`
         }
+        return posts;
       }
-      for(let i =1; i<=iteration;i++){         
-        if(i != 1) {
-          position = (3 * i) + (i-1);
-        }
-        if(posts.length >= position){          
-          this.insertToArray(posts, position, adCount[i-1])          
-        } else {
-          this.insertToArray(posts, posts.length, adCount[i-1])
-        }
-      }
-      return posts;
     }
 
     getShareURL(){

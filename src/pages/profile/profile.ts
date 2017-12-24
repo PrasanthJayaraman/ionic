@@ -84,7 +84,7 @@ export class ProfilePage {
 
   postLoginData(url, data) {
     let loading = this.loadingCtrl.create({
-      content: 'Loading, please wait...'
+      content: 'Loading, please wait...'      
     });
     loading.present();
     let headers = {
