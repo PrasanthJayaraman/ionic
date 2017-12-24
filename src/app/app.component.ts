@@ -23,6 +23,8 @@ export class MyApp {
   constructor(public authService: AuthServiceProvider, public storage: Storage, public modalCtrl: ModalController,
     public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
 
+    this.rootPage = Home;    
+    
     platform.ready().then(() => {      
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -30,7 +32,6 @@ export class MyApp {
       this.getCategories();
       this.getAds();
       splashScreen.hide();
-      this.rootPage = Home;    
     });
   }  
 
