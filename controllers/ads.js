@@ -27,7 +27,7 @@ exports.adForm = function (req, res, next) {
 exports.editAd = function (req, res, next) {
     var id = req.params.id;
 
-    if (!id || !ad.script) {
+    if (!id) {
         return res.status(400).send({
             message: "Please check the inputs"
         })
@@ -40,8 +40,7 @@ exports.editAd = function (req, res, next) {
             });
         } else {
             var script = entities.decode(ad.script);
-            ad.script = script;
-            console.log(ad);
+            ad.script = script;            
             res.render('adform', { data: ad })
         }
     })

@@ -20,11 +20,11 @@ var adSchema = new Schema({
 });
 
 adSchema.statics.getAllAd = function (cb) {
-    this.find({}, null, { sort: { modified: -1 } }, cb);
+    this.find({}, null, { sort: { _id: 1 } }, cb);
 }
 
 adSchema.statics.getActiveAds = function (cb) {
-    this.find({ active: true }, null, { sort: { modified: -1 } }, cb);
+    this.find({ active: true }, null, { sort: { _id: 1 } }, cb);
 }
 
 mongoose.model('Ad', adSchema);
