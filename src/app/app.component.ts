@@ -24,7 +24,7 @@ export class MyApp {
     public platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public fb: Facebook) {          
 
     this.rootPage = Home;    
-    
+      
     platform.ready().then(() => {      
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.

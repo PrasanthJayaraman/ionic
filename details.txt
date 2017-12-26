@@ -11,3 +11,7 @@ ionic cordova plugin add cordova-plugin-facebook4 --variable APP_ID="21915096210
 cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.361099237251-c7iln2cpankf3j3ume8hugl5ejlvaga5
 
 debug.keystore -alias androiddebugkey -storepass android -keypass android
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore debug.keystore android-release-unsigned.apk androiddebugkey
+
+zipalign -v 4 android-release-unsigned.apk Jobswala.apk

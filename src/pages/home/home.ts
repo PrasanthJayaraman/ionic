@@ -125,24 +125,20 @@ export class Home {
 
     platform.registerBackButtonAction((e) => {  
       if(!this.alertAlreadyPresent){
-        if(this.pageHead == 'Home') {
-          this.alertAlreadyPresent = true;
-          let alert = alertCtrl.create({
-            title: 'Confirm',
-            message: 'Do you want to exit?',
-            buttons: [{
-              text: "exit?",
-              handler: () => { this.exitApp() }
-            }, {            
-              text: "Cancel",
-              role: 'cancel',
-              handler: () => { this.alertAlreadyPresent = false }
-            }]
-          })
-          alert.present();     
-        } else {
-          this.nav.push(Home);  
-        }
+        this.alertAlreadyPresent = true;
+        let alert = alertCtrl.create({
+          title: 'Confirm',
+          message: 'Do you want to exit?',
+          buttons: [{
+            text: "exit?",
+            handler: () => { this.exitApp() }
+          }, {
+            text: "Cancel",
+            role: 'cancel',
+            handler: () => { this.alertAlreadyPresent = false }
+          }]
+        })
+        alert.present();     
       }
     });
 
@@ -157,7 +153,7 @@ export class Home {
   }
 
   ionViewDidLoad() {      
-      this.isOnline = true; this.getData(this.pageHead, 1); 
+      //this.isOnline = true; this.getData(this.pageHead, 1); 
       //this.getStorageData();
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
