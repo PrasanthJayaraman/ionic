@@ -7,7 +7,7 @@ var common = require("../common");
 exports.createCategory = function(req, res, next){
     var category = req.body.category;
 
-    if(!category || !category.name || !category.active){
+    if(!category || !category.name){
         return res.status(400).send({
             message: "Invalid Category data"
         })
@@ -18,17 +18,27 @@ exports.createCategory = function(req, res, next){
         created: common.getISTTime(),
         modified: common.getISTTime(),
         active: category.active
-    });
+    });    
 
-    newObj.save(function(err){
+    Category.findOne({name: category.name}, function(err, oldCategory){
         if(err){
-            return res.status(500).send({
-                message: "Server is Busy, Please try again!"
-            });
-        } else {
-            res.send(200);
+             return res.status(500).send({
+               message: "Server is Busy, Please try again!"
+             });
+        } else if(oldCategory) {            
+            return res.status(200).send();  // dont do anything if there is a category already existing
+        } else {            
+            newObj.save(function (err) {
+              if (err) {
+                return res.status(500).send({
+                  message: "Server is Busy, Please try again!"
+                });
+              } else {
+                return res.status(200).send();
+              }
+            })
         }
-    })
+    })    
 }
 
 exports.categoryForm = function(req, res, next){
