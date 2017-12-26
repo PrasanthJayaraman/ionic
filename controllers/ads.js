@@ -27,9 +27,9 @@ exports.adForm = function (req, res, next) {
 exports.editAd = function (req, res, next) {
     var id = req.params.id;
 
-    if (!id) {
+    if (!id || !ad.script) {
         return res.status(400).send({
-            message: "Cannot edit the selected ad"
+            message: "Please check the inputs"
         })
     }
 
