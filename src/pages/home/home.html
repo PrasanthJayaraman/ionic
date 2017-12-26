@@ -6,8 +6,8 @@
       </button>
     </ion-buttons>
     <img src="assets/imgs/logo_white.png"  style="padding-top:5px;width:110px;height:40px" alt="">  
-    <ion-title left style="margin-top:6px;margin-left:75px;">
-      {{pageHead}}
+    <ion-title class="toolbar-tit" style="margin-top:6px;">
+      {{pageHead.length > 12 ? pageHead.substring(0, 12) + '...' : pageHead}}
     </ion-title>
     <ion-buttons end>
       <button (click)="doRefresh()" style="background-color: transparent; font-size: 28px;color:#fff">

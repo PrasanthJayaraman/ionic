@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { AlertController } from 'ionic-angular';
 
-let APIURL = "https://jobswala.co/api/v1/";
+let APIURL = "http://admin.jobswala.co/api/v1/";
 
 /*
   Generated class for the AuthServiceProvider provider.

@@ -13,6 +13,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class HelperProvider {
   public platformHeight: any;
+  public adPosition: Number;
   
     constructor(private uniqueDeviceID: UniqueDeviceID, public toast: ToastController, public modalCtrl: ModalController, public storage: Storage,
       public platform: Platform, public geolocation: Geolocation, public locationAccuracy: LocationAccuracy, 
@@ -233,17 +234,18 @@ export class HelperProvider {
 
     
 
-    concatPostAndAd(posts, ads) {   
+    concatPostAndAd(posts, ads, index) {   
       try {     
         if(ads && ads.length > 0){
-          let position = 3;       // count of posts you need to see between each ad
-          let iteration = Math.floor(posts.length / 3);      
-          let adCount = [];
-          let k = 0;     
+          let position = 5;       // count of posts you need to see between each ad
+          let iteration = Math.floor(posts.length / 5);      
+          let adCount = ads;
           for(let item of posts){                
             item.newImage = `<img data-url="online" src="${item.url}" class="post-image ${item._id}" alt="No image" />`
           }
-          for(let j=0; j<=iteration;j++){
+          //let k = 0;     
+          /* let adCount = [];
+            for(let j=0; j<=iteration;j++){
             if(j !+ 0) k++;        
             let temp = ads[k];
             if(temp){
@@ -252,18 +254,43 @@ export class HelperProvider {
               k = 0;
               adCount.push(ads[k]);
             }
-          }
-          for(let i =1; i<=iteration;i++){         
-            if(i != 1) {
-              position = (3 * i) + (i-1);
+          }*/
+          if(index == 1){            
+            for(let i =1; i<=iteration;i++){         
+              if(i != 1) {
+                position = (5 * i) + (i-1);
+              }
+              if(posts.length >= position){          
+                this.insertToArray(posts, position, adCount[i-1]) 
+                this.adPosition = i-1;         
+              } else {
+                this.insertToArray(posts, posts.length, adCount[i-1])
+                this.adPosition = i-1;
+              }
             }
-            if(posts.length >= position){          
-              this.insertToArray(posts, position, adCount[i-1])          
-            } else {
-              this.insertToArray(posts, posts.length, adCount[i-1])
+            return posts;
+          } else {
+            for(let i =1; i<=iteration;i++){         
+              if(i != 1) {
+                position = (5 * i) + (i-1);
+              }
+              let a : any = this.adPosition;
+              if((a + 1) >= adCount.length){
+                a = 0;
+              } else {
+                a = this.adPosition;
+                a++;      //this.adPosition + 1;
+              }
+              if(posts.length >= position){          
+                this.insertToArray(posts, position, adCount[a])          
+                this.adPosition = a;
+              } else {
+                this.insertToArray(posts, posts.length, adCount[a])
+                this.adPosition = a;
+              }
             }
-          }
-          return posts;
+            return posts;
+          }        
         } else {
           for(let item of posts){                
             item.newImage = `<img data-url="online" src="${item.url}" class="post-image ${item._id}" alt="No image" />`

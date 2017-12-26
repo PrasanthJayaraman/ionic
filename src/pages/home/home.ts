@@ -157,7 +157,7 @@ export class Home {
   }
 
   ionViewDidLoad() {      
-      //this.isOnline = true; this.getData(this.pageHead, 1); 
+      this.isOnline = true; this.getData(this.pageHead, 1); 
       //this.getStorageData();
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
@@ -271,7 +271,7 @@ export class Home {
             .then(ads => {
               loading.dismiss();
               if(index > 1){
-                let postsWithAd = this.helper.concatPostAndAd(newPosts, ads);
+                let postsWithAd = this.helper.concatPostAndAd(newPosts, ads, this.index);
                 this.posts.push(...postsWithAd);             
                 this.content.resize();               
                 this.toast.create({            
@@ -279,7 +279,7 @@ export class Home {
                   duration: 2000
                 }).present();
               } else {              
-                let concated = this.helper.concatPostAndAd(newPosts, ads);
+                let concated = this.helper.concatPostAndAd(newPosts, ads, this.index);
                 this.posts = [];
                 this.posts.push(...concated);            
                 this.slides.slideTo(0);  
