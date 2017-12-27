@@ -3,6 +3,8 @@ var Post = mongoose.model('Post');
 var Category = mongoose.model('Category');
 var pushController = require('./push');
 var common = require("../common");
+var Entities = require('html-entities').AllHtmlEntities;
+var entities = new Entities();
 
 exports.showLogin = function(req, res, next){
     return res.render('login');
@@ -169,6 +171,8 @@ exports.editPost = function(req, res, next){
                         message: "Server is Busy, Please try again!"
                     });
                 } else {                         
+                    var script = entities.decode(ad.body);
+                    post.body = script;
                     return res.render('post', {data: post, categories: categories });
                 }
             })
