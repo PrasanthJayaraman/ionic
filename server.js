@@ -17,14 +17,14 @@ var credentials = {
 };
 
 var app = express();
-
+/* 
 app.use(function (req, res, next) {
     if (req.secure) {
         next();
     } else {
         return res.redirect('https://' + req.get('host') + req.url);
     }
-}); 
+}); */ 
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }))
@@ -37,7 +37,7 @@ app.use('/assets', express.static(__dirname + '/assets/'));
 app.use('/uploads', express.static(__dirname + '/uploads/'));
 
 var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
+//var httpsServer = https.createServer(credentials, app);
 
 var db = DB.connect(function(err){
     if(err){
@@ -50,9 +50,9 @@ var db = DB.connect(function(err){
                 require("./routes")(app);
                 httpServer.listen(80, function () { console.log("HTTP server is UP and Running"); });
 
-                httpsServer.listen(443, function () {
+               /*  httpsServer.listen(443, function () {
                     console.log("Secure server is UP and Running");
-                });
+                }); */
             }
         });
     }
