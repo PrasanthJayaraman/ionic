@@ -40,7 +40,7 @@ exports.getAds = function(req, res, next){
 }
 
 exports.listCategory = function (req, res, next) {
-    Category.find({active: true}, 'name', function (err, categories) {
+    Category.find({active: true}, 'name', {sort: {name: 1}}, function (err, categories) {
         if (err) {
             return res.status(500).send({
                 message: "Server is Busy, Please try again!"

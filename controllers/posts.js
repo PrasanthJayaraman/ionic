@@ -165,6 +165,7 @@ exports.editPost = function(req, res, next){
             });
         } else {
             post = post.toObject();
+            console.log(post)
             Category.find({}, 'name', function (err, categories) {
                 if (err) {
                     return res.status(500).send({
@@ -173,6 +174,7 @@ exports.editPost = function(req, res, next){
                 } else {                         
                     var script = entities.decode(post.body);
                     post.body = script;
+                    console.log(post);
                     return res.render('post', {data: post, categories: categories });
                 }
             })
