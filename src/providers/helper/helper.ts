@@ -156,8 +156,8 @@ export class HelperProvider {
       var heights = <any>Object;
       heights.slideH = `${this.platformHeight}px`;
       heights.imageH = `${Number(((30 / 100) * this.platformHeight).toFixed(1))}px`;
-      heights.bodyH = `${Number(((61 / 100) * this.platformHeight).toFixed(1))}px`;
-      heights.footerH = `${Number(((7 / 100) * this.platformHeight).toFixed(1))}px`;
+      heights.bodyH = `${Number(((60 / 100) * this.platformHeight).toFixed(1))}px`;
+      heights.footerH = `${Number(((8 / 100) * this.platformHeight).toFixed(1))}px`;
       console.log("heights", heights.slideH, heights.imageH, heights.bodyH, heights.footerH);
       var result = posts.map(function(o) {        
         o.url = o.image,

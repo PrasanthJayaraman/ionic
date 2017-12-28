@@ -106,11 +106,11 @@ export class ProfilePage {
           }, error => console.error("pro error", error))
         } else {
           loading.dismiss();
-          this.alert("Error", res.data.message);
+          //this.alert("Error", res.data.message);
         }
       }, (err) => {
         loading.dismiss();        
-        this.alert("Error", err.data.message);
+        //this.alert("Error", err.data.message);
       })
 
   }

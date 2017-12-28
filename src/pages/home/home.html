@@ -35,13 +35,13 @@
                 </div>      
                 <div class="row buttons-row" [style.height]="post.footerH">
                   <div class="column">            
-                    <button ion-button color="secondary" (click)="openWithSystemBrowser(post.applyUrl)" outline>Apply</button>
+                    <button ion-button color="secondary" style="font-size:13px" (click)="openWithSystemBrowser(post.applyUrl)" outline>Read More</button>
                   </div>
                   <div class="column">            
-                      <button ion-button color="secondary" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notify</button>
+                      <button ion-button color="secondary" style="font-size:12px" (click)="openWithSystemBrowser(post.notifyUrl)" class="button" outline>Notification</button>
                   </div>
                   <div class="column">            
-                      <button ion-button color="secondary" class="button" (click)="showShare(post.title, post.url)" outline>Share</button>
+                      <button ion-button color="secondary" style="font-size:13px" class="button" (click)="showShare(post.title, post.url)" outline>&nbsp; Share &nbsp;</button>
                   </div>
                   <div class="footer-text">
                     <ion-icon name="arrow-up"></ion-icon>
