@@ -83,17 +83,17 @@ export class WelcomePage {
             this.storage.set('profile', data).then(() => {
               this.storage.set('isLoggedIn', true).then(() => {
                 loading.dismiss();
-                this.alert("Info", JSON.stringify(data));
+                //this.alert("Info", JSON.stringify(data));
                 this.viewCtrl.dismiss();
               }, error => console.error("islogg error", error))
             }, error => console.error("pro error", error))
           } else {
             loading.dismiss();
-            this.alert("Error", res.data.message);
+            //this.alert("Error", res.data.message);
           }
         }, (err) => {
           loading.dismiss();        
-          this.alert("Error", err.data.message);
+          //this.alert("Error", err.data.message);
         })  
       } else {
         this.authService.postData(url, headers, body)
@@ -103,17 +103,17 @@ export class WelcomePage {
             this.storage.set('profile', data).then(() => {
               this.storage.set('isLoggedIn', true).then(() => {
                 loading.dismiss();
-                this.alert("Info", JSON.stringify(data));
+                //this.alert("Info", JSON.stringify(data));
                 this.viewCtrl.dismiss();
               }, error => console.error("islogg error", error))
             }, error => console.error("pro error", error))
           } else {
             loading.dismiss();
-            this.alert("Error", res.data.message);
+            //("Error", res.data.message);
           }
         }, (err) => {
           loading.dismiss();        
-          this.alert("Error", err.data.message);
+          //this.alert("Error", err.data.message);
         })  
       }
     });        

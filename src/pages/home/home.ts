@@ -81,8 +81,7 @@ export class Home {
         firebase.onNotificationOpen()
           .subscribe((notification) => {
             if (notification.tap) {
-              console.log("yes", JSON.stringify(notification));
-              //this.alert(JSON.stringify(notification));
+              console.log("yes", JSON.stringify(notification));              
             } else {
               //this.alert(JSON.stringify(notification));
             }
@@ -153,7 +152,7 @@ export class Home {
   }
 
   ionViewDidLoad() {      
-      //this.isOnline = true; this.getData(this.pageHead, 1); 
+      this.isOnline = true; this.getData(this.pageHead, 1); 
       //this.getStorageData();
       if(this.platform.is('cordova')) {
       this.platform.ready().then(() => {        
