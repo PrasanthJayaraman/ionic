@@ -27,7 +27,7 @@ exports.send = function(tokens, title, body){
     .then(function (response) {
         // See the MessagingDevicesResponse reference documentation for
         // the contents of response.
-        console.log("Successfully sent message:", response);
+        console.log("Successfully sent message:", JSON.stringify(response));
     })
     .catch(function (error) {
         console.log("Error sending message:", error);
